@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Logo · Ronda 6 · Regla de tamaños + mint profundo para el mini</title>
+<style>
+  /* ============================================================
+     Ronda 6 (decisión CEO sobre r5):
+       · SIN borde: la versión limpia gana. (Nota: WCAG exime a los
+         logotipos del requisito de contraste — no es una infracción.)
+       · El fallback tinta gana SOLO a 15px, pero el CEO señala que
+         #0B7C6C "parece un verde oscuro", no el turquesa del logo.
+     Esta hoja: (1) codifica la regla por tamaños (responsive logo,
+     práctica estándar), (2) propone una rampa de "mint profundo"
+     que conserva la familia turquesa para el mini, (3) alternativa
+     también estándar: isotipo + texto neutro en el watermark.
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C;
+    --action-bright: #43E5C2;
+    --accent-ink: #6C3FD1;
+    --bg: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --text-primary: #1C1826;
+    --text-secondary: #544E68;
+    --text-tertiary: #6B6383;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --wall-light: #EDEBF2;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary); padding: 40px 20px 96px; }
+  .sheet { max-width: 1080px; margin: 0 auto; }
+  .head, .dir, .foot { background: var(--bg); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 28px; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+  h1 { font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .head p { font-size: 14px; line-height: 21px; color: var(--text-secondary); margin-top: 10px; max-width: 76ch; }
+  h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .sub { font-size: 13.5px; color: var(--text-secondary); margin-bottom: 18px; max-width: 80ch; }
+  .bench { border-radius: var(--r-md); padding: 22px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 34px; }
+  .bench.white { background: #FFFFFF; border: 1px solid var(--border); }
+  .bench.wallL { background: var(--wall-light); border: 1px solid var(--border); }
+  .spec { display: flex; flex-direction: column; gap: 7px; align-items: center; }
+  .speclab { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-align: center; }
+  .ok { color: #0B7C6C; font-weight: 700; }
+
+  .wm { font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; white-space: nowrap; }
+  .pik { color: var(--accent-ink); }
+  .lockup { display: inline-flex; align-items: center; gap: 10px; }
+
+  .ramp { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+  .ramp i { display: block; width: 26px; height: 26px; border-radius: 6px; }
+
+  .rationale { background: var(--surface-subtle); border-radius: var(--r-md); padding: 16px 20px; margin-top: 14px; font-size: 13.5px; line-height: 20px; color: var(--text-secondary); }
+  .rationale b { color: var(--text-primary); font-weight: 600; }
+  .rationale p + p { margin-top: 6px; }
+  .foot { font-size: 14px; line-height: 21px; color: var(--text-secondary); }
+  .foot h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+  .foot ul { margin: 8px 0 0 18px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="markA" viewBox="0 0 96 96">
+      <g transform="translate(6,0)">
+        <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+        <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#43E5C2"/>
+        <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="sheet">
+
+  <div class="head">
+    <div class="kicker">Logo · Ronda 6 · issue #27 · 2026-07-07 · sin borde APROBADO ✓</div>
+    <h1>La regla de tamaños + un mini que siga siendo turquesa</h1>
+    <p>Decidido: <b>sin borde</b> como versión canónica. (Y buena noticia: WCAG exime
+       explícitamente a los logotipos del requisito de contraste — el "sacrificio de
+       accesibilidad" no es tal; los botones y textos de la UI siguen con sus tokens AA.)
+       Lo que se decide aquí: el color exacto del "Maker" en tamaños mini, para que no
+       parezca "otro verde".</p>
+  </div>
+
+  <div class="dir">
+    <h2>1 · La regla (práctica estándar: "responsive logo")</h2>
+    <div class="sub">Los manuales de identidad definen variantes por tamaño mínimo. Nuestra regla propuesta: <b>≥ 20px de altura de texto → mint brillante pelado · &lt; 20px → variante mini</b> (a elegir abajo).</div>
+    <div class="bench white">
+      <div class="spec">
+        <div class="lockup"><svg width="42" height="42"><use href="#markA"/></svg><span class="wm" style="font-size:25px"><span class="pik">Pikete</span><span style="color:#43E5C2">Maker</span></span></div>
+        <span class="speclab">≥ 20px · canónico sin borde <span class="ok">✓ decidido</span></span>
+      </div>
+      <div class="spec">
+        <div class="lockup"><svg width="26" height="26"><use href="#markA"/></svg><span class="wm" style="font-size:15px"><span class="pik">Pikete</span><span style="color:#43E5C2">Maker</span></span></div>
+        <span class="speclab">15px · el problema: mint se pierde</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dir">
+    <h2>2 · Candidatos para el "Maker" mini — rampa de mint profundo</h2>
+    <div class="sub">Tu diagnóstico es correcto: <span style="font-family:var(--font-mono)">#0B7C6C</span> no es "el turquesa oscurecido" — es el verde tinta de los botones de la UI, nacido para otra cosa. Aquí una rampa que <b>baja la luz del turquesa manteniendo su familia</b> (mismo matiz ~168°): a más oscuro, más aguanta en blanco, pero más "verde botella" parece. Elige dónde está tu equilibrio.</div>
+    <div class="bench wallL">
+      <div class="spec">
+        <div class="lockup"><svg width="26" height="26"><use href="#markA"/></svg><span class="wm" style="font-size:15px"><span class="pik">Pikete</span><span style="color:#17B598">Maker</span></span></div>
+        <span class="speclab">M1 · #17B598 · turquesa claro<br>contraste ~2.6:1</span>
+      </div>
+      <div class="spec">
+        <div class="lockup"><svg width="26" height="26"><use href="#markA"/></svg><span class="wm" style="font-size:15px"><span class="pik">Pikete</span><span style="color:#0EA184">Maker</span></span></div>
+        <span class="speclab">M2 · #0EA184 · turquesa medio<br>contraste ~3.3:1</span>
+      </div>
+      <div class="spec">
+        <div class="lockup"><svg width="26" height="26"><use href="#markA"/></svg><span class="wm" style="font-size:15px"><span class="pik">Pikete</span><span style="color:#0C8570">Maker</span></span></div>
+        <span class="speclab">M3 · #0C8570 · turquesa profundo<br>contraste ~4.6:1 · recomendado UX</span>
+      </div>
+      <div class="spec">
+        <div class="lockup"><svg width="26" height="26"><use href="#markA"/></svg><span class="wm" style="font-size:15px"><span class="pik">Pikete</span><span style="color:#0B7C6C">Maker</span></span></div>
+        <span class="speclab">M4 · #0B7C6C · el de la UI<br>(el que te parecía verde oscuro)</span>
+      </div>
+    </div>
+    <div class="bench white" style="margin-top:14px">
+      <div class="spec">
+        <div class="ramp">
+          <i style="background:#43E5C2"></i><i style="background:#17B598"></i><i style="background:#0EA184"></i><i style="background:#0C8570"></i><i style="background:#0B7C6C"></i>
+        </div>
+        <span class="speclab">la familia completa: del mint del logo al tinta de la UI</span>
+      </div>
+      <div class="spec">
+        <div class="lockup"><svg width="26" height="26"><use href="#markA"/></svg><span class="wm" style="font-size:15px" ><span style="color:#544E68">Pikete</span><span style="color:#544E68">Maker</span></span></div>
+        <span class="speclab">Alternativa también estándar: mini TODO<br>en neutro — el color lo pone el isotipo</span>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Respuesta directa a tu pregunta ("¿qué se suele hacer?"):</b> sí — exactamente lo
+         que propones. Se llama <b>sistema de logo por tamaños</b> (responsive logo): el manual
+         define un tamaño mínimo para la versión canónica y una variante mini por debajo.
+         Lo hacen desde Google (multicolor grande, simplificado pequeño) hasta cualquier
+         marca con watermark. No es un parche: es tener sistema.</p>
+      <p><b>Y tu segunda observación también es de diseñador:</b> el fallback no debe ser "el
+         verde de los botones" — debe ser <b>el turquesa del logo con menos luz</b>. La rampa
+         M1-M3 mantiene el matiz exacto de la familia (~168°); M3 aguanta 4.6:1 en blanco
+         y sigue leyéndose turquesa al lado del morado. M2 es el punto medio si M3 aún te
+         sabe a botella.</p>
+      <p><b>Regla final propuesta para el manual:</b> ≥20px → mint #43E5C2 pelado ·
+         &lt;20px → mint profundo (el M que elijas) · el isotipo nunca cambia.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <h3>Última decisión del logo</h3>
+    <ul>
+      <li>Elige el mini: <b>M1 / M2 / M3 / M4</b> o la alternativa en neutro.</li>
+      <li>Con eso, ronda de cierre: display con licencia, splash, watermark, favicon, negativa sobre morado, exports 48-512px y mini-manual de uso (la regla de tamaños escrita).</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

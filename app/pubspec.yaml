@@ -1,0 +1,114 @@
+name: piketemaker
+description: "PiketeMaker — tu paleta de outfit con criterio. MVP demo on-device (D15)."
+publish_to: "none"
+
+# Versión de la app (semver+build). Desde r7 el build number = ronda de release
+# (r7 = +7); versionCode monótono creciente (r6 salió con +1).
+version: 0.1.0+20
+
+environment:
+  # Dart 3 / Flutter 3.x estable. Rango amplio para no atarnos a un patch concreto.
+  sdk: ">=3.3.0 <4.0.0"
+  # Flutter floor 3.27 (was 3.19, wrong — app review F16, 2026-09-30): the
+  # color engine reads the double channels Color.r/.g/.b (display.dart,
+  # color_names.dart), which reached the engine with "Framework wide color"
+  # (flutter/engine#54737, 2024-08-29): after 3.24.0 (2024-07-30) and before
+  # 3.27.0 (2024-12-10). Verified in the SDK git history (C:/dev/flutter).
+  # The CEO's toolchains (3.27.4 / 3.32.8; CI 3.44.6) all satisfy it.
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # i18n (D18 extendido, 2026-07-15): 7 locales vía gen-l10n (ARB en
+  # lib/l10n/). flutter_localizations es SDK (coste APK ~0); intl llega
+  # anclado por el propio SDK ("any" resuelve a la versión que fija
+  # flutter_localizations). El formateo de fechas visible NO usa intl
+  # (tablas propias en result_blocks.dart) para que el copy es quede
+  # byte-idéntico ("14 jul 2026", sin el punto de "jul." de CLDR).
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+  # Iconos Cupertino de la plantilla por defecto. Cero dependencias pesadas
+  # (gate G1: tamaño de APK y fricción de build). El logo se dibuja con
+  # CustomPainter (sin flutter_svg).
+  cupertino_icons: ^1.0.6
+
+  # Cámara/galería (paso 3 del D12, "subir foto"). Plugin OFICIAL de Flutter,
+  # ligero: en Android delega en la app de cámara / photo picker del sistema.
+  image_picker: ^1.1.2
+
+  # Persistencia del flag `onboardingSeen` (F13). Oficial y mínimo: un bool.
+  shared_preferences: ^2.2.3
+
+  # F5-lite "Ver looks así" (#82, decisión 3: SOLO deep-link, nunca embeber
+  # resultados de terceros). Plugin OFICIAL flutter.dev: en Android es un
+  # wrapper fino de Intent ACTION_VIEW (~decenas de KB en el APK, sin
+  # servicios nativos) — gate G1 intacto.
+  url_launcher: ^6.3.0
+
+  # Fase 2.5 (D21): runtime TFLite para MediaPipe Selfie Multiclass on-device.
+  # Elegido sobre "MediaPipe Tasks" porque el plugin oficial de visión NO
+  # existe en pub.dev (google/flutter-mediapipe solo publica text/genai/core,
+  # verificado 2026-07-14) — ver el ADR del spike F2.5. Plugin del equipo de
+  # TensorFlow; el pre/post-proceso (resize/normalize/argmax) se implementa en
+  # Dart puro en lib/core/segmentation/. Coste APK: ver el informe del spike.
+  tflite_flutter: ^0.12.1
+
+  # A3 (r13, CEO decision 2026-09-29): "Súbela a tu story" opens the OS share
+  # sheet with the generated 9:16 PNG. Flutter Community Plus plugin (the de
+  # facto standard; image_picker/url_launcher-grade maintenance). 13.x is the
+  # line that supports Flutter >=3.38 / Dart >=3.10 and builds on AGP 9 with
+  # our classic-DSL flags. On Android it is a thin Intent.ACTION_SEND wrapper
+  # + a FileProvider: NO INTERNET permission, no native SDK, no background
+  # service — sharing stays user-initiated and the photo never leaves the
+  # device (only the swatch image the user chooses to share). APK impact
+  # measured in the r13 A3 report (rule #87).
+  share_plus: ^13.3.0
+  # Transitive pins (A3): share_plus_platform_interface pulls path_provider.
+  # Its latest Android impl (2.3.x) moved to JNI (`jni` + `jni_flutter`:
+  # a native libdartjni.so per ABI + a native-assets build hook), and the
+  # latest iOS impl (2.6.x) to FFI (`objective_c` + build hook). Both add APK
+  # weight / build-toolchain friction (gate G1, #79) for ZERO benefit here.
+  # The pre-JNI/pre-FFI lines are the same API on Pigeon platform channels.
+  # We never call path_provider ourselves. Drop these pins when a future
+  # share_plus stops depending on path_provider, or if the pins ever block an
+  # upgrade.
+  path_provider_android: ">=2.2.23 <2.3.0"
+  path_provider_foundation: ">=2.5.1 <2.6.0"
+
+  # PENDIENTE (se añade en su fase, no antes):
+  #   google_mobile_ads -> rewarded ad (F8, Fase 5). El hueco ya está en el layout.
+  # NO se añade el paquete `image`: la decodificación/reescalado de la foto se
+  # hace con dart:ui (motor de Flutter, coste cero en APK). Ver
+  # lib/features/analyzing/preparar_imagen.dart.
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  # E2E quality gate (#41): integration_test/ drives both real flows on a
+  # device/emulator (real engine, real prefs, real rendering — pixel-level
+  # swatch checks for the r3 bug class). SDK package: zero APK impact.
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  # gen-l10n (i18n, D18): compila los ARB de lib/l10n/ a AppLocalizations
+  # en cada build/test (config en l10n.yaml).
+  generate: true
+
+  # El SVG maestro del logo (D14) vive aquí como fuente para generar el icono
+  # de launcher y el splash (ver README). No se carga en runtime: el widget
+  # LogoIsotipo lo reproduce con CustomPainter, offline y sin dependencias.
+  assets:
+    - assets/logo/
+    # Fase 2.5 (D21): modelo selfie_multiclass_256x256.tflite (16.37 MB,
+    # Apache-2.0). GITIGNORADO — en un clon fresco ejecutar
+    # app/tool/fetch_models.sh antes de compilar. Se empaqueta DENTRO del APK
+    # (D2: 100% offline; la descarga es build-time, nunca runtime).
+    - assets/models/

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Esqueleto MVP-demo · 5 pasos (D12/D15)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json
+     Esqueleto de 5 pasos del MVP-demo (D12): abrir → tutorial (F13)
+     → subir foto → loading con hueco de ad (F8) → resultado.
+     D8: mint = acción · morado = acento (máx 2 dosis/pantalla).
+     D9: neutros teñidos de morado (AA garantizado).
+     Logo D14 (LOGO.md) reproducido con SVG inline.
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C;      /* brand.mint.ink — 5.10:1 */
+    --action-bright: #43E5C2;   /* brand.mint.bright — no textual */
+    --action-tint: #DFF7F1;     /* brand.mint.tint */
+    --accent-ink: #6C3FD1;      /* brand.purple.ink — 6.42:1 */
+    --accent-bright: #A78BFA;
+    --accent-tint: #EFEAFB;
+
+    --logo-turq: #17B598;       /* turquesa de MARCA del logo (D14) — solo logo */
+
+    --bg: #FFFFFF;
+    --surface: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --border-strong: #D9D3E6;
+    --text-primary: #1C1826;
+    --text-secondary: #544E68;
+    --text-tertiary: #6B6383;
+    --text-disabled: #8F87A3;
+    --action-on-fill: #FFFFFF;
+    --success: #2E7D32;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px; --sp-3xl: 48px;
+    --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+    --shadow-lg: 0 12px 32px rgba(28,24,38,0.14);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #F2F0F6;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    padding: 40px 16px 100px;
+  }
+
+  .lede {
+    max-width: 760px; margin: 0 auto 40px; text-align: center;
+  }
+  .lede h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+  .lede p { margin-top: 10px; font-size: 14px; line-height: 21px; color: var(--text-secondary); }
+  .lede .steps {
+    margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    font-size: 12px; color: var(--text-tertiary);
+  }
+  .lede .steps b {
+    display: inline-block; padding: 4px 10px; border-radius: var(--r-pill);
+    background: #fff; border: 1px solid var(--border); color: var(--text-secondary); font-weight: 600;
+  }
+
+  .rail {
+    display: flex; flex-wrap: wrap; gap: 40px 32px;
+    justify-content: center; align-items: flex-start;
+  }
+
+  .stage { width: 390px; }
+  .stage-num {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  }
+  .stage-num .dot {
+    width: 26px; height: 26px; border-radius: 50%; flex: none;
+    background: var(--action-tint); color: var(--action-ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+  }
+  .stage-num .lbl { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .stage-num .lbl span { color: var(--text-tertiary); font-weight: 400; }
+
+  .stage-note {
+    margin-top: 14px; padding: 0 4px;
+    font-size: 12px; line-height: 17px; color: var(--text-tertiary);
+  }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+
+  .phone {
+    width: 390px; height: 844px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow-md);
+  }
+
+  .statusbar {
+    height: 44px; flex: none;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--screen-margin);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+  }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 6px auto 8px; }
+
+  /* ---- Logo (D14) ---- */
+  .wordmark { font-weight: 800; letter-spacing: -0.01em; }
+  .wordmark .pk { color: var(--accent-ink); }
+  .wordmark .mk { color: var(--logo-turq); }
+  .kicker {
+    font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary);
+  }
+
+  /* ---- botones ---- */
+  .btn {
+    height: 56px; border-radius: var(--r-pill);
+    display: flex; align-items: center; justify-content: center; gap: var(--sp-sm);
+    font-size: 16px; font-weight: 700; font-family: var(--font-sans);
+    border: none; cursor: pointer; width: 100%;
+  }
+  .btn-primary { background: var(--action-ink); color: var(--action-on-fill); }
+  .btn-secondary { background: var(--bg); color: var(--action-ink); border: 1.5px solid var(--border-strong); }
+
+  .skip {
+    font-size: 13px; line-height: 18px; color: var(--text-tertiary);
+    background: none; border: none; font-family: var(--font-sans); cursor: pointer;
+    min-height: 44px; display: flex; align-items: center;
+  }
+
+  /* ============================================================
+     PASO 1 — SPLASH / ENTRADA
+     ============================================================ */
+  .splash {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: var(--sp-lg);
+    padding: 0 var(--screen-margin);
+  }
+  .splash .iso { width: 96px; height: 96px; }
+  .splash .wm { font-size: 30px; }
+  .splash .tag { font-size: 14px; line-height: 20px; color: var(--text-tertiary); text-align: center; }
+  .splash .foot {
+    position: relative; margin-top: auto; padding-bottom: var(--sp-xl);
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .spinner {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 3px solid var(--action-tint); border-top-color: var(--action-bright);
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .splash .offline {
+    font-size: 12px; color: var(--text-tertiary);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ============================================================
+     PASO 2 — ONBOARDING (dos sub-pantallas)
+     ============================================================ */
+  .onb {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 0 var(--screen-margin) var(--sp-xl);
+  }
+  .onb-top { display: flex; justify-content: flex-end; }
+  .onb-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .brand-line { display: flex; align-items: center; gap: 10px; margin-bottom: var(--sp-2xl); }
+  .brand-line .iso { width: 40px; height: 40px; }
+  .brand-line .wm { font-size: 17px; }
+
+  .onb h1 {
+    font-size: 32px; line-height: 38px; font-weight: 800; letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+  .onb .sub {
+    margin-top: var(--sp-md); font-size: 15px; line-height: 22px; color: var(--text-secondary);
+    max-width: 300px;
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; align-self: flex-start;
+    font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-ink); background: var(--accent-tint);
+    border-radius: var(--r-sm); padding: 4px 10px; margin-bottom: var(--sp-md);
+  }
+
+  .examples { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-md); margin: var(--sp-xl) 0; }
+  .ex { border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--border); background: var(--surface-subtle); }
+  .ex.good { border-color: var(--success); }
+  .ex .art { height: 118px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
+  .ex.good .art { background: #F4F2F7; }
+  .ex.bad .art {
+    background:
+      repeating-linear-gradient(45deg, #ECE8F3 0 10px, #E4DEEF 10px 20px);
+  }
+  .ex .figure { width: 34px; height: 78px; border-radius: 16px 16px 8px 8px; background: var(--text-tertiary); opacity: .85; margin-bottom: 6px; }
+  .ex.bad .clutter { position: absolute; inset: 8px; border: 1px dashed var(--border-strong); border-radius: 6px; }
+  .ex .cap {
+    display: flex; align-items: center; gap: 6px; justify-content: center;
+    padding: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  }
+  .ex.good .cap { color: var(--success); }
+  .ex.bad .cap { color: var(--text-tertiary); }
+
+  .tips { display: flex; flex-direction: column; gap: var(--sp-md); }
+  .tip { display: flex; gap: var(--sp-md); align-items: flex-start; }
+  .tip .ic {
+    width: 22px; height: 22px; flex: none; border-radius: 50%;
+    background: var(--action-tint); color: var(--action-ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; margin-top: 1px;
+  }
+  .tip .tx { font-size: 15px; line-height: 21px; }
+  .tip.hero .tx { color: var(--text-primary); font-weight: 500; }
+  .tip .tx { color: var(--text-secondary); }
+  .onb .reinforce {
+    margin-top: var(--sp-lg); font-size: 13px; line-height: 18px; color: var(--text-secondary);
+  }
+
+  .onb-cta { margin-top: var(--sp-xl); }
+  .onb-dots { display: flex; gap: 6px; justify-content: center; margin-top: var(--sp-lg); }
+  .onb-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); }
+  .onb-dots i.on { background: var(--action-ink); width: 18px; border-radius: 3px; }
+
+  /* ============================================================
+     PASO 3 — SUBIR FOTO (sheet Cámara / Galería sobre home mínimo)
+     ============================================================ */
+  .home-under { flex: 1; display: flex; flex-direction: column; position: relative; }
+  .home-top { display: flex; align-items: center; justify-content: space-between; padding: var(--sp-sm) var(--screen-margin) 0; }
+  .home-top .wm { font-size: 17px; }
+  .home-top .settings { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); font-size: 20px; }
+  .home-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-md); padding: 0 var(--screen-margin); text-align: center; }
+  .home-hero .iso { width: 64px; height: 64px; opacity: .9; }
+  .home-hero h1 { font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .home-hero .sub { font-size: 15px; line-height: 22px; color: var(--text-secondary); max-width: 280px; }
+  .home-cta { padding: var(--sp-xl) var(--screen-margin) var(--sp-xl); }
+
+  .scrim { position: absolute; inset: 0; background: rgba(28,24,38,0.40); }
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: var(--surface);
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    padding: var(--sp-md) var(--screen-margin) var(--sp-xl);
+    box-shadow: var(--shadow-lg);
+  }
+  .sheet .grab { width: 40px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 4px auto var(--sp-lg); }
+  .sheet h2 { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .sheet .sh-sub { font-size: 13px; line-height: 18px; color: var(--text-tertiary); margin: 4px 0 var(--sp-lg); }
+  .origin { display: flex; flex-direction: column; gap: var(--sp-md); }
+  .origin .opt {
+    display: flex; align-items: center; gap: var(--sp-lg);
+    padding: var(--sp-lg); border: 1px solid var(--border); border-radius: var(--r-md);
+    background: var(--bg); cursor: pointer; min-height: 64px;
+  }
+  .origin .opt .ic {
+    width: 44px; height: 44px; flex: none; border-radius: var(--r-md);
+    background: var(--action-tint); color: var(--action-ink);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
+  .origin .opt .t .n { font-size: 16px; line-height: 22px; font-weight: 600; }
+  .origin .opt .t .d { font-size: 13px; line-height: 18px; color: var(--text-tertiary); }
+  .origin .opt .chev { margin-left: auto; color: var(--action-ink); font-size: 20px; font-weight: 700; }
+  .sheet .hint {
+    margin-top: var(--sp-lg); display: flex; gap: 8px; align-items: center;
+    padding: var(--sp-md); background: var(--action-tint); border-radius: var(--r-md);
+    font-size: 13px; line-height: 18px; color: var(--action-ink);
+  }
+
+  /* ============================================================
+     PASO 4 — ANALIZANDO (hueco rewarded ad, F8)
+     ============================================================ */
+  .analyzing-body { flex: 1; display: flex; flex-direction: column; padding: 0 var(--screen-margin); }
+  .progress-zone { padding: var(--sp-2xl) 0 var(--sp-xl); }
+  .progress-zone .copy { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: var(--sp-xs); }
+  .progress-zone .step { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-bottom: var(--sp-lg); }
+  .track { height: 6px; background: var(--action-tint); border-radius: 3px; overflow: hidden; }
+  .track .fill { width: 62%; height: 100%; background: var(--action-bright); border-radius: 3px; }
+  .track-meta { display: flex; justify-content: space-between; margin-top: var(--sp-sm); font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+  .track-meta .pct { color: var(--action-ink); font-weight: 700; }
+  .ad-slot {
+    flex: 1; max-height: 438px;
+    background: var(--surface-subtle);
+    border: 1px dashed var(--border-strong); border-radius: var(--r-lg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: var(--sp-sm); text-align: center; padding: var(--sp-xl);
+  }
+  .ad-slot .tag { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); border: 1px solid var(--border-strong); border-radius: var(--r-sm); padding: 3px 8px; }
+  .ad-slot .why { font-size: 13px; line-height: 18px; color: var(--text-secondary); max-width: 250px; }
+  .skip-note { text-align: center; font-size: 13px; color: var(--text-tertiary); padding: var(--sp-lg) 0 var(--sp-xl); }
+  .skip-note b { color: var(--accent-ink); font-weight: 700; }
+
+  /* ============================================================
+     PASO 5 — RESULTADO (paleta + armonías) · idéntico a result.html
+     ============================================================ */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: var(--sp-sm) var(--screen-margin) var(--sp-lg); }
+  .topbar .back { width: 44px; height: 44px; margin-left: -12px; display: flex; align-items: center; justify-content: center; color: var(--action-ink); font-size: 24px; }
+  .res-scroll { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  .share-canvas {
+    margin: 0 var(--screen-margin); padding: var(--sp-xl) var(--sp-xl) var(--sp-lg);
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-sm);
+  }
+  .share-canvas h1 { font-size: 32px; line-height: 38px; font-weight: 800; letter-spacing: -0.02em; }
+  .share-canvas .meta { font-size: 13px; line-height: 18px; color: var(--text-tertiary); margin: var(--sp-xs) 0 var(--sp-lg); }
+  .plate-row { display: flex; align-items: stretch; gap: var(--sp-md); }
+  .plate-row .swatch { flex: 1; }
+  .plate-row:first-child .swatch { border-radius: var(--r-sm) var(--r-sm) 0 0; }
+  .plate-row:last-child .swatch { border-radius: 0 0 var(--r-sm) var(--r-sm); }
+  .plate-row .index { width: 96px; display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: 13px; line-height: 18px; font-weight: 500; letter-spacing: 0.02em; }
+  .plate-row .index .hex { color: var(--text-secondary); }
+  .plate-row .index .pct { color: var(--text-tertiary); }
+  .plate-row.is-base .index .hex { color: var(--text-primary); font-weight: 700; }
+  .base-line { display: flex; align-items: center; gap: var(--sp-md); margin-top: var(--sp-lg); padding-top: var(--sp-lg); border-top: 1px solid var(--border); }
+  .base-dot { width: 28px; height: 28px; border-radius: 50%; background: #E13683; flex: none; box-shadow: 0 0 0 1px var(--border-strong); }
+  .base-line .txt { flex: 1; }
+  .badge-base { display: inline-block; font-size: 11px; line-height: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-tint); border-radius: var(--r-sm); padding: 2px 8px; margin-bottom: 2px; }
+  .base-line .desc { font-size: 13px; line-height: 18px; color: var(--text-secondary); }
+  .base-line .desc b { color: var(--text-primary); font-weight: 600; }
+  .watermark { margin-top: var(--sp-md); text-align: right; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-disabled); }
+  .watermark span { color: var(--accent-ink); }
+  .section { padding: var(--sp-xl) var(--screen-margin) 0; }
+  .section h2 { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: var(--sp-xs); }
+  .section .ssub { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-bottom: var(--sp-md); }
+  .harmony { display: flex; align-items: center; gap: var(--sp-lg); padding: var(--sp-md) 0; border-top: 1px solid var(--border); min-height: 44px; }
+  .harmony:last-of-type { border-bottom: 1px solid var(--border); }
+  .harmony .name { flex: 1; }
+  .harmony .name .n { font-size: 16px; line-height: 22px; font-weight: 600; }
+  .harmony .name .d { font-size: 13px; line-height: 18px; color: var(--text-tertiary); }
+  .harmony .strip { display: flex; width: 120px; height: 40px; border-radius: var(--r-sm); overflow: hidden; box-shadow: 0 0 0 1px var(--border); }
+  .harmony .strip i { flex: 1; }
+  .harmony .chev { color: var(--action-ink); font-size: 18px; font-weight: 700; }
+  .cta-block { margin-top: auto; padding: var(--sp-lg) var(--screen-margin) var(--sp-lg); display: flex; flex-direction: column; gap: var(--sp-md); }
+</style>
+</head>
+<body>
+
+  <div class="lede">
+    <h1>PiketeMaker — Esqueleto MVP-demo</h1>
+    <p>Los 5 pasos exactos del demo instalable (D12), en la dirección visual congelada (D7/D8/D9) y con el logo aprobado (D14). Offline, on-device (D15). Cuenta toda la historia de izquierda a derecha.</p>
+    <div class="steps">
+      <b>1 · Abrir</b><b>2 · Aprender a tirar la foto</b><b>3 · Subir foto</b><b>4 · Analizar (+ad)</b><b>5 · Tu paleta</b>
+    </div>
+  </div>
+
+  <div class="rail">
+
+    <!-- ===================== PASO 1 · SPLASH ===================== -->
+    <div class="stage">
+      <div class="stage-num"><span class="dot">1</span><span class="lbl">Abrir app <span>· splash / entrada</span></span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="splash">
+          <svg class="iso" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(6,0)">
+              <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+              <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#17B598"/>
+              <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+            </g>
+          </svg>
+          <div class="wordmark wm"><span class="pk">Pikete</span><span class="mk">Maker</span></div>
+          <div class="tag">Los colores de tu fit, con criterio.</div>
+          <div class="foot">
+            <div class="spinner"></div>
+            <div class="offline">● 100% offline · sin cuenta</div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <div class="stage-note"><strong>Splash.</strong> Isotipo + wordmark D14 centrados sobre blanco, tagline de la visión y spinner en mint (bright, no textual). El sello "100% offline · sin cuenta" es marketing del demo: se lo das a un inversor y arranca sin red ni registro. Cero morado funcional. Transición a onboarding o home con motion.base.</div>
+    </div>
+
+    <!-- ===================== PASO 2a · ONBOARDING BIENVENIDA ===================== -->
+    <div class="stage">
+      <div class="stage-num"><span class="dot">2</span><span class="lbl">Tutorial · Bienvenida <span>· F13 (1/2)</span></span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="onb">
+          <div class="onb-top"><button class="skip">Saltar</button></div>
+          <div class="onb-hero">
+            <div class="brand-line">
+              <svg class="iso" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg"><g transform="translate(6,0)"><path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/><path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#17B598"/><circle cx="38" cy="38" r="10" fill="#1C1826"/></g></svg>
+              <div class="wordmark wm"><span class="pk">Pikete</span><span class="mk">Maker</span></div>
+            </div>
+            <h1>Los colores de tu fit, con criterio.</h1>
+            <div class="sub">Hazte una foto y te digo tu paleta y con qué combina.</div>
+          </div>
+          <div class="onb-cta"><button class="btn btn-primary">Empezar</button></div>
+          <div class="onb-dots"><i class="on"></i><i></i></div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <div class="stage-note"><strong>Onboarding 1/2 · Bienvenida.</strong> Un solo display con la propuesta de valor, subtítulo de 2 líneas, CTA "Empezar" (mint, único color funcional). "Saltar" en baja jerarquía arriba-dcha. Cero acento morado: se reserva. Specs: onboarding-tutorial.md §2.1.</div>
+    </div>
+
+    <!-- ===================== PASO 2b · ONBOARDING TIP PRO ===================== -->
+    <div class="stage">
+      <div class="stage-num"><span class="dot">2</span><span class="lbl">Tutorial · Tip pro <span>· F13 (2/2)</span></span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="onb">
+          <div class="onb-top"><button class="skip">Saltar</button></div>
+          <span class="badge">Tip pro</span>
+          <h1>El truco para clavar los colores</h1>
+          <div class="examples">
+            <div class="ex good">
+              <div class="art"><div class="figure"></div></div>
+              <div class="cap">✓ BIEN</div>
+            </div>
+            <div class="ex bad">
+              <div class="art"><div class="clutter"></div><div class="figure"></div></div>
+              <div class="cap">✕ MAL</div>
+            </div>
+          </div>
+          <div class="tips">
+            <div class="tip hero"><span class="ic">1</span><span class="tx">Ponte frente a una pared lisa de un solo color.</span></div>
+            <div class="tip"><span class="ic">2</span><span class="tx">Que se te vea el fit entero, de arriba abajo.</span></div>
+            <div class="tip"><span class="ic">3</span><span class="tx">Un paso atrás y con buena luz.</span></div>
+          </div>
+          <div class="reinforce">Cuanto más liso el fondo, mejor te leo los colores.</div>
+          <div class="onb-cta"><button class="btn btn-primary">Hacer mi primera foto</button></div>
+          <div class="onb-dots"><i></i><i class="on"></i></div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <div class="stage-note"><strong>Onboarding 2/2 · Tip pro (pantalla clave).</strong> Aquí vive el de-risking técnico (fondo liso, F13/D11) vendido como truco pro, no como límite. Badge "Tip pro" = única dosis de morado. Ejemplo bien/mal con siluetas ilustradas (sin fotos, sin sesgo de cuerpo); "mal" en neutro, nunca rojo. Iconos y CTA en mint. <em>Matiz exacto del fondo (claro vs gris) pendiente de reconciliar con backend — el copy "de un solo color" lo absorbe con 1 palabra.</em></div>
+    </div>
+
+    <!-- ===================== PASO 3 · SUBIR FOTO ===================== -->
+    <div class="stage">
+      <div class="stage-num"><span class="dot">3</span><span class="lbl">Subir foto <span>· cámara / galería</span></span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="home-under">
+          <div class="home-top">
+            <div class="wordmark wm"><span class="pk">Pikete</span><span class="mk">Maker</span></div>
+            <div class="settings">⚙</div>
+          </div>
+          <div class="home-hero">
+            <svg class="iso" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg"><g transform="translate(6,0)"><path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/><path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#17B598"/><circle cx="38" cy="38" r="10" fill="#1C1826"/></g></svg>
+            <h1>Analiza tu fit</h1>
+            <div class="sub">Una foto y tienes tu paleta y con qué combina.</div>
+          </div>
+          <div class="home-cta"><button class="btn btn-primary">Analiza tu fit</button></div>
+
+          <!-- sheet origen sobre scrim -->
+          <div class="scrim"></div>
+          <div class="sheet">
+            <div class="grab"></div>
+            <h2>¿De dónde sacamos la foto?</h2>
+            <div class="sh-sub">Tu foto no sale del móvil: se analiza aquí mismo.</div>
+            <div class="origin">
+              <div class="opt">
+                <span class="ic">📷</span>
+                <div class="t"><div class="n">Hacer una foto</div><div class="d">Cuerpo entero, fondo liso</div></div>
+                <span class="chev">›</span>
+              </div>
+              <div class="opt">
+                <span class="ic">🖼</span>
+                <div class="t"><div class="n">Elegir de la galería</div><div class="d">Una que ya tengas</div></div>
+                <span class="chev">›</span>
+              </div>
+            </div>
+            <div class="hint">◆ Fondo liso = colores más finos.</div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <div class="stage-note"><strong>Subir foto.</strong> Home de una decisión (CTA único "Analiza tu fit") + bottom sheet de origen sobre scrim teñido (D9). Dos opciones grandes con iconos en mint. El hint de fondo liso (F13) reaparece aquí como red de seguridad para quien saltó el tutorial. Permiso de cámara: contextual al pulsar "Hacer una foto". Tras elegir → captura/confirmar → analizar.</div>
+    </div>
+
+    <!-- ===================== PASO 4 · ANALIZANDO ===================== -->
+    <div class="stage">
+      <div class="stage-num"><span class="dot">4</span><span class="lbl">Analizando <span>· hueco rewarded ad (F8)</span></span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="analyzing-body">
+          <div class="progress-zone">
+            <div class="copy">Leyendo los colores de tu fit…</div>
+            <div class="step">Separando la ropa del fondo</div>
+            <div class="track"><div class="fill"></div></div>
+            <div class="track-meta"><span>analizando</span><span class="pct">62%</span></div>
+          </div>
+          <div class="ad-slot">
+            <div class="tag">Hueco rewarded video · F8 · AdMob</div>
+            <div class="why">Contenedor máx. 4:5 en superficie sutil. El progreso queda siempre visible arriba y avanzando: el ad acompaña la espera, no la bloquea.</div>
+          </div>
+          <div class="skip-note">Tu paleta aparece en cuanto termine — <b>ya casi</b></div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <div class="stage-note"><strong>Analizando (F8).</strong> El hueco del rewarded ad es parte del layout desde el día 1 (D12): cuando llegue AdMob en Fase 5 no se rediseña el flujo. En el demo el hueco muestra su etiqueta (sin ad real). Progreso en mint; el morado firma 1 vez ("ya casi"). Al completar: revelación con motion.reveal (600 ms).</div>
+    </div>
+
+    <!-- ===================== PASO 5 · RESULTADO ===================== -->
+    <div class="stage">
+      <div class="stage-num"><span class="dot">5</span><span class="lbl">Resultado <span>· paleta + armonías</span></span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="topbar">
+          <div class="back">‹</div>
+          <div class="kicker">PiketeMaker</div>
+          <div style="width:44px"></div>
+        </div>
+        <div class="res-scroll">
+          <div class="share-canvas">
+            <h1>Tu paleta</h1>
+            <div class="meta">Fit de hoy · 7 jul 2026</div>
+            <div class="plate">
+              <div class="plate-row is-base" style="height:64px"><div class="swatch" style="background:#E13683"></div><div class="index"><span class="hex">#E13683</span><span class="pct">36%</span></div></div>
+              <div class="plate-row" style="height:54px"><div class="swatch" style="background:#F856A4"></div><div class="index"><span class="hex">#F856A4</span><span class="pct">31%</span></div></div>
+              <div class="plate-row" style="height:38px"><div class="swatch" style="background:#B21E5E"></div><div class="index"><span class="hex">#B21E5E</span><span class="pct">20%</span></div></div>
+              <div class="plate-row" style="height:22px"><div class="swatch" style="background:#652234"></div><div class="index"><span class="hex">#652234</span><span class="pct">9%</span></div></div>
+              <div class="plate-row" style="height:14px"><div class="swatch" style="background:#9CA6C6"></div><div class="index"><span class="hex">#9CA6C6</span><span class="pct">3%</span></div></div>
+            </div>
+            <div class="base-line">
+              <div class="base-dot"></div>
+              <div class="txt"><span class="badge-base">Base</span><div class="desc"><b>Tu color dominante.</b> Todo conjunta alrededor de él.</div></div>
+            </div>
+            <div class="watermark">piketemaker<span>.</span></div>
+          </div>
+          <div class="section">
+            <h2>Combina con</h2>
+            <div class="ssub">Toca una y mira looks reales con esos colores.</div>
+            <div class="harmony"><div class="name"><div class="n">Complementario</div><div class="d">Contraste máximo, 2 colores</div></div><div class="strip"><i style="background:#E13683"></i><i style="background:#36E194"></i></div><div class="chev">›</div></div>
+            <div class="harmony"><div class="name"><div class="n">Análogo</div><div class="d">Suave, tono sobre tono</div></div><div class="strip"><i style="background:#E136D8"></i><i style="background:#E13683"></i><i style="background:#E13E36"></i></div><div class="chev">›</div></div>
+            <div class="harmony"><div class="name"><div class="n">Triádico</div><div class="d">Equilibrado, 3 colores</div></div><div class="strip"><i style="background:#E13683"></i><i style="background:#83E136"></i><i style="background:#3683E1"></i></div><div class="chev">›</div></div>
+          </div>
+          <div class="cta-block">
+            <button class="btn btn-primary">Ver looks así</button>
+            <button class="btn btn-secondary">Súbela a tu story</button>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <div class="stage-note"><strong>Resultado (canónico, result.html).</strong> La card superior <em>es</em> el objeto compartible (F6, story 9:16): sobrevive sin la UI. Paleta con bandas proporcionales al peso + hex/% en mono; BASE con badge morado (D5). Armonías tocables (F4). CTAs "Ver looks así" (F5-lite) y "Súbela a tu story" (F6) son fast-follow: en el esqueleto D12 pueden aparecer deshabilitados o abrir un placeholder.</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

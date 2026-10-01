@@ -1,0 +1,17 @@
+# Stricter rules for `lib/core/` ONLY.
+#
+# `core/` is the reusable engine of the app — the color engine and the
+# segmentation seam are the pieces a reader (or a reviewer of the public
+# showcase repo) will actually study. They are also the layer with real
+# public APIs, as opposed to the widget tree, where "public" members are
+# mostly constructor parameters whose meaning is obvious from their name.
+#
+# So the full-API-documentation rule is enforced HERE and nowhere else: it
+# buys genuine clarity in this directory and would be busywork elsewhere.
+# The analyzer picks the closest options file to each source file, so this
+# one governs `lib/core/**` while the app-level file governs the rest.
+include: ../../analysis_options.yaml
+
+linter:
+  rules:
+    public_member_api_docs: true

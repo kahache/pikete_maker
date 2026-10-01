@@ -1,0 +1,23 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+// Gradle 9 removed Project.buildDir (#79): use layout.buildDirectory, same
+// redirection as before (android/../build = app/build), ported from the
+// Flutter 3.44.6 template.
+def newBuildDir = rootProject.layout.buildDirectory.dir("../../build").get()
+rootProject.layout.buildDirectory.value(newBuildDir)
+
+subprojects {
+    project.layout.buildDirectory.value(newBuildDir.dir(project.name))
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.layout.buildDirectory
+}

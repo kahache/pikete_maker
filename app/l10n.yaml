@@ -1,0 +1,15 @@
+# gen-l10n config (i18n round, D18 extended 2026-07-15).
+#
+# - Template = app_es.arb: SPANISH IS CANONICAL (D17/D18). Every other locale
+#   translates FROM it; missing keys fall back to es at generation time.
+# - Output committed under lib/l10n/gen/ (synthetic package retired upstream);
+#   regenerate with `flutter gen-l10n` (also runs automatically on build/test).
+# - zh/ko/ja are DRAFT quality pending native review — see the @@x-status
+#   header inside each ARB and the D18 note in docs/PRD.md.
+arb-dir: lib/l10n
+template-arb-file: app_es.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+output-dir: lib/l10n/gen
+nullable-getter: true
+untranslated-messages-file: build/untranslated_messages.json

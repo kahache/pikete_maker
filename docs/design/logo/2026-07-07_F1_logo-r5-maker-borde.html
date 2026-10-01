@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Logo · Ronda 5 · Prueba: "Maker" con borde negro fino</title>
+<style>
+  /* ============================================================
+     Ronda 5 (idea CEO): "Maker" mantiene el mint brillante del
+     logo y gana un borde negro finísimo para aguantar sobre
+     fondos claros. Banco de pruebas: 4 grosores x 2 fondos x
+     3 tamaños + versión "producción" (SVG con borde EXTERIOR).
+     Nota técnica: el CSS text-stroke pinta el borde CENTRADO
+     (mitad come letra); en producción el borde va por FUERA
+     (paint-order stroke) y el mint queda íntegro — la última
+     sección enseña esa versión, que es la real.
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C;
+    --action-bright: #43E5C2;
+    --accent-ink: #6C3FD1;
+    --accent-tint: #EFEAFB;
+    --bg: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --text-primary: #1C1826;
+    --text-secondary: #544E68;
+    --text-tertiary: #6B6383;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --wall-light: #EDEBF2;
+    --wall-dark: #141119;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary); padding: 40px 20px 96px; }
+  .sheet { max-width: 1080px; margin: 0 auto; }
+  .head, .dir, .foot { background: var(--bg); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 28px; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+  h1 { font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .head p { font-size: 14px; line-height: 21px; color: var(--text-secondary); margin-top: 10px; max-width: 76ch; }
+  h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .sub { font-size: 13.5px; color: var(--text-secondary); margin-bottom: 18px; }
+
+  .rowlab { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin: 18px 0 10px; }
+  .bench { border-radius: var(--r-md); padding: 22px 24px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 34px; }
+  .bench.white { background: #FFFFFF; border: 1px solid var(--border); }
+  .bench.wallL { background: var(--wall-light); border: 1px solid var(--border); }
+  .bench.dark  { background: var(--wall-dark); }
+  .spec { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .speclab { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+  .bench.dark .speclab { color: #8F87A3; }
+
+  .wm { font-weight: 800; letter-spacing: -0.02em; font-size: 34px; line-height: 1.15; white-space: nowrap; }
+  .pik { color: var(--accent-ink); }
+  .mkr { color: var(--action-bright); }
+  .mkr-ink { color: var(--action-ink); }
+  .s035 { -webkit-text-stroke: 0.35px #1C1826; }
+  .s050 { -webkit-text-stroke: 0.5px  #1C1826; }
+  .s075 { -webkit-text-stroke: 0.75px #1C1826; }
+  .s100 { -webkit-text-stroke: 1px    #1C1826; }
+
+  .lockup { display: inline-flex; align-items: center; gap: 12px; }
+  .lockup svg.iso { width: 42px; height: 42px; }
+  .lockup .wm { font-size: 25px; }
+  .lockup.small svg.iso { width: 26px; height: 26px; }
+  .lockup.small .wm { font-size: 15px; }
+
+  .rationale { background: var(--surface-subtle); border-radius: var(--r-md); padding: 16px 20px; margin-top: 14px; font-size: 13.5px; line-height: 20px; color: var(--text-secondary); }
+  .rationale b { color: var(--text-primary); font-weight: 600; }
+  .rationale p + p { margin-top: 6px; }
+  .foot { font-size: 14px; line-height: 21px; color: var(--text-secondary); }
+  .foot h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+  .foot ul { margin: 8px 0 0 18px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="markA_r4" viewBox="0 0 96 96">
+      <g transform="translate(6,0)">
+        <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+        <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#43E5C2"/>
+        <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="sheet">
+
+  <div class="head">
+    <div class="kicker">Logo · Ronda 5 · issue #27 · 2026-07-07 · isotipo r4 APROBADO ✓</div>
+    <h1>Prueba: "Maker" mint con borde negro finísimo</h1>
+    <p>Idea del CEO para que el mint brillante aguante sobre fondos claros sin renunciar al
+       color del logo. De regalo conceptual: el filete negro sobre letra de color es código
+       visual de <b>sticker/parche</b> — idioma nativo del streetwear. Abajo: 4 grosores,
+       2 fondos, 3 tamaños, y la versión de producción con el borde por fuera.</p>
+  </div>
+
+  <div class="dir">
+    <h2>1 · Grosor del borde, sobre blanco</h2>
+    <div class="sub">El candidato a "finísimo" está entre 0.35 y 0.75. (En esta prueba CSS el borde come un pelín de letra; en producción va por fuera — sección 3.)</div>
+    <div class="bench white">
+      <div class="spec"><span class="wm"><span class="pik">Pikete</span><span class="mkr">Maker</span></span><span class="speclab">sin borde (r4)</span></div>
+      <div class="spec"><span class="wm"><span class="pik">Pikete</span><span class="mkr s035">Maker</span></span><span class="speclab">0.35px</span></div>
+      <div class="spec"><span class="wm"><span class="pik">Pikete</span><span class="mkr s050">Maker</span></span><span class="speclab">0.5px</span></div>
+      <div class="spec"><span class="wm"><span class="pik">Pikete</span><span class="mkr s075">Maker</span></span><span class="speclab">0.75px</span></div>
+      <div class="spec"><span class="wm"><span class="pik">Pikete</span><span class="mkr s100">Maker</span></span><span class="speclab">1px</span></div>
+    </div>
+
+    <div class="rowlab">El mismo banco sobre fondo oscuro (¿el borde ensucia donde no hace falta?)</div>
+    <div class="bench dark">
+      <div class="spec"><span class="wm"><span class="pik">Pikete</span><span class="mkr">Maker</span></span><span class="speclab">sin borde</span></div>
+      <div class="spec"><span class="wm"><span class="pik">Pikete</span><span class="mkr s050">Maker</span></span><span class="speclab">0.5px</span></div>
+      <div class="spec"><span class="wm"><span class="pik">Pikete</span><span class="mkr s100">Maker</span></span><span class="speclab">1px</span></div>
+    </div>
+  </div>
+
+  <div class="dir">
+    <h2>2 · Estrés de tamaño pequeño (donde se decide esto)</h2>
+    <div class="sub">Lockup a tamaño header de app y a tamaño mini (watermark del story). Compara: mint pelado vs mint con borde vs el fallback tinta.</div>
+    <div class="bench wallL">
+      <div class="spec">
+        <div class="lockup"><svg class="iso"><use href="#markA_r4"/></svg><span class="wm"><span class="pik">Pikete</span><span class="mkr">Maker</span></span></div>
+        <span class="speclab">25px · sin borde</span>
+      </div>
+      <div class="spec">
+        <div class="lockup"><svg class="iso"><use href="#markA_r4"/></svg><span class="wm"><span class="pik">Pikete</span><span class="mkr s050">Maker</span></span></div>
+        <span class="speclab">25px · borde 0.5px</span>
+      </div>
+      <div class="spec">
+        <div class="lockup"><svg class="iso"><use href="#markA_r4"/></svg><span class="wm"><span class="pik">Pikete</span><span class="mkr-ink">Maker</span></span></div>
+        <span class="speclab">25px · fallback tinta</span>
+      </div>
+    </div>
+    <div class="bench wallL" style="margin-top:14px">
+      <div class="spec">
+        <div class="lockup small"><svg class="iso"><use href="#markA_r4"/></svg><span class="wm"><span class="pik">Pikete</span><span class="mkr">Maker</span></span></div>
+        <span class="speclab">15px · sin borde</span>
+      </div>
+      <div class="spec">
+        <div class="lockup small"><svg class="iso"><use href="#markA_r4"/></svg><span class="wm"><span class="pik">Pikete</span><span class="mkr s035">Maker</span></span></div>
+        <span class="speclab">15px · borde 0.35px</span>
+      </div>
+      <div class="spec">
+        <div class="lockup small"><svg class="iso"><use href="#markA_r4"/></svg><span class="wm"><span class="pik">Pikete</span><span class="mkr-ink">Maker</span></span></div>
+        <span class="speclab">15px · fallback tinta</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dir">
+    <h2>3 · Versión producción: borde por FUERA (el mint no se toca)</h2>
+    <div class="sub">SVG con paint-order: el trazo se pinta detrás del relleno → solo asoma la mitad exterior. Así se hará en el fichero final, con la display definitiva. Grosor propuesto: equivalente a 0.5px a tamaño header, escalando con la letra.</div>
+    <div class="bench white">
+      <div class="spec">
+        <svg width="360" height="52" viewBox="0 0 360 52">
+          <g transform="translate(0,4)"><g transform="scale(0.46)"><g transform="translate(6,0)">
+            <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+            <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#43E5C2"/>
+            <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+          </g></g></g>
+          <text x="56" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                font-size="30" font-weight="800" letter-spacing="-0.6">
+            <tspan fill="#6C3FD1">Pikete</tspan><tspan fill="#43E5C2" stroke="#1C1826" stroke-width="1.4" paint-order="stroke" stroke-linejoin="round">Maker</tspan>
+          </text>
+        </svg>
+        <span class="speclab">lockup producción · borde exterior</span>
+      </div>
+      <div class="spec">
+        <svg width="220" height="34" viewBox="0 0 220 34">
+          <text x="2" y="25" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                font-size="24" font-weight="800" letter-spacing="-0.4">
+            <tspan fill="#6C3FD1">Pikete</tspan><tspan fill="#43E5C2" stroke="#1C1826" stroke-width="1.1" paint-order="stroke" stroke-linejoin="round">Maker</tspan>
+          </text>
+        </svg>
+        <span class="speclab">wordmark producción</span>
+      </div>
+    </div>
+    <div class="bench dark" style="margin-top:14px">
+      <div class="spec">
+        <svg width="220" height="34" viewBox="0 0 220 34">
+          <text x="2" y="25" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                font-size="24" font-weight="800" letter-spacing="-0.4">
+            <tspan fill="#6C3FD1">Pikete</tspan><tspan fill="#43E5C2" stroke="#1C1826" stroke-width="1.1" paint-order="stroke" stroke-linejoin="round">Maker</tspan>
+          </text>
+        </svg>
+        <span class="speclab">sobre oscuro · mismo trato</span>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Lectura del UX:</b> el borde funciona — convierte "Maker" en sticker y resuelve el
+         blanco sin renunciar al mint del logo. Recomendación: <b>borde exterior fino
+         (sección 3), grosor ~0.5px equivalente</b>; a 15px el borde de 0.35px empieza a
+         empastar (míralo en la sección 2) — para el watermark mini quizá convenga la versión
+         sin borde o el fallback tinta. Decisión de sistema: si el borde entra, entra SOLO en
+         "Maker" (el morado de "Pikete" ya aguanta solo — añadirle borde lo ensuciaría).</p>
+      <p><b>Ojo con "Pikete" sobre oscuro</b> (se ve en los bancos): el morado tinta pierde
+         fuerza sobre negro — para dark contexts la identidad final usará el morado claro del
+         sistema (#A78BFA) en "Pikete". Se fija en la ronda de cierre.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <h3>Qué decides con esta hoja</h3>
+    <ul>
+      <li><b>¿Borde sí/no?</b> Y si sí: ¿0.35 / 0.5 / 0.75?</li>
+      <li>¿En mini (watermark 15px): borde, sin borde, o fallback tinta?</li>
+      <li>Con eso → ronda de cierre: display con licencia, todas las variantes y exports.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

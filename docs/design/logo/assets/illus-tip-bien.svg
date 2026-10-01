@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Foto bien hecha: cuerpo entero frente a una pared lisa">
+  <!-- pared lisa (surfaceSubtle) -->
+  <rect width="160" height="120" fill="#F7F5FB"/>
+  <!-- suelo -->
+  <rect y="102" width="160" height="18" fill="#E9E6F2"/>
+  <!-- sombra suave -->
+  <ellipse cx="80" cy="104" rx="18" ry="3.5" fill="#D9D3E6"/>
+  <!-- figura neutra, cuerpo entero (textSecondary; sin tono de piel) -->
+  <g fill="#544E68">
+    <circle cx="80" cy="30" r="8.5"/>
+    <rect x="68.5" y="42" width="23" height="34" rx="10"/>
+    <rect x="72" y="72" width="6.6" height="32" rx="3.3"/>
+    <rect x="81.4" y="72" width="6.6" height="32" rx="3.3"/>
+  </g>
+</svg>

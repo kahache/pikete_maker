@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PiketeMaker — r10 UX polish (#94) before/after</title>
+<style>
+  :root{
+    --bg:#FFFFFF; --surface:#FFFFFF;
+    --mintInk:#0B7C6C; --mintTint:#DFF7F1;
+    --purpleInk:#6C3FD1; --purpleTint:#EFEAFB; --logoTurq:#17B598;
+    --textPrimary:#1C1826; --textSecondary:#544E68; --textTertiary:#6B6383;
+    --textDisabled:#8F87A3; --border:#E9E6F2; --borderStrong:#D9D3E6;
+    --divider:rgba(28,24,38,0.10);
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','Roboto Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#EDEBF3;font-family:var(--sans);color:var(--textPrimary);padding:28px 16px 56px}
+  h1{font-size:20px;font-weight:800;letter-spacing:-.01em;text-align:center;margin-bottom:6px}
+  .sub{text-align:center;color:var(--textSecondary);font-size:13px;margin-bottom:28px}
+  .item{max-width:900px;margin:0 auto 40px}
+  .itemhead{font-size:15px;font-weight:700;margin-bottom:4px}
+  .itemnote{font-size:13px;color:var(--textSecondary);margin-bottom:14px;line-height:1.5}
+  .itemnote b{color:var(--textPrimary)}
+  .pair{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+  .col{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .tag.before{color:var(--textTertiary)}
+  .tag.after{color:var(--mintInk)}
+  /* phone frame */
+  .phone{width:300px;background:var(--bg);border-radius:26px;border:1px solid var(--borderStrong);
+         box-shadow:0 12px 32px rgba(28,24,38,.14);overflow:hidden}
+  /* ---- Home top bar ---- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px}
+  .lockup{display:flex;align-items:center;gap:5px}
+  .wm{font-weight:800;letter-spacing:-.01em;line-height:1}
+  .wm .p{color:var(--purpleInk)} .wm .m{color:var(--logoTurq)}
+  .help{color:var(--textTertiary);font-size:28px;line-height:1}
+  /* logo mark (simplified P-in-square) */
+  .mark{position:relative;display:inline-block}
+  .mark .stem{position:absolute;background:var(--purpleInk);border-radius:0 0 40% 40%}
+  .mark .bowl{position:absolute;border:solid var(--logoTurq);border-left:none;border-radius:0 50% 50% 0}
+  .mark .dot{position:absolute;background:var(--textPrimary);border-radius:50%}
+  /* ---- Home zones ---- */
+  .zones{display:flex;flex-direction:column;height:430px}
+  .zone{flex:1;display:flex;flex-direction:column;padding:0 26px}
+  .zone.top{background:var(--mintTint);justify-content:flex-end}
+  .zone.bot{background:var(--purpleTint);justify-content:flex-start}
+  .zdivider{height:1px;background:var(--divider)}
+  .block{display:flex;flex-direction:column;align-items:center;text-align:center}
+  .glyph{width:52px;height:52px;margin-bottom:10px}
+  .zlabel{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .zcap{font-size:13px;color:var(--textSecondary);margin-top:6px}
+  .pill{margin-top:12px;height:36px;padding:0 18px;border-radius:999px;display:inline-flex;
+        align-items:center;gap:5px;font-size:13px;font-weight:700}
+  .zone.top .zlabel,.zone.top .zcap{color:var(--textPrimary)}
+  .zone.top .pill{border:1.5px solid var(--mintInk);color:var(--mintInk)}
+  .zone.bot .pill{border:1.5px solid var(--purpleInk);color:var(--purpleInk)}
+  .gap-24{height:24px} .gap-32{height:32px}
+  .caliper{font-size:10px;color:var(--textDisabled);font-family:var(--mono)}
+  /* ---- result rows ---- */
+  .rows{padding:16px 18px 20px}
+  .rtitle{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:2px}
+  .rsub{font-size:13px;color:var(--textSecondary);margin-bottom:12px}
+  .row{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--border)}
+  .rowmeta{flex:1;min-width:0}
+  .chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:16px;font-weight:600;line-height:1.3}
+  .chip.sel{background:var(--mintInk);color:#fff}
+  .rdesc{font-size:13px;color:var(--textTertiary);margin-top:2px}
+  .strip{width:120px;height:40px;border-radius:8px;border:1px solid var(--border);
+         overflow:hidden;display:flex;flex:none}
+  .strip span{flex:1}
+  .chev{color:var(--mintInk);font-size:22px;line-height:1;flex:none}
+  .chev.gone{opacity:.18;text-decoration:line-through}
+  .legend{font-size:12px;color:var(--textSecondary);text-align:center;margin-top:10px;line-height:1.5}
+</style>
+</head>
+<body>
+  <h1>r10 UX polish — issue #94</h1>
+  <div class="sub">Before / after · viewport-approximate · real tokens · Catalan device copy</div>
+
+  <!-- ITEM 1 -->
+  <div class="item">
+    <div class="itemhead">1 · Home logo slightly bigger</div>
+    <div class="itemnote">Symbol grows <b>18 → 22 px</b> (one constant). Today the mark is smaller than the 28 px help icon across from it; the bar height is unchanged because the help icon still sets it.</div>
+    <div class="pair">
+      <div class="col">
+        <div class="tag before">Antes · 18</div>
+        <div class="phone">
+          <div class="topbar">
+            <span class="lockup" id="lk18"></span>
+            <span class="help">?</span>
+          </div>
+          <div style="padding:60px 20px;color:var(--textTertiary);font-size:12px;text-align:center">↓ zones below (unchanged) ↓</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="tag after">Después · 22</div>
+        <div class="phone">
+          <div class="topbar">
+            <span class="lockup" id="lk22"></span>
+            <span class="help">?</span>
+          </div>
+          <div style="padding:60px 20px;color:var(--textTertiary);font-size:12px;text-align:center">↓ zones below (unchanged) ↓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ITEM 2 -->
+  <div class="item">
+    <div class="itemhead">2 · "Les meves bambes" block — more air above the divider</div>
+    <div class="itemnote">Gap block→divider grows <b>24 → 32 px</b> (<code>_dividerGap</code>). Symmetric: the top block moves up, the bottom block moves down, so the #81 mirror is kept.</div>
+    <div class="pair">
+      <div class="col">
+        <div class="tag before">Antes · gap 24</div>
+        <div class="phone">
+          <div class="topbar"><span class="lockup" id="lk22b"></span><span class="help">?</span></div>
+          <div class="zones">
+            <div class="zone top">
+              <div class="block">
+                <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="#0B7C6C" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M4 30v-7a2 2 0 0 1 2-2h7l6 5 11 2c7 1 12 3 12 6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M13 21l3 6M19 26l3 5M4 33h38"/></svg>
+                <div class="zlabel">Les meves bambes</div>
+                <div class="zcap">Munta el fit des de les teves bambes</div>
+                <div class="pill">Comença ›</div>
+              </div>
+              <div class="gap-24"></div>
+            </div>
+            <div class="zdivider"></div>
+            <div class="zone bot">
+              <div class="gap-24"></div>
+              <div class="block">
+                <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="#6C3FD1" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M18 7l-4 2-8 5 4 7 4-3v22h20V18l4 3 4-7-8-5-4-2c0 4-12 4-12 0z"/></svg>
+                <div class="zlabel">El meu pikete</div>
+                <div class="zcap">Treu la paleta del teu fit</div>
+                <div class="pill">Comença ›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="caliper">gap = 24</div>
+      </div>
+      <div class="col">
+        <div class="tag after">Después · gap 32</div>
+        <div class="phone">
+          <div class="topbar"><span class="lockup" id="lk22c"></span><span class="help">?</span></div>
+          <div class="zones">
+            <div class="zone top">
+              <div class="block">
+                <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="#0B7C6C" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M4 30v-7a2 2 0 0 1 2-2h7l6 5 11 2c7 1 12 3 12 6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M13 21l3 6M19 26l3 5M4 33h38"/></svg>
+                <div class="zlabel">Les meves bambes</div>
+                <div class="zcap">Munta el fit des de les teves bambes</div>
+                <div class="pill">Comença ›</div>
+              </div>
+              <div class="gap-32"></div>
+            </div>
+            <div class="zdivider"></div>
+            <div class="zone bot">
+              <div class="gap-32"></div>
+              <div class="block">
+                <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="#6C3FD1" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M18 7l-4 2-8 5 4 7 4-3v22h20V18l4 3 4-7-8-5-4-2c0 4-12 4-12 0z"/></svg>
+                <div class="zlabel">El meu pikete</div>
+                <div class="zcap">Treu la paleta del teu fit</div>
+                <div class="pill">Comença ›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="caliper">gap = 32</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ITEM 3 -->
+  <div class="item">
+    <div class="itemhead">3 · The "dead" › chevron on each suggested palette</div>
+    <div class="itemnote">The row is a <b>radio selection</b> (tap fills the name chip mint); the › is a leftover <b>navigation</b> cue that goes nowhere. The real "go" is the bottom CTA. Proposal: <b>remove it</b> — the filled chip already shows what's selected, and the swatch strip (the color) sits at the row's end.</div>
+    <div class="pair">
+      <div class="col">
+        <div class="tag before">Antes · with ›</div>
+        <div class="phone">
+          <div class="rows">
+            <div class="rtitle">Combina amb</div>
+            <div class="rsub">Tria una combi</div>
+            <div class="row"><div class="rowmeta"><span class="chip sel">Complementari</span><div class="rdesc">El contrast que més pega</div></div><div class="strip"><span style="background:#B5432E"></span><span style="background:#2E86B5"></span></div><div class="chev">›</div></div>
+            <div class="row"><div class="rowmeta"><span class="chip">Anàleg</span><div class="rdesc">Tons veïns, suau</div></div><div class="strip"><span style="background:#B5432E"></span><span style="background:#B5762E"></span><span style="background:#B52E86"></span></div><div class="chev">›</div></div>
+            <div class="row"><div class="rowmeta"><span class="chip">Tríada</span><div class="rdesc">Tres pals, viu</div></div><div class="strip"><span style="background:#B5432E"></span><span style="background:#2EB543"></span><span style="background:#432EB5"></span></div><div class="chev">›</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="tag after">Después · removed</div>
+        <div class="phone">
+          <div class="rows">
+            <div class="rtitle">Combina amb</div>
+            <div class="rsub">Tria una combi</div>
+            <div class="row"><div class="rowmeta"><span class="chip sel">Complementari</span><div class="rdesc">El contrast que més pega</div></div><div class="strip"><span style="background:#B5432E"></span><span style="background:#2E86B5"></span></div></div>
+            <div class="row"><div class="rowmeta"><span class="chip">Anàleg</span><div class="rdesc">Tons veïns, suau</div></div><div class="strip"><span style="background:#B5432E"></span><span style="background:#B5762E"></span><span style="background:#B52E86"></span></div></div>
+            <div class="row"><div class="rowmeta"><span class="chip">Tríada</span><div class="rdesc">Tres pals, viu</div></div><div class="strip"><span style="background:#B5432E"></span><span style="background:#2EB543"></span><span style="background:#432EB5"></span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="legend">The filled mint chip = the selected combi. The bottom "Ver looks així" CTA (not shown) is the real navigation — it deep-links the browser for the selected combi.</div>
+  </div>
+
+<script>
+  // Build the P-in-square logo mark at a given pixel side, plus wordmark at side*0.62.
+  function lockup(el, side){
+    var mark = document.createElement('span');
+    mark.className='mark';
+    mark.style.width = side+'px'; mark.style.height = side+'px';
+    var u = side/96; // viewBox 96
+    // stem 20..38 x 12..84 (approx of the real geometry)
+    var stem = document.createElement('span'); stem.className='stem';
+    stem.style.left=(20*u)+'px'; stem.style.top=(12*u)+'px';
+    stem.style.width=(18*u)+'px'; stem.style.height=(72*u)+'px';
+    // bowl: right half ring, outer r~26 centered near x38 y38
+    var bowl=document.createElement('span'); bowl.className='bowl';
+    var d=(52*u); // outer diameter
+    bowl.style.left=(12*u)+'px'; bowl.style.top=(12*u)+'px';
+    bowl.style.width=(26*u)+'px'; bowl.style.height=d+'px';
+    bowl.style.borderWidth=(9*u)+'px';
+    // dot (eye)
+    var dot=document.createElement('span'); dot.className='dot';
+    var dd=(15*u);
+    dot.style.left=(30*u)+'px'; dot.style.top=(30*u)+'px';
+    dot.style.width=dd+'px'; dot.style.height=dd+'px';
+    mark.appendChild(bowl); mark.appendChild(stem); mark.appendChild(dot);
+    var wm=document.createElement('span'); wm.className='wm';
+    wm.style.fontSize=(side*0.62)+'px';
+    wm.innerHTML='<span class="p">Pikete</span><span class="m">Maker</span>';
+    el.appendChild(mark); el.appendChild(wm);
+  }
+  lockup(document.getElementById('lk18'),18);
+  lockup(document.getElementById('lk22'),22);
+  lockup(document.getElementById('lk22b'),22);
+  lockup(document.getElementById('lk22c'),22);
+</script>
+</body>
+</html>

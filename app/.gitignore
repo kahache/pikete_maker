@@ -1,0 +1,22 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+.pub-cache/
+.pub/
+pubspec.lock          # app de aplicación en repo mono: se regenera; el CEO decide si lo trackea
+
+# Herramientas / IDE
+.idea/
+*.iml
+.vscode/
+
+# Claves de firma (¡nunca en git!). Ver README §APK firmada.
+**/key.properties
+**/*.keystore
+**/*.jks
+
+# Artefactos generados de icono/splash (se regeneran con flutter pub run)
+# android/app/src/main/res/mipmap-*/ic_launcher.png  <- descomentar si se generan

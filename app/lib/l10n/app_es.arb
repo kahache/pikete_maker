@@ -1,0 +1,365 @@
+{
+  "@@locale": "es",
+  "@@x-status": "CANONICAL — es is the source of truth (D17/D18). Every value below is the pre-i18n app copy VERBATIM; the copy-pinning widget suite is the regression net. Do not edit without the CEO.",
+
+  "homeTutorialTooltip": "Cómo hacer la foto",
+  "homeSneakerLabel": "Mis zapas",
+  "homeSneakerCaption": "Monta el fit desde tus zapas",
+  "homeOutfitLabel": "Mi pikete",
+  "@homeOutfitLabel": {
+    "description": "Home bottom zone label — D27 amendment to D26 ('Mi fit' → 'Mi pikete'). Voice-adapt per market, never translate literally."
+  },
+  "homeOutfitCaption": "Saca la paleta de tu fit",
+  "homeGoPill": "Empezar",
+
+  "onbSkip": "Saltar",
+  "onbWelcomeHeadline": "Los colores de tu fit,\ncon criterio.",
+  "onbWelcomeBody": "Hazte una foto y te digo tu paleta y con qué combina.",
+  "onbWelcomeCta": "Empezar",
+  "onbWelcomePrivacy": "Tu foto no sale de tu móvil y no la guardamos.",
+  "@onbWelcomePrivacy": {
+    "description": "First-run privacy reassurance shown up front on ONB-1 (#95, CEO). Two promises: the photo stays on-device AND is not stored. Voice-adapt per market; do NOT add any telemetry/analytics-consent claim here (that lands with #96)."
+  },
+  "onbTipBadge": "TIP PRO",
+  "onbTipHeadline": "El truco para\nclavar los colores",
+  "onbTipPhraseWall": "Ponte frente a una pared lisa de un solo color.",
+  "onbTipPhraseFullFit": "Que se te vea el fit entero, de arriba abajo.",
+  "onbTipPhraseLight": "Un paso atrás y con buena luz.",
+  "onbTipCaption": "Cuanto más liso el fondo, mejor te leo los colores.",
+  "onbTipCta": "Hacer mi primera foto",
+  "onbExampleGood": "BIEN",
+  "onbExampleBad": "MAL",
+  "onbIllustrationGood": "Foto bien hecha: cuerpo entero frente a una pared lisa",
+  "onbIllustrationBad": "Foto mal hecha: la misma figura en un cuarto recargado",
+
+  "privacyNote": "Tu foto no sale del móvil: se analiza aquí mismo.",
+  "sheetCameraTitle": "Hacer una foto",
+  "sheetGalleryTitle": "Elegir de la galería",
+  "sheetPlainBgHint": "Fondo liso = colores más finos.",
+
+  "outfitSheetTitle": "¿De dónde sacamos la foto?",
+  "outfitSheetCameraCaption": "Cuerpo entero, fondo liso",
+  "outfitSheetGalleryCaption": "Una que ya tengas",
+  "outfitConfirmTitle": "¿Se ve bien tu fit?",
+  "outfitConfirmHint": "Fondo liso = colores más finos.",
+  "outfitConfirmCtaPrimary": "Analizar",
+  "outfitConfirmCtaSecondary": "Repetir",
+  "outfitAnalyzingHeadline": "Leyendo los colores de tu fit…",
+  "outfitAnalyzingStep1": "Leyendo tu foto",
+  "outfitAnalyzingStep2": "Agrupando los colores",
+  "outfitAnalyzingStep3": "Montando tus armonías",
+  "outfitAnalyzingSkipNotePrefix": "Tu paleta aparece en cuanto termine — ",
+
+  "analyzingMonoLabel": "analizando",
+  "analyzingSkipNoteAccent": "ya casi",
+  "adSlotTipBadge": "TIP",
+  "adSlotAdCaption": "El progreso queda siempre visible arriba: el ad acompaña la espera, no la bloquea.",
+  "adSlotTipCaption": "Fondo liso y un paso atrás: así te clavo los colores.",
+
+  "feedbackCameraHeadline": "Sin cámara no hay fit.",
+  "feedbackCameraDetail": "Actívala en ajustes o elige una foto de tu galería.",
+  "feedbackCameraCtaPrimary": "Cómo activarla",
+  "feedbackCameraCtaSecondary": "Elegir de la galería",
+  "feedbackCameraSettingsPath": "Ajustes del sistema → Apps → PiketeMaker → Permisos → Cámara.",
+  "feedbackFailedHeadline": "No pillamos bien tu fit.",
+  "feedbackFailedDetail": "Prueba con más luz o aléjate un paso.",
+  "feedbackFailedCtaPrimary": "Probar con otra foto",
+  "feedbackFailedCtaSecondary": "Reintentar con la misma",
+  "feedbackNoOutfitHeadline": "Aquí no vemos un outfit claro.",
+  "feedbackNoOutfitDetail": "Cuerpo entero, buena luz y fondo tranquilo.",
+  "feedbackNoOutfitCtaPrimary": "Hacer otra foto",
+  "feedbackNoOutfitCtaSecondary": "Elegir de la galería",
+
+  "resultHeadlineLegacy": "Tu paleta",
+  "resultHeadlineGarments": "Tu pikete",
+  "resultMeta": "Fit de hoy · {date}",
+  "@resultMeta": {
+    "description": "Share-canvas meta line. {date} arrives pre-formatted by localizedShortDate() — NOT an intl DateFormat (es must stay byte-identical: '14 jul 2026').",
+    "placeholders": {
+      "date": {"type": "String", "example": "14 jul 2026"}
+    }
+  },
+  "resultBaseBadge": "BASE",
+  "resultBaseLead": "Tu color dominante. ",
+  "resultBaseAttributionUpper": "Sale de tu parte de arriba. ",
+  "resultBaseAttributionLower": "Sale de tu parte de abajo. ",
+  "resultBaseRest": "Todo conjunta alrededor de él.",
+  "garmentUpperLabel": "ARRIBA",
+  "garmentLowerLabel": "ABAJO",
+  "garmentSingleLabel": "TU ROPA",
+
+  "resultRecoHeadline": "Toma tu pikete",
+  "@resultRecoHeadline": {
+    "description": "D36 (2026-07-23) recommendation-first outfit result H1 (chromatic). Replaces the extraction-led headline: the color RECOMMENDATION is now the hero, the extracted palette is demoted. Keeps 'pikete' (brand equity, Home 'Mi pikete'). Voice-adapt per market, never translate literally."
+  },
+  "resultHeroKicker": "La combi · Contraste",
+  "@resultHeroKicker": {
+    "description": "Kicker above the hero combo band (D36). The hero scheme is always the complementary → 'Contraste'. Mirrors sneakerResultHeroKicker."
+  },
+  "resultTagFit": "tu fit",
+  "@resultTagFit": {
+    "description": "Role micro-label on the hero combo's BASE segment (D36): the outfit's dominant color."
+  },
+  "resultTagAdd": "súmale",
+  "@resultTagAdd": {
+    "description": "Imperative role micro-label on the hero combo's complement segment (D36): the color to ADD (cap/jacket/kicks). The imperative verb communicates a recommendation, not an extraction."
+  },
+  "resultTagNeutral": "+ {neutral}",
+  "@resultTagNeutral": {
+    "description": "Role micro-label on the hero combo's neutral segment (D36). Mirrors sneakerTagNeutral.",
+    "placeholders": {
+      "neutral": {"type": "String", "example": "crema"}
+    }
+  },
+  "resultCaptionLead": "El {complement} hace saltar el {base} de tu fit.",
+  "@resultCaptionLead": {
+    "description": "Hero caption lead (styled 600 textPrimary, D36). {complement}/{base} are localized color names from color_names.dart.",
+    "placeholders": {
+      "complement": {"type": "String", "example": "verde"},
+      "base": {"type": "String", "example": "morado"}
+    }
+  },
+  "resultCaptionRest": " Súmale {neutral1} o {neutral2} y vas fino.",
+  "@resultCaptionRest": {
+    "description": "Hero caption tail after the bold lead (D36). Mirrors sneakerCaptionRest.",
+    "placeholders": {
+      "neutral1": {"type": "String", "example": "crema"},
+      "neutral2": {"type": "String", "example": "negro"}
+    }
+  },
+  "resultPaletteLabel": "Tu fit · de aquí sale la combi",
+  "@resultPaletteLabel": {
+    "description": "Section label of the DEMOTED extracted palette (D36): the ARRIBA/ABAJO strips are now evidence, not the headline. CEO wording (2026-07-23): the hero is 'pikete', the small extracted palette is 'tu fit'."
+  },
+  "resultPaletteLabelCanvas": "Tu fit · tu lienzo neutro",
+  "@resultPaletteLabelCanvas": {
+    "description": "Section label of the demoted neutral palette in canvas mode (D36)."
+  },
+  "resultCanvasHeadline": "Tu fit pide color",
+  "@resultCanvasHeadline": {
+    "description": "D36 canvas-mode H1 (100% neutral outfit). Slang; replaces 'Tu look es un lienzo'. The curated accent pops ARE the recommendation and move to the hero position. Voice-adapt per market."
+  },
+  "resultCanvasKicker": "La combi · Lienzo",
+  "@resultCanvasKicker": {
+    "description": "Kicker above the curated pops when the outfit is 100% neutral (D36). Mirrors sneakerCanvasKicker."
+  },
+  "resultCanvasBaseCap": "Todo tu fit es neutro — combina con todo. Por eso mandamos color, no armonías.",
+  "@resultCanvasBaseCap": {
+    "description": "Caption under the demoted neutral palette in canvas mode (D36): honest explanation of why we propose color pops instead of harmonies."
+  },
+
+  "harmoniesTitle": "Combina con",
+  "harmoniesSub": "Toca una y mira looks reales con esos colores.",
+  "canvasTitle": "Tu look es un lienzo",
+  "canvasBody": "Negro, blanco y grises combinan con todo. Dale un toque de color con uno de estos:",
+  "resultCtaLooks": "Ver looks así",
+  "resultCtaStory": "Súbela a tu story",
+  "storyFailedSnack": "No se pudo generar la story. Prueba otra vez.",
+  "storyIncludePhoto": "Incluir mi foto",
+  "@storyIncludePhoto": {
+    "description": "N1 preview sheet (outfit + sneaker): label of the switch that puts the user's own uploaded photo in the shared 9:16 story. Default ON. Keep it first person and short (one line at 390 dp next to a switch)."
+  },
+  "storyPhotoPrivacy": "Tu foto solo sale del móvil si tú la compartes.",
+  "@storyPhotoPrivacy": {
+    "description": "N1 preview sheet: privacy line under the switch. Must stay literally true: the photo only leaves the device through the user's own OS share. Echoes onbWelcomePrivacy / privacyNote ('Tu foto no sale del móvil'). Keep 'del móvil': a bare 'sale' would read as 'appears (in the story)'."
+  },
+  "storyShareCta": "Compartir",
+  "@storyShareCta": {
+    "description": "N1 preview sheet: primary CTA that opens the OS share sheet with the previewed image."
+  },
+  "storyPreviewLabel": "Vista previa de tu story",
+  "@storyPreviewLabel": {
+    "description": "N1 preview sheet: accessibility (semantics) label of the preview image. Not visible."
+  },
+  "looksSearchFailed": "No se ha podido abrir el navegador. Revisa tu conexión y prueba otra vez.",
+
+  "harmonyComplementaryName": "Complementario",
+  "harmonyComplementaryDesc": "Contraste máximo, 2 colores",
+  "harmonyAnalogousName": "Análogo",
+  "harmonyAnalogousDesc": "Suave, tono sobre tono",
+  "harmonyTriadicName": "Triádico",
+  "harmonyTriadicDesc": "Equilibrado, 3 colores",
+  "harmonySplitName": "Complementario dividido",
+  "harmonySplitDesc": "Contraste con matiz",
+
+  "sneakerAppBarKicker": "MIS ZAPAS",
+  "sneakerSourceTitle": "¿Desde dónde haces la foto?",
+  "sneakerSourceSub": "Cada sitio tiene su truco. Elige el tuyo.",
+  "sneakerSourceCasaTitle": "Casa o calle",
+  "sneakerSourceCasaHint": "Las zapas, en el centro y llenando la foto",
+  "sneakerSourceTiendaTitle": "En una tienda",
+  "sneakerSourceTiendaHint": "Ponlas en el suelo, como si fueran tuyas",
+  "sneakerSourceWebTitle": "Captura de pantalla",
+  "sneakerSourceWebHint": "Recórtala hasta dejar solo la zapa",
+  "sneakerTipBadge": "EL TRUCO",
+  "sneakerTipCasaTitle": "Zapas en el centro, llenando la foto",
+  "sneakerTipCasaBody": "Acércate hasta que las zapas ocupen casi toda la pantalla. Fondo liso (suelo o pared) y buena luz.",
+  "sneakerTipCasaCta": "Hacer la foto",
+  "sneakerTipTiendaTitle": "Ponlas en el suelo, como tuyas",
+  "sneakerTipTiendaBody": "Baja las zapas al suelo y dispara desde arriba, como si ya fueran tuyas. Así el fondo no se cuela en los colores.",
+  "sneakerTipTiendaCta": "Hacer la foto",
+  "sneakerTipWebTitle": "Recorta hasta dejar solo la zapa",
+  "sneakerTipWebBody": "Antes de subirla, recorta la captura: fuera el navegador, el precio y todo lo blanco. Solo la zapa.",
+  "sneakerTipWebCta": "Elegir la captura",
+  "sneakerIllustrationCasa": "Zapa grande centrada que casi toca las esquinas del cuadro",
+  "sneakerIllustrationTienda": "Zapa en el suelo y un móvil disparando desde arriba",
+  "sneakerIllustrationWeb": "Ventana de navegador con una zapa pequeña y un recorte que deja solo la zapa",
+
+  "sneakerSheetTitle": "¿De dónde sacamos las zapas?",
+  "sneakerSheetCameraCaption": "Las zapas, fondo liso",
+  "sneakerSheetGalleryCaption": "Una que ya tengas",
+  "sneakerConfirmTitle": "¿Se ven bien tus zapas?",
+  "sneakerConfirmHint": "Fondo liso y bien iluminadas = colores más finos.",
+  "sneakerConfirmCtaPrimary": "Dame el pikete",
+  "sneakerConfirmCtaSecondary": "Otra foto",
+  "sneakerAnalyzingHeadline": "Sacando los colores de tus zapas…",
+  "sneakerAnalyzingStep": "Aislando las zapas del fondo",
+  "sneakerAnalyzingSkipNotePrefix": "Tu combi aparece en cuanto termine — ",
+
+  "sneakerResultMeta": "Tus zapas · {date}",
+  "@sneakerResultMeta": {
+    "placeholders": {
+      "date": {"type": "String", "example": "14 jul 2026"}
+    }
+  },
+  "sneakerResultTitle": "Combina tu ropa con estas zapas",
+  "sneakerResultHeroKicker": "La combi · Contraste",
+  "sneakerTagZapas": "tus zapas",
+  "sneakerTagRopa": "tu ropa",
+  "sneakerTagNeutral": "+ {neutral}",
+  "@sneakerTagNeutral": {
+    "placeholders": {
+      "neutral": {"type": "String", "example": "crema"}
+    }
+  },
+  "sneakerCaptionLead": "El {complement} hace saltar el {base} de tus zapas.",
+  "@sneakerCaptionLead": {
+    "description": "Hero caption lead (styled 600 textPrimary). {complement}/{base} are localized color names from color_names.dart.",
+    "placeholders": {
+      "complement": {"type": "String", "example": "rojo"},
+      "base": {"type": "String", "example": "verde-azulado"}
+    }
+  },
+  "sneakerCaptionRest": " Súmale {neutral1} o {neutral2} y vas fino.",
+  "@sneakerCaptionRest": {
+    "placeholders": {
+      "neutral1": {"type": "String", "example": "crema"},
+      "neutral2": {"type": "String", "example": "negro"}
+    }
+  },
+  "sneakerBaseBadge": "Base · {color}",
+  "@sneakerBaseBadge": {
+    "description": "Label style; the widget applies .toUpperCase().",
+    "placeholders": {
+      "color": {"type": "String", "example": "negro"}
+    }
+  },
+  "sneakerBaseDescPre": "La ",
+  "sneakerBaseDescBold": "paleta de tus zapas",
+  "sneakerBaseDescRest": ". El {color} manda la combi.",
+  "@sneakerBaseDescRest": {
+    "description": "Rich-text tail after the bold span; pre+bold+rest must compose into one grammatical sentence per locale.",
+    "placeholders": {
+      "color": {"type": "String", "example": "negro"}
+    }
+  },
+  "sneakerSectionTitle": "Otras combis",
+  "sneakerSectionSub": "Toca una y mira looks reales con esos colores.",
+  "sneakerHarmonyAnalogousName": "Tono sobre tono",
+  "sneakerHarmonyAnalogousSub": "Cálidos, suave",
+  "sneakerHarmonyTriadicName": "Equilibrada",
+  "sneakerHarmonyTriadicSub": "3 colores, atrevida",
+  "sneakerHarmonySplitName": "Contraste con matiz",
+  "sneakerHarmonySplitSub": "Punch, más fino",
+  "sneakerResultCtaPrimary": "Enséñame otros piketes",
+  "sneakerResultCtaSecondary": "Otras zapas",
+  "sneakerCanvasKicker": "La combi · Lienzo",
+  "sneakerCanvasCaptionLead": "Zapas neutras = lienzo total.",
+  "sneakerCanvasCaptionRest": " Cualquiera de estos cinco pops les sienta de lujo.",
+  "sneakerErrorTitle": "No hemos pillado los colores",
+  "sneakerErrorBody": "Prueba con más luz o con un fondo liso.",
+  "sneakerErrorCta": "Otra foto",
+
+  "settingsTooltip": "Ajustes",
+  "settingsTitle": "Ajustes",
+  "@settingsTitle": {
+    "description": "Minimal settings surface (D33 telemetry opt-out home, docs/legal/consent-copy-first-run.md §3). Only reachable in telemetry-active builds."
+  },
+  "settingsTelemetryTitle": "Estadísticas de uso anónimas",
+  "settingsTelemetryBody": "Nos ayudan a mejorar la app. Son anónimas: nunca incluyen tus fotos, datos personales ni nada que te identifique. Al desactivarlas, dejamos de enviar nada.",
+  "@settingsTelemetryBody": {
+    "description": "Opt-out switch caption, VERBATIM from docs/legal/consent-copy-first-run.md §3 (DRAFT pending lawyer). Must stay literally true: OFF ⇒ queue purged, zero sends."
+  },
+  "telemetryNoticeTitle": "Esto es tuyo",
+  "@telemetryNoticeTitle": {
+    "description": "First-run telemetry NOTICE (not a consent gate), copy VERBATIM from docs/legal/consent-copy-first-run.md §2 (DRAFT pending lawyer + UX-writer). Split into sentence-level keys so the bold emphasis survives CJK word order."
+  },
+  "telemetryNoticeBody1Strong": "Tu foto no sale del móvil.",
+  "telemetryNoticeBody1Rest": "El análisis de color ocurre aquí dentro, sin conexión, sin cuenta.",
+  "telemetryNoticeBody2Intro": "Para mejorar la app enviamos algunas estadísticas anónimas de uso (por ejemplo, con qué frecuencia se analiza).",
+  "telemetryNoticeBody2Strong": "Sin fotos, sin datos personales, sin identificarte.",
+  "telemetryNoticeBody2Rest": "Puedes desactivarlo cuando quieras en Ajustes.",
+  "telemetryNoticeCta": "Entendido",
+  "telemetryNoticeLink": "Cómo tratamos los datos",
+  "recolorCta": "Vérmelo puesto",
+  "@recolorCta": {
+    "description": "I2 result screen: outlined pill under the recommendation card that opens the recolor view (the user's own photo with one garment region repainted in the hero combo colour). The CEO's own words. One line at 390 dp."
+  },
+  "recolorHeadline": "Así te quedaría",
+  "@recolorHeadline": {
+    "description": "I2 recolor view: display headline AND the headline of the story shared from that view. Conditional on purpose (a colour preview, not a promise). One line, scaleDown floor 24 px on the story."
+  },
+  "recolorKicker": "{region} · {color}",
+  "@recolorKicker": {
+    "description": "I2 recolor view: label-style kicker under the headline. {region} = garmentUpperLabel|garmentLowerLabel (already uppercase), {color} = localized colour name of the applied swatch (color_names.dart). Rendered uppercase by the label style.",
+    "placeholders": {
+      "region": {
+        "type": "String"
+      },
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "recolorExpectation": "Solo cambia el color: tu prenda sigue siendo la tuya.",
+  "@recolorExpectation": {
+    "description": "I2 recolor view: one caption line under the photo card. Sets expectations (only the colour changes; no garment was swapped; prints stay prints) without apologising. Max 2 lines at 320 dp."
+  },
+  "recolorHoldHint": "Mantén para ver el original",
+  "@recolorHoldHint": {
+    "description": "I2 recolor view: screen-only chip on the photo (never exported). Affordance of the press-and-hold compare gesture. Rendered uppercase, label style; keep it short."
+  },
+  "recolorHoldActive": "Original",
+  "@recolorHoldActive": {
+    "description": "I2 recolor view: the same chip while the finger is down and the original photo is shown."
+  },
+  "recolorTipPeople": "Para verte el color puesto, sal solo en la foto.",
+  "@recolorTipPeople": {
+    "description": "I2 result screen, replaces the recolor button when more than one person is detected. A tip, not an error: no blame, no tech words. Same sentence family as the other two tips."
+  },
+  "recolorTipLight": "Para verte el color puesto, hace falta más luz.",
+  "@recolorTipLight": {
+    "description": "I2 result screen, replaces the recolor button when the scene is too dark for a credible recolor."
+  },
+  "recolorTipCoverage": "Para verte el color puesto, que se vea tu fit entero.",
+  "@recolorTipCoverage": {
+    "description": "I2 result screen, replaces the recolor button when neither region mask is reliable enough (too small, holes, disconnected). Suggests a full-body photo without saying 'mask'."
+  },
+  "recolorFailedSnack": "No hemos podido probar el color. Prueba otra vez.",
+  "@recolorFailedSnack": {
+    "description": "I2 defensive fallback when the recolor transform fails at runtime. Mirrors storyFailedSnack. Stays on the result screen."
+  },
+  "recolorPreviewLabel": "Tu foto con el color de la combi",
+  "@recolorPreviewLabel": {
+    "description": "I2 recolor view: accessibility (semantics) label of the recolored photo card. Not visible."
+  },
+  "resultComboKicker": "La combi · {scheme}",
+  "@resultComboKicker": {
+    "description": "D39: kicker above the hero band when the user selected an 'Otras combis' row (the band swaps to that combo). {scheme} = that row's own name (sneakerHarmony*Name). Same prefix as resultHeroKicker; the hero (no selection) keeps resultHeroKicker.",
+    "placeholders": {
+      "scheme": {
+        "type": "String"
+      }
+    }
+  }
+}

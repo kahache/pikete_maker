@@ -1,0 +1,2 @@
+# Keeps assets/models/ present on fresh clones (the .tflite model itself is
+# gitignored — fetch it with app/tool/fetch_models.sh before building).

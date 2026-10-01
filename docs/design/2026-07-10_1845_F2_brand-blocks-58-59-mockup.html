@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#58/#59 — Tamaños de marca (comparación visual) · PiketeMaker</title>
+<style>
+  :root{
+    --page:#F2F0F6; --surface:#FFFFFF; --ink:#1C1826; --sec:#5C5568; --ter:#8E88A0;
+    --accent:#6C3FD1; --accent-tint:#EEE8FB; --mint:#17C3A2; --border:#E7E3F0;
+    --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:var(--font);padding:36px 20px 90px}
+  .sheet{max-width:1180px;margin:0 auto}
+  h1{font-size:27px;font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+  .lead{color:var(--sec);font-size:14.5px;line-height:22px;max-width:80ch;margin:0 0 8px}
+  .kicker{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  .card{background:var(--surface);border-radius:20px;box-shadow:0 1px 3px rgba(28,24,38,.07);padding:26px 30px;margin:26px 0}
+  h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 2px}
+  .sub{color:var(--sec);font-size:13.5px;line-height:20px;margin:6px 0 0;max-width:82ch}
+  .rec{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--mint);border:1.5px solid var(--mint);border-radius:999px;padding:2px 9px;margin-left:8px;vertical-align:2px}
+  .row{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-start;margin-top:22px}
+  .opt{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .plabel{font-family:var(--mono);font-size:12px;color:var(--ter);text-align:center;line-height:16px}
+  .plabel b{color:var(--ink);font-weight:800}
+  /* phone frame at ~true logical scale: 300px wide screen slice */
+  .phone{width:300px;background:var(--surface);border:1px solid var(--border);border-radius:26px;
+         box-shadow:0 10px 30px rgba(28,24,38,.10);overflow:hidden}
+  .status{height:26px;background:#FBFAFD;border-bottom:1px solid var(--border)}
+  /* HOME hero context */
+  .home{padding:34px 22px 30px;display:flex;flex-direction:column;align-items:center;min-height:300px}
+  .home .headline{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:20px 0 6px;text-align:center}
+  .home .hsub{font-size:13px;color:var(--sec);text-align:center}
+  .home .cta{margin-top:auto;width:100%;background:var(--mint);color:#04302A;font-weight:800;
+             text-align:center;padding:13px;border-radius:14px;font-size:15px}
+  /* ONB block */
+  .onb{padding:54px 22px;display:flex;flex-direction:column;align-items:center;min-height:340px;justify-content:center}
+  .wm{display:block}
+  /* topbar for #59 */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+  .topbar .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
+  .ticon{display:flex;flex-direction:column;align-items:center;gap:3px}
+  .ticon .tt{font-size:10px;color:var(--ter);font-family:var(--mono)}
+  .iconbtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px}
+  .iconbtn:hover{background:var(--accent-tint)}
+  .diff{background:#FBFAFD;border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-top:20px;font-size:13px;color:var(--sec);line-height:19px}
+  .diff code{font-family:var(--mono);background:var(--accent-tint);color:var(--accent);padding:1px 6px;border-radius:5px;font-size:.92em}
+  .note{font-size:12.5px;color:var(--ter);margin-top:10px}
+  .foot{margin-top:30px;font-size:12.5px;color:var(--ter);line-height:19px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="kicker">Deuda visual · #58 / #59 · propone→eliges→se implementa</div>
+  <h1>Tamaños de marca — comparación visual</h1>
+  <p class="lead">Todo a <b>escala real</b> (marco de móvil = franja de 300&nbsp;px, el logo al tamaño verdadero en px). Tu feedback en r6 fue direccional (“incluso yo la aumentaría algo más”); aquí las cifras concretas para que elijas. Nada se implementa hasta tu OK, y se valida en el próximo build de device.</p>
+
+  <!-- ============ #58a HOME HERO ============ -->
+  <div class="card">
+    <h2>#58a · Logo héroe en Home <span class="rec">Recomendado 112</span></h2>
+    <p class="sub">Constante <code style="font-family:var(--mono)">_heroLogoSize</code> en <code style="font-family:var(--mono)">home_screen.dart</code>. Fíjate en la relación con el titular “Analiza tu fit” (te gusta como héroe de texto — el logo no debe destronarlo).</p>
+    <div class="row" style="justify-content:center">
+      <div class="opt">
+        <div class="phone"><div class="status"></div><div class="home">
+          <img src="logo/assets/symbol-mono.svg" width="96" height="96" alt="logo 96">
+          <div class="headline">Analiza tu fit</div><div class="hsub">Sube una foto y saca tu paleta</div>
+          <div class="cta">Hacer mi primera foto</div>
+        </div></div>
+        <div class="plabel"><b>96 px</b><br>actual</div>
+      </div>
+      <div class="opt">
+        <div class="phone"><div class="status"></div><div class="home">
+          <img src="logo/assets/symbol-mono.svg" width="112" height="112" alt="logo 112">
+          <div class="headline">Analiza tu fit</div><div class="hsub">Sube una foto y saca tu paleta</div>
+          <div class="cta">Hacer mi primera foto</div>
+        </div></div>
+        <div class="plabel"><b>112 px</b> ★<br>recomendado</div>
+      </div>
+      <div class="opt">
+        <div class="phone"><div class="status"></div><div class="home">
+          <img src="logo/assets/symbol-mono.svg" width="120" height="120" alt="logo 120">
+          <div class="headline">Analiza tu fit</div><div class="hsub">Sube una foto y saca tu paleta</div>
+          <div class="cta">Hacer mi primera foto</div>
+        </div></div>
+        <div class="plabel"><b>120 px</b><br>opción “más grande”</div>
+      </div>
+    </div>
+    <div class="diff">112 px = igual que el splash canónico; el clearspace (24&nbsp;px = <code>Space.xl</code>) pasa justo. &nbsp;·&nbsp; 120 px se ve algo más rotundo pero exige subir el hueco de debajo a <code>Space.xxl</code> (32&nbsp;px) → toca una 2ª constante.</div>
+  </div>
+
+  <!-- ============ #58b ONBOARDING ============ -->
+  <div class="card">
+    <h2>#58b · Bloque de marca en Empezar (ONB-1) <span class="rec">Recomendado 128</span></h2>
+    <p class="sub">Símbolo + wordmark apilados (<code style="font-family:var(--mono)">onboarding_screen.dart</code>). Se escala el trío junto (×1.143) para congelar el ratio de wordmark (61%, USAGE §4). El wordmark queda a 31&nbsp;px, justo bajo el titular de 32 → no lo destrona.</p>
+    <div class="row" style="justify-content:center">
+      <div class="opt">
+        <div class="phone"><div class="status"></div><div class="onb">
+          <img src="logo/assets/symbol-mono.svg" width="112" height="112" alt="símbolo 112" style="margin-bottom:18px">
+          <img class="wm" src="logo/assets/wordmark.svg" height="27" alt="wordmark 27">
+        </div></div>
+        <div class="plabel"><b>símbolo 112 · wm 27</b><br>actual (gap 18)</div>
+      </div>
+      <div class="opt">
+        <div class="phone"><div class="status"></div><div class="onb">
+          <img src="logo/assets/symbol-mono.svg" width="128" height="128" alt="símbolo 128" style="margin-bottom:20px">
+          <img class="wm" src="logo/assets/wordmark.svg" height="31" alt="wordmark 31">
+        </div></div>
+        <div class="plabel"><b>símbolo 128 · wm 31</b> ★<br>recomendado (gap 20)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ #59 TUTORIAL ICON ============ -->
+  <div class="card">
+    <h2>#59 · Icono de reentrada al tutorial en Home <span class="rec">Recomendado 28, icon-only</span></h2>
+    <p class="sub">El icono “Cómo hacer la foto” (arriba en Home). El área táctil de 44&nbsp;px NO cambia — solo crece el <b>glifo visual</b>. Recomendación UX: dejarlo <b>solo icono</b> (D7 simplicidad; el tooltip ya etiqueta).</p>
+    <div class="row" style="justify-content:center">
+      <div class="opt">
+        <div class="phone" style="width:340px"><div class="topbar">
+          <span class="brand"><img src="logo/assets/symbol-mono.svg" width="24" height="24" alt="">PiketeMaker</span>
+          <span class="iconbtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1826" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4"/><circle cx="12" cy="17.5" r="0.6" fill="#1C1826"/></svg></span>
+        </div><div style="height:120px"></div></div>
+        <div class="plabel"><b>24 px</b><br>actual (default)</div>
+      </div>
+      <div class="opt">
+        <div class="phone" style="width:340px"><div class="topbar">
+          <span class="brand"><img src="logo/assets/symbol-mono.svg" width="24" height="24" alt="">PiketeMaker</span>
+          <span class="iconbtn"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1C1826" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4"/><circle cx="12" cy="17.5" r="0.6" fill="#1C1826"/></svg></span>
+        </div><div style="height:120px"></div></div>
+        <div class="plabel"><b>28 px</b> ★<br>recomendado</div>
+      </div>
+    </div>
+    <div class="note">(El glifo “?” es representativo — el icono real puede ser cámara/ayuda; lo que se decide aquí es el TAMAÑO.)</div>
+  </div>
+
+  <p class="foot">Fuente: spec <code style="font-family:var(--mono)">docs/design/2026-07-10_1830_F2_brand-blocks-sizing-58-59.md</code>. &nbsp;Al implementar hay que sincronizar los mockups canónicos <code style="font-family:var(--mono)">home.html</code>/<code style="font-family:var(--mono)">onboarding.html</code> (hoy desfasados). &nbsp;Dime qué eliges por cada bloque (o “las recomendadas”) y lo implemento cuando el código quede libre.</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Sneaker flow FINAL (F2S · D26+D27)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json
+     F2S FINAL implementation reference: Home (split, D26 as amended)
+     + sneaker inner flow (Captura → Analizando → Resultado, D27).
+     Supersedes the exploration mockups of 2026-07-10 (immutable
+     snapshots); mobile-dev implements from THIS file + the spec
+     docs/design/2026-07-11_1030_F2S_sneaker-flow-final-spec.md.
+     Light theme. Self-contained, inline. Viewport 390.
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C; --action-bright: #43E5C2; --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1; --accent-bright: #A78BFA; --accent-tint: #EFEAFB;
+    --logo-turquoise: #17B598; /* LOGO-only color — never UI */
+
+    --bg: #FFFFFF; --surface: #FFFFFF; --surface-subtle: #F7F5FB;
+    --border: #E9E6F2; --border-strong: #D9D3E6;
+    --text-primary: #1C1826; --text-secondary: #544E68;
+    --text-tertiary: #6B6383; --text-disabled: #8F87A3;
+    --action-on-fill: #FFFFFF;
+    --error: #B3261E; --success: #2E7D32;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px; --sp-3xl: 48px;
+    --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+    --shadow-lg: 0 12px 32px rgba(28,24,38,0.14);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary);
+    padding: 40px 16px 80px;
+  }
+  .page-head { max-width: 1000px; margin: 0 auto 36px; text-align: center; }
+  .page-head h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+  .page-head p { font-size: 13px; line-height: 19px; color: var(--text-secondary); margin-top: 8px; }
+  .page-head .decision {
+    display: inline-block; margin-top: 12px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink);
+    background: var(--accent-tint); border-radius: var(--r-sm); padding: 4px 10px;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 44px; justify-content: center; align-items: flex-start; }
+  .stage { width: 390px; }
+  .stage-tag { text-align: center; font-size: 13px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-primary); margin-bottom: 4px; }
+  .stage-tag span { color: var(--text-tertiary); font-weight: 600; }
+  .stage-note { margin-top: 14px; padding: 0 4px; font-size: 12px; line-height: 17px; color: var(--text-tertiary); }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+  .stage-note code { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+
+  .phone {
+    width: 390px; min-height: 844px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 28px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: var(--shadow-md); position: relative;
+  }
+  .statusbar {
+    height: 44px; flex: none; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 var(--screen-margin);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary); z-index: 3;
+  }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 6px auto 8px; flex: none; z-index: 3; }
+
+  /* app bar (back + centered mode kicker — D27: contextual "MIS ZAPAS") */
+  .appbar { height: 52px; display: flex; align-items: center; padding: 0 var(--sp-xs); position: relative; flex: none; }
+  .appbar .back { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--action-ink); }
+  .appbar .title {
+    position: absolute; left: 0; right: 0; text-align: center;
+    font-size: 11px; line-height: 14px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-tertiary); pointer-events: none;
+  }
+
+  .btn {
+    height: 56px; border-radius: var(--r-pill); display: flex; align-items: center;
+    justify-content: center; gap: var(--sp-sm); font-size: 16px; font-weight: 700; border: none;
+    cursor: pointer; width: 100%; font-family: var(--font-sans);
+  }
+  .btn-primary { background: var(--action-ink); color: var(--action-on-fill); }
+  .btn-secondary { background: var(--bg); color: var(--action-ink); border: 1.5px solid var(--border-strong); }
+
+  /* ---------- 0 · HOME (split 50/50, D26 as amended by D27) ---------- */
+  .top-row { display: flex; align-items: center; justify-content: space-between; padding: 0 var(--screen-margin); flex: none; }
+  .lockup { display: flex; align-items: center; gap: 5px; }
+  .lockup .word { font-weight: 800; font-size: 12px; letter-spacing: -0.01em; }
+  .lockup .word .pikete { color: var(--accent-ink); }
+  .lockup .word .maker { color: var(--logo-turquoise); }
+  .help-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); margin-right: -10px; }
+  .a-body { flex: 1; display: flex; flex-direction: column; }
+  .a-top { position: absolute; top: 44px; left: 0; right: 0; z-index: 2; padding-top: 6px; }
+  .split { flex: 1; display: flex; flex-direction: column; padding-top: 56px; }
+  .zone {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 0 var(--sp-2xl); position: relative; cursor: pointer;
+  }
+  .zone.sneaker { background: var(--action-tint); }
+  .zone.outfit  { background: var(--accent-tint); }
+  .zone .glyph { width: 84px; height: 84px; }
+  .zone.sneaker .glyph { color: var(--action-ink); }
+  .zone.outfit  .glyph { color: var(--accent-ink); }
+  .zone h2 { font-size: 32px; line-height: 38px; font-weight: 800; letter-spacing: -0.02em; margin-top: var(--sp-lg); color: var(--text-primary); }
+  .zone .cap { font-size: 15px; line-height: 22px; color: var(--text-secondary); margin-top: var(--sp-sm); }
+  .zone .go {
+    position: absolute; bottom: 22px; display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: var(--action-ink);
+  }
+  .split-divider { height: 1px; background: rgba(28,24,38,0.10); flex: none; }
+
+  /* ---------- 1 · CAPTURA (confirm) ---------- */
+  .confirm-body { flex: 1; display: flex; flex-direction: column; padding: var(--sp-sm) var(--screen-margin) var(--sp-xl); }
+  .confirm-body h2 { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .photo {
+    flex: 1; margin-top: var(--sp-lg); border-radius: var(--r-lg); overflow: hidden;
+    background:
+      radial-gradient(120px 60px at 50% 74%, rgba(28,24,38,0.10) 0%, transparent 70%),
+      linear-gradient(180deg, #F1EEE8 0%, #E7E2D9 100%);
+    position: relative;
+    display: flex; align-items: flex-end; justify-content: center;
+    color: var(--text-tertiary); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; font-weight: 700; padding-bottom: 12px;
+  }
+  .photo .kick {
+    position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%);
+    width: 190px; height: 96px;
+  }
+  .hint-row {
+    display: flex; align-items: center; justify-content: center; gap: var(--sp-xs);
+    margin-top: var(--sp-md); font-size: 13px; line-height: 18px; color: var(--text-secondary);
+  }
+  .hint-row svg { color: var(--action-ink); flex: none; }
+
+  /* ---------- 2 · ANALIZANDO ---------- */
+  .analyzing-body { flex: 1; display: flex; flex-direction: column; padding: 0 var(--screen-margin); }
+  .progress-zone { padding: var(--sp-2xl) 0 var(--sp-xl); }
+  .progress-zone .copy { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: var(--sp-xs); }
+  .progress-zone .step { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-bottom: var(--sp-lg); }
+  .track { height: 6px; background: var(--action-tint); border-radius: 3px; overflow: hidden; }
+  .track .fill { width: 58%; height: 100%; background: var(--action-bright); border-radius: 3px; }
+  .track-meta { display: flex; justify-content: space-between; margin-top: var(--sp-sm); font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+  .track-meta .pct { color: var(--action-ink); font-weight: 700; }
+  .ad-slot {
+    flex: 1; max-height: 438px; background: var(--surface-subtle);
+    border: 1px dashed var(--border-strong); border-radius: var(--r-lg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: var(--sp-sm); text-align: center; padding: var(--sp-xl);
+  }
+  .ad-slot .tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-tertiary); border: 1px solid var(--border-strong); border-radius: var(--r-sm); padding: 3px 8px;
+  }
+  .ad-slot .why { font-size: 13px; line-height: 18px; color: var(--text-secondary); max-width: 250px; }
+  .skip-note { text-align: center; font-size: 13px; color: var(--text-tertiary); padding: var(--sp-lg) 0 var(--sp-xl); }
+  .skip-note b { color: var(--accent-ink); font-weight: 700; }
+
+  /* ---------- 3 · RESULTADO / RECOMENDACIÓN (D27 inverted hierarchy) ---------- */
+  .res-scroll { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  .share-canvas {
+    margin: 0 var(--screen-margin);
+    padding: var(--sp-xl) var(--sp-xl) var(--sp-lg);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-lg); box-shadow: var(--shadow-sm);
+  }
+  .share-canvas .meta { font-size: 13px; line-height: 18px; color: var(--text-tertiary); margin-bottom: var(--sp-sm); }
+  .share-canvas h1 { font-size: 32px; line-height: 36px; font-weight: 800; letter-spacing: -0.02em; }
+
+  /* hero kicker: names the scheme of the hero combo (label style, neutral) */
+  .hero-kicker {
+    margin-top: var(--sp-lg); font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary);
+  }
+
+  /* PROTAGONIST: the recommended combo (big) */
+  .combo {
+    margin-top: var(--sp-sm); display: flex; height: 150px;
+    border-radius: var(--r-md); overflow: hidden; box-shadow: 0 0 0 1px var(--border);
+  }
+  .combo .seg { position: relative; display: flex; align-items: flex-end; padding: var(--sp-sm); }
+  .combo .seg .tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: var(--r-pill); backdrop-filter: blur(2px);
+  }
+  .combo-caption { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-top: var(--sp-md); }
+  .combo-caption b { color: var(--text-primary); font-weight: 600; }
+
+  /* SECONDARY: the raw sneaker palette */
+  .zapas-line {
+    display: flex; align-items: center; gap: var(--sp-md);
+    margin-top: var(--sp-lg); padding-top: var(--sp-lg); border-top: 1px solid var(--border);
+  }
+  .zapas-line .strip { display: flex; width: 108px; height: 30px; border-radius: var(--r-sm); overflow: hidden; box-shadow: 0 0 0 1px var(--border); flex: none; }
+  .zapas-line .strip i { flex: 1; position: relative; }
+  .zapas-line .strip i.base::after {
+    content: ""; position: absolute; left: 50%; bottom: 3px; transform: translateX(-50%);
+    width: 5px; height: 5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1.5px var(--accent-ink);
+  }
+  .zapas-line .txt { flex: 1; min-width: 0; }
+  .badge-base {
+    display: inline-block; font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink);
+    background: var(--accent-tint); border-radius: var(--r-sm); padding: 2px 8px; margin-bottom: 2px;
+  }
+  .zapas-line .desc { font-size: 13px; line-height: 18px; color: var(--text-secondary); }
+  .zapas-line .desc b { color: var(--text-primary); font-weight: 600; }
+
+  .watermark { margin-top: var(--sp-lg); text-align: right; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-disabled); }
+  .watermark span { color: var(--accent-ink); }
+
+  /* "otras combis" harmony rows (reused from result.html) */
+  .section { padding: var(--sp-2xl) var(--screen-margin) 0; }
+  .section h2 { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: var(--sp-xs); }
+  .section .sub { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-bottom: var(--sp-lg); }
+  .harmony { display: flex; align-items: center; gap: var(--sp-lg); padding: var(--sp-lg) 0; border-top: 1px solid var(--border); min-height: 44px; }
+  .harmony:last-of-type { border-bottom: 1px solid var(--border); }
+  .harmony .name { flex: 1; }
+  .harmony .name .n { font-size: 16px; line-height: 22px; font-weight: 600; }
+  .harmony .name .d { font-size: 13px; line-height: 18px; color: var(--text-tertiary); }
+  .harmony .strip { display: flex; width: 132px; height: 44px; border-radius: var(--r-sm); overflow: hidden; box-shadow: 0 0 0 1px var(--border); }
+  .harmony .strip i { flex: 1; }
+  .harmony .chev { color: var(--action-ink); font-size: 18px; font-weight: 700; }
+
+  .cta-block { padding: var(--sp-2xl) var(--screen-margin) var(--sp-lg); display: flex; flex-direction: column; gap: var(--sp-md); }
+
+  .callout { position: absolute; z-index: 5; pointer-events: none; border: 1.5px dashed var(--accent-bright); border-radius: var(--r-sm); }
+  .callout .lbl {
+    position: absolute; top: 100%; left: 0; margin-top: 6px; white-space: nowrap;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent-ink); background: var(--accent-tint); border-radius: var(--r-sm); padding: 2px 6px;
+  }
+  .callout .lbl.right { left: auto; right: 0; }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>Modo zapas — FINAL para implementar (F2S)</h1>
+    <p>Referencia de implementación: <strong>Home split</strong> (D26 enmendada: «Mi fit» → «Mi pikete»)
+       y el <strong>flujo interno de zapas</strong> con la jerarquía invertida ratificada (D27): la
+       recomendación es la protagonista, la paleta cruda baja a tira secundaria, el héroe es el
+       <strong>contraste (complementario)</strong>, sin CTA de compartir ni de guardar (D25 / F7 roadmap).
+       Spec de componentes: <code>docs/design/2026-07-11_1030_F2S_sneaker-flow-final-spec.md</code>.</p>
+    <div class="decision">F2S · FINAL — D26 (enmendada) + D27 — 4 pantallas</div>
+  </div>
+
+  <div class="row">
+
+    <!-- ============ 0 · HOME (split 50/50 · D26 as amended) ============ -->
+    <div class="stage">
+      <div class="stage-tag">0 · Home <span>· split 50/50, labels finales</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+
+        <div class="a-top top-row">
+          <div class="lockup">
+            <svg width="18" height="18" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(6,0)">
+                <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+                <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#17B598"/>
+                <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+              </g>
+            </svg>
+            <div class="word"><span class="pikete">Pikete</span><span class="maker">Maker</span></div>
+          </div>
+          <div class="help-btn" title="Cómo hacer la foto">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.9c-.7.3-1 .8-1 1.6"/>
+              <circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="a-body">
+          <div class="split">
+            <!-- ZONE 1 · Mis zapas (mint.tint wash) -->
+            <div class="zone sneaker">
+              <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 30 v-7 a2 2 0 0 1 2-2 h7 l6 5 l11 2 c7 1 12 3 12 6 v1 a2 2 0 0 1-2 2 H6 a2 2 0 0 1-2-2 Z"/>
+                <path d="M13 21 l3 6"/>
+                <path d="M19 26 l3 5"/>
+                <path d="M4 33 h38"/>
+              </svg>
+              <h2>Mis zapas</h2>
+              <div class="cap">Monta el fit desde tus zapas</div>
+              <div class="go">
+                Empezar
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+
+            <div class="split-divider"></div>
+
+            <!-- ZONE 2 · Mi pikete (purple.tint wash — D26 Home-only exception) -->
+            <div class="zone outfit">
+              <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 7 l-4 2 l-8 5 l4 7 l4 -3 v22 h20 v-22 l4 3 l4 -7 l-8 -5 l-4 -2 c0 4 -12 4 -12 0 Z"/>
+              </svg>
+              <h2>Mi pikete</h2>
+              <div class="cap">Saca la paleta de tu fit</div>
+              <div class="go" style="color:var(--accent-ink)">
+                Empezar
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+
+        <div class="callout" style="bottom: 190px; left: 110px; width: 170px; height: 46px;">
+          <div class="lbl">«Mi pikete» — D27 enmienda D26</div>
+        </div>
+      </div>
+      <div class="stage-note">
+        <strong>Home — Variante A ratificada (D26), labels finales.</strong> Dos zonas iguales full-height:
+        <strong>Mis zapas</strong> arriba (<code>mint.tint</code>) y <strong>Mi pikete</strong> abajo
+        (<code>purple.tint</code> — excepción D8 ratificada SOLO en el Home). Labels en <code>display</code>,
+        captions en <code>body</code>, glifos 84px en <code>ink</code>. Lockup + re-entrada del tutorial en la
+        barra fina superior, sin cambios. Único cambio vs el snapshot 2026-07-10: el label inferior pasa de
+        «Mi fit» a <strong>«Mi pikete»</strong> (D27 — apoya la palabra de marca).
+      </div>
+    </div>
+
+    <!-- ============ 1 · CAPTURA (confirm) ============ -->
+    <div class="stage">
+      <div class="stage-tag">1 · Captura <span>· confirmar foto</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="appbar">
+          <div class="back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg></div>
+          <div class="title">Mis zapas</div>
+        </div>
+
+        <div class="confirm-body">
+          <h2>¿Se ven bien tus zapas?</h2>
+          <div class="photo">
+            <svg class="kick" viewBox="0 0 190 96" fill="none" stroke="#B7B0A4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 66 v-20 a4 4 0 0 1 4-4 h20 l16 12 l30 5 c20 3 40 7 52 16 v6 a5 5 0 0 1-5 5 H18 a4 4 0 0 1-4-4 Z"/>
+              <path d="M40 44 l8 15" /><path d="M58 54 l7 13" /><path d="M78 60 l6 12" />
+              <path d="M14 74 h150" stroke="#9A9488"/>
+            </svg>
+            Foto de tus zapas (preview)
+          </div>
+          <div class="hint-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5h-6c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg>
+            <span>Fondo liso y bien iluminadas = colores más finos.</span>
+          </div>
+          <div style="height: var(--sp-xl);"></div>
+          <button class="btn btn-primary">Dame la combi</button>
+          <div style="height: var(--sp-md);"></div>
+          <button class="btn btn-secondary">Otra foto</button>
+        </div>
+        <div class="homebar"></div>
+
+        <div class="callout" style="top: 96px; left: 12px; right: 12px; height: 30px;">
+          <div class="lbl">App-bar contextual «MIS ZAPAS» (D27)</div>
+        </div>
+      </div>
+      <div class="stage-note">
+        <strong>Captura — reutiliza el flujo de outfit (<code>photo_source_sheet.dart</code> + <code>capture_screen.dart</code>).</strong>
+        Misma hoja de origen (cámara / galería) con copy de zapas («¿De dónde sacamos las zapas?»), misma pantalla de confirmar.
+        Copy product-mode: título <em>«¿Se ven bien tus zapas?»</em>, hint <em>«Fondo liso…»</em> (aquí pesa MÁS que en outfit).
+        <strong>CTAs en full slang (D27):</strong> primario <em>«Dame la combi»</em>, secundario <em>«Otra foto»</em>. Kicker de
+        modo <em>«MIS ZAPAS»</em> en neutro (ratificado D27 — no el wordmark). Cámara del sistema (image_picker), la guía vive en el copy.
+      </div>
+    </div>
+
+    <!-- ============ 2 · ANALIZANDO ============ -->
+    <div class="stage">
+      <div class="stage-tag">2 · Analizando <span>· hueco rewarded ad (F8)</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="analyzing-body">
+          <div class="progress-zone">
+            <div class="copy">Sacando los colores de tus zapas…</div>
+            <div class="step">Aislando las zapas del fondo</div>
+            <div class="track"><div class="fill"></div></div>
+            <div class="track-meta"><span>analizando</span><span class="pct">58%</span></div>
+          </div>
+          <div class="ad-slot">
+            <div class="tag">Hueco rewarded video · F8 · AdMob</div>
+            <div class="why">Idéntico al modo outfit: contenedor máx. 4:5 en superficie sutil, progreso siempre visible
+              arriba y avanzando. El ad acompaña la espera, no la bloquea.</div>
+          </div>
+          <div class="skip-note">Tu combi aparece en cuanto termine — <b>ya casi</b></div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <div class="stage-note">
+        <strong>Analizando — reutiliza tal cual la pantalla de outfit.</strong> Solo cambia el copy:
+        <em>«Sacando los colores de tus zapas…»</em> y el paso <em>«Aislando las zapas del fondo»</em>. Progreso en mint
+        (tint + bright, no textual), % en mint ink, morado firma una sola vez (<em>«ya casi»</em>). El hueco del rewarded ad
+        es el mismo (D22; en product-mode la espera es incluso más corta — sin capas de persona — y el ad la cubre).
+        Sin cambios vs el snapshot 2026-07-10.
+      </div>
+    </div>
+
+    <!-- ============ 3 · RESULTADO / RECOMENDACIÓN (D27) ============ -->
+    <div class="stage">
+      <div class="stage-tag">3 · Resultado <span>· jerarquía invertida ratificada (D27)</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="appbar">
+          <div class="back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg></div>
+          <div class="title">Mis zapas</div>
+        </div>
+
+        <div class="res-scroll">
+          <!-- SHARE-CANVAS shell reused — the RECOMMENDATION is the hero (D27) -->
+          <div class="share-canvas">
+            <div class="meta">Tus zapas · 11 jul 2026</div>
+            <h1>Combina tu ropa con estas zapas</h1>
+
+            <!-- hero kicker: the hero combo IS the complementary (D27) -->
+            <div class="hero-kicker">La combi · Contraste</div>
+
+            <!-- PROTAGONIST: the recommended combo, big, with role labels (D27 keeps them) -->
+            <div class="combo">
+              <div class="seg" style="flex:1.15; background:#D6352E;">
+                <span class="tag" style="color:#fff; background:rgba(0,0,0,0.22);">tus zapas</span>
+              </div>
+              <div class="seg" style="flex:1.55; background:#2E9E86;">
+                <span class="tag" style="color:#fff; background:rgba(0,0,0,0.22);">tu ropa</span>
+              </div>
+              <div class="seg" style="flex:0.9; background:#EDE9E1;">
+                <span class="tag" style="color:#3A3730; background:rgba(255,255,255,0.55);">+ crema</span>
+              </div>
+            </div>
+            <div class="combo-caption"><b>El verde-azulado hace saltar el rojo de tus zapas.</b> Súmale crema o negro y vas fino.</div>
+
+            <!-- SECONDARY: the raw sneaker palette (small), with BASE (D5) -->
+            <div class="zapas-line">
+              <div class="strip">
+                <i class="base" style="background:#D6352E;"></i>
+                <i style="background:#EDE9E1;"></i>
+                <i style="background:#23211F;"></i>
+                <i style="background:#B98A5E;"></i>
+                <i style="background:#8A8F98;"></i>
+              </div>
+              <div class="txt">
+                <span class="badge-base">Base · rojo</span>
+                <div class="desc">La <b>paleta de tus zapas</b>. El rojo manda la combi (D5).</div>
+              </div>
+            </div>
+
+            <div class="watermark">piketemaker<span>.</span></div>
+          </div>
+
+          <!-- OTRAS COMBIS: the 3 remaining harmonies (the complementary IS the hero, not repeated) -->
+          <div class="section">
+            <h2>Otras combis</h2>
+            <div class="sub">Toca una y mira looks reales con esos colores.</div>
+
+            <div class="harmony">
+              <div class="name"><div class="n">Tono sobre tono</div><div class="d">Cálidos, suave</div></div>
+              <div class="strip"><i style="background:#D62E6E"></i><i style="background:#D6352E"></i><i style="background:#D6702E"></i></div>
+              <div class="chev">›</div>
+            </div>
+            <div class="harmony">
+              <div class="name"><div class="n">Equilibrada</div><div class="d">3 colores, atrevida</div></div>
+              <div class="strip"><i style="background:#D6352E"></i><i style="background:#2ED635"></i><i style="background:#352ED6"></i></div>
+              <div class="chev">›</div>
+            </div>
+            <div class="harmony">
+              <div class="name"><div class="n">Contraste con matiz</div><div class="d">Punch, más fino</div></div>
+              <div class="strip"><i style="background:#D6352E"></i><i style="background:#2ED6A0"></i><i style="background:#2E86D6"></i></div>
+              <div class="chev">›</div>
+            </div>
+          </div>
+
+          <!-- CTAs: NO share, NO save (D25 / F7 roadmap). Full slang (D27). -->
+          <div class="cta-block">
+            <button class="btn btn-primary">Enséñame fits así</button>
+            <button class="btn btn-secondary">Otras zapas</button>
+          </div>
+        </div>
+        <div class="homebar"></div>
+
+        <div class="callout" style="top: 148px; left: 12px; right: 12px; height: 196px;">
+          <div class="lbl">Héroe = la combi · contraste (D27)</div>
+        </div>
+      </div>
+      <div class="stage-note">
+        <strong>Resultado — jerarquía invertida RATIFICADA (D27).</strong> El combo recomendado (contraste/complementario,
+        la apuesta fuerte) es el elemento más grande y colorido; la paleta cruda baja a tira secundaria con badge BASE (D5).
+        Micro-labels <em>«tus zapas» / «tu ropa»</em> se mantienen (D27). «Otras combis» = las <strong>3 armonías restantes</strong>
+        (el contraste ya es el héroe, no se repite). <strong>Sin CTA de compartir ni de guardar</strong> (D25; guardar → F7 roadmap,
+        «mis paletas/mis recomendaciones», fuera de esta fase). CTAs full slang: <em>«Enséñame fits así»</em> (deep-link F5-lite con
+        la combi elegida) y <em>«Otras zapas»</em> (vuelve a captura). Disciplina D8 intacta: mint solo en lo pulsable, morado en
+        2 dosis (badge BASE + watermark) — las pantallas internas NO heredan la excepción de tints del Home.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

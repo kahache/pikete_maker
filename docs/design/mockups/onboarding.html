@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Onboarding F13 (synced with app · D12 step 2)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json · SYNCED-WITH-APP MOCKUP
+     Source of truth for layout/copy:
+     app/lib/features/onboarding/onboarding_screen.dart
+     (2-page PageView · 2-dot indicator · skippable from both pages).
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C; --action-bright: #43E5C2; --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1; --accent-bright: #A78BFA; --accent-tint: #EFEAFB;
+    --logo-turquoise: #17B598;
+
+    --bg: #FFFFFF; --surface: #FFFFFF; --surface-subtle: #F7F5FB;
+    --border: #E9E6F2; --border-strong: #D9D3E6;
+    --text-primary: #1C1826; --text-secondary: #544E68;
+    --text-tertiary: #6B6383; --text-disabled: #8F87A3;
+    --action-on-fill: #FFFFFF;
+    --error: #B3261E; --success: #2E7D32;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px; --sp-3xl: 48px;
+    --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary);
+    display: flex; flex-wrap: wrap; gap: 40px; justify-content: center;
+    align-items: flex-start; padding: 40px 16px 80px;
+  }
+  .stage { width: 390px; }
+  .stage-note { margin-top: 14px; padding: 0 4px; font-size: 12px; line-height: 17px; color: var(--text-tertiary); }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+  .phone {
+    width: 390px; min-height: 844px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 28px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: var(--shadow-md); position: relative;
+  }
+  .statusbar {
+    height: 44px; flex: none; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 var(--screen-margin);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+  }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 6px auto 8px; }
+  .btn {
+    height: 56px; border-radius: var(--r-pill); display: flex; align-items: center;
+    justify-content: center; font-size: 16px; font-weight: 700; border: none;
+    cursor: pointer; width: 100%; font-family: var(--font-sans);
+  }
+  .btn-primary { background: var(--action-ink); color: var(--action-on-fill); }
+
+  /* overlay row: dots centered + Saltar right (44px targets, on top of PageView) */
+  .onb-overlay {
+    position: absolute; top: 44px; left: 0; right: 0; height: 44px; z-index: 3;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dots { display: flex; align-items: center; gap: var(--sp-sm); }
+  .dot { width: 6px; height: 6px; border-radius: var(--r-pill); background: var(--border-strong); }
+  .dot.active { width: 20px; background: var(--action-ink); }
+  .skip {
+    position: absolute; right: var(--sp-sm); top: 0; height: 44px;
+    display: flex; align-items: center; padding: 0 var(--sp-md);
+    font-size: 13px; color: var(--text-tertiary); cursor: pointer;
+  }
+
+  .page { flex: 1; display: flex; flex-direction: column; padding: 0 var(--screen-margin) var(--sp-xl); }
+  .display { font-size: 32px; line-height: 38px; font-weight: 800; letter-spacing: -0.02em; }
+  .body-txt { font-size: 15px; line-height: 22px; color: var(--text-secondary); }
+  .caption { font-size: 13px; line-height: 18px; color: var(--text-secondary); }
+  .spacer-1 { flex: 1; } .spacer-2 { flex: 2; }
+
+  .lockup { display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .lockup .word { font-weight: 800; font-size: 16px; letter-spacing: -0.01em; }
+  .lockup .word .pikete { color: var(--accent-ink); }
+  .lockup .word .maker { color: var(--logo-turquoise); }
+
+  /* ONB-2 pieces */
+  .badge-tippro {
+    display: inline-block; font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-ink); background: var(--accent-tint);
+    border-radius: var(--r-sm); padding: 3px 8px;
+  }
+  .examples { display: flex; gap: var(--sp-md); }
+  .ex-card {
+    flex: 1; height: 120px; background: var(--surface-subtle);
+    border-radius: var(--r-md); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: var(--sp-sm);
+  }
+  .ex-card.good { border: 1.5px solid var(--success); }
+  .ex-card.bad  { border: 1px solid var(--border); }
+  .ex-label { display: flex; align-items: center; gap: var(--sp-xs);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+  .ex-card.good .ex-label { color: var(--success); }
+  .ex-card.bad  .ex-label { color: var(--text-tertiary); }
+
+  .tip { display: flex; align-items: flex-start; gap: var(--sp-sm); margin-bottom: var(--sp-sm); }
+  .tip svg { flex: none; margin-top: 2px; color: var(--action-ink); }
+  .tip .t { font-size: 15px; line-height: 22px; color: var(--text-secondary); }
+  .tip.hero .t { color: var(--text-primary); font-weight: 600; }
+</style>
+</head>
+<body>
+
+  <!-- ================= ONB-1 · Bienvenida ================= -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="onb-overlay">
+        <div class="dots"><div class="dot active"></div><div class="dot"></div></div>
+        <div class="skip">Saltar</div>
+      </div>
+
+      <div class="page" style="padding-top: 48px;">
+        <div class="spacer-2"></div>
+        <!-- #58b: block scaled +14% (symbol 112→128 in code); mockup is a
+             reduced representation, so values are scaled proportionally, not 1:1. -->
+        <div class="lockup">
+          <svg width="30" height="30" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(6,0)">
+              <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+              <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#17B598"/>
+              <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+            </g>
+          </svg>
+          <div class="word"><span class="pikete" style="color:var(--accent-ink);font-weight:800;font-size:18px;">Pikete</span><span class="maker" style="color:var(--logo-turquoise);font-weight:800;font-size:18px;">Maker</span></div>
+        </div>
+        <div class="spacer-1"></div>
+        <div class="display">Los colores de tu fit,<br>con criterio.</div>
+        <div class="body-txt" style="margin-top: var(--sp-md);">Hazte una foto y te digo tu paleta y con qué combina.</div>
+        <div class="spacer-2"></div>
+        <button class="btn btn-primary">Empezar</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>ONB-1 · Welcome — synced with <code>onboarding_screen.dart</code>.</strong>
+      Page 1 of a 2-page PageView. Zero purple accent (reserved); mint only on the
+      CTA. "Empezar" advances to ONB-2 (does not exit). "Saltar" (caption /
+      textTertiary, 44px target) marks <code>onboardingSeen</code> and returns to
+      Home. The 2-dot indicator (active pill in action mint) tells the user
+      "this is short" — added at hi-fi per skeleton spec §2.
+    </div>
+  </div>
+
+  <!-- ================= ONB-2 · Tip pro ================= -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="onb-overlay">
+        <div class="dots"><div class="dot"></div><div class="dot active"></div></div>
+        <div class="skip">Saltar</div>
+      </div>
+
+      <div class="page" style="padding-top: 32px;">
+        <div><span class="badge-tippro">Tip pro</span></div>
+        <div class="display" style="margin-top: var(--sp-md);">El truco para<br>clavar los colores</div>
+
+        <div class="examples" style="margin-top: var(--sp-xl);">
+          <div class="ex-card good">
+            <!-- Icons.person 40 · textTertiary (schematic silhouette, no photos) -->
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="#6B6383">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.3 3.6-5 8-5s8 1.7 8 5v1H4z"/>
+            </svg>
+            <div class="ex-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="3"><path d="M4 12.5 10 18 20 6"/></svg>
+              BIEN
+            </div>
+          </div>
+          <div class="ex-card bad">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="#6B6383">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.3 3.6-5 8-5s8 1.7 8 5v1H4z"/>
+            </svg>
+            <div class="ex-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6383" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg>
+              MAL
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: var(--sp-xl);">
+          <div class="tip hero">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12.5 11 15.5 16 9.5"/></svg>
+            <div class="t">Ponte frente a una pared lisa de un solo color.</div>
+          </div>
+          <div class="tip">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12.5 11 15.5 16 9.5"/></svg>
+            <div class="t">Que se te vea el fit entero, de arriba abajo.</div>
+          </div>
+          <div class="tip">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12.5 11 15.5 16 9.5"/></svg>
+            <div class="t">Un paso atrás y con buena luz.</div>
+          </div>
+        </div>
+
+        <div class="caption" style="margin-top: var(--sp-md);">Cuanto más liso el fondo, mejor te leo los colores.</div>
+
+        <div class="spacer-1"></div>
+        <button class="btn btn-primary">Hacer mi primera foto</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>ONB-2 · Pro tip — synced with the app.</strong>
+      The single purple dose on this screen is the TIP PRO badge (accent tint +
+      ink). Tip icons are check-circles in action ink; the hero point (plain
+      background — the technical de-risking) carries textPrimary + w600.
+      "Hacer mi primera foto" marks <code>onboardingSeen</code> and chains
+      straight into the photo-source sheet (warm user shoots, doesn't browse).
+      NOTE (as implemented): the BIEN/MAL cards show the same neutral person
+      glyph in both, differing only by frame and label — the illustrated
+      wall-vs-cluttered-room miniatures from onboarding-tutorial §2.3 are NOT
+      implemented yet. This mockup reflects the app, not the spec; the gap is
+      logged in the UX audit (issue #26 evidence).
+    </div>
+  </div>
+
+</body>
+</html>

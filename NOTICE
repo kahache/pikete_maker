@@ -1,0 +1,38 @@
+PiketeMaker
+Copyright (c) 2026 Javi Brines
+
+This repository is licensed under the PolyForm Noncommercial License 1.0.0
+(see LICENSE). The following third-party components are used under their
+own licenses:
+
+--------------------------------------------------------------------------
+MediaPipe Selfie Multiclass segmentation model
+(selfie_multiclass_256x256.tflite)
+--------------------------------------------------------------------------
+Copyright Google LLC. Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+
+The model file is NOT redistributed in this repository. It is downloaded at
+build time from Google's official distribution URL by the script
+app/tool/fetch_models.sh (SHA-256 pinned); the app performs no downloads at
+runtime. Release APK/AAB binaries built from this repository DO bundle the
+model, so binary distributions carry this Apache-2.0 attribution.
+
+--------------------------------------------------------------------------
+tflite_flutter (Dart/Flutter TensorFlow Lite bindings)
+--------------------------------------------------------------------------
+Licensed under the Apache License, Version 2.0. Pulled as a pub.dev
+dependency at build time; not vendored in this repository.
+
+--------------------------------------------------------------------------
+Fonts: Archivo Black, Inter
+--------------------------------------------------------------------------
+Licensed under the SIL Open Font License 1.1. Verbatim license texts are
+bundled alongside the font assets in docs/design/logo/assets/fonts/
+(OFL-ArchivoBlack.txt, OFL-Inter.txt).
+
+--------------------------------------------------------------------------
+Sample photos
+--------------------------------------------------------------------------
+A small number of Creative Commons sample photos are included for testing;
+per-photo sources and licenses are listed in ATTRIBUTION.md.

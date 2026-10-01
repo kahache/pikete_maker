@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — F6 story · concepts CON FOTO (D7+D8+D9)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json
+     Two NEW 9:16 story concepts for issue #60 (CEO redirect):
+       · Concept 1 "Con foto"  — the user's own photo is the hook.
+       · Concept 2 "Combina con" — the color RECOMMENDATION is the hero.
+     Rules honored: D7 (white + radical simplicity), D8 (mint = 0 doses
+     here, nothing is tappable; purple <= 2 doses), D9 (tinted neutrals),
+     Principle 2 (the user's color/photo is the protagonist).
+     Canvas = 360x640 CSS px, a 1:3 stand-in for the 1080x1920 export.
+     ============================================================ */
+  :root {
+    --accent-ink: #6C3FD1;      /* brand.purple.ink — 6.42:1 */
+    --accent-tint: #EFEAFB;
+    --bg: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --border-strong: #D9D3E6;
+    --text-primary: #1C1826;    /* 17.38:1 */
+    --text-secondary: #544E68;  /* 7.88:1 */
+    --text-tertiary: #6B6383;   /* 5.62:1 */
+    --text-disabled: #8F87A3;   /* watermark / placeholder only */
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #EDEBF2;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    display: flex; flex-wrap: wrap; gap: 48px;
+    justify-content: center; align-items: flex-start;
+    padding: 48px 24px 96px;
+  }
+  .stage { width: 360px; }
+  .stage h3 {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+    color: var(--text-secondary); margin-bottom: 4px;
+  }
+  .stage .lead { font-size: 12px; line-height: 17px; color: var(--text-tertiary); margin-bottom: 16px; }
+  .stage-note {
+    margin-top: 14px; padding: 0 2px;
+    font-size: 11.5px; line-height: 17px; color: var(--text-tertiary);
+  }
+  .stage-note b { color: var(--text-secondary); font-weight: 600; }
+
+  /* ---- the 9:16 export canvas ---- */
+  .canvas {
+    position: relative;
+    width: 360px; height: 640px;    /* 9:16 · stands in for 1080x1920 */
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(28,24,38,0.14);
+  }
+  /* platform-unsafe guides (top/bottom ~250/1920 => ~83px here) */
+  .safe {
+    position: absolute; left: 0; right: 0; height: 83px;
+    pointer-events: none; z-index: 5;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: rgba(140,132,163,0.55);
+    background: repeating-linear-gradient(-45deg,
+      rgba(140,132,163,0.05) 0 6px, rgba(140,132,163,0) 6px 12px);
+  }
+  .safe.top { top: 0; border-bottom: 1px dashed rgba(140,132,163,0.4); align-items: flex-end; padding-bottom: 4px; }
+  .safe.bot { bottom: 0; border-top: 1px dashed rgba(140,132,163,0.4); align-items: flex-start; padding-top: 4px; }
+
+  /* content lives inside the safe band */
+  .frame {
+    position: absolute; left: 0; right: 0; top: 83px; bottom: 83px;
+    padding: 12px 22px 6px;
+    display: flex; flex-direction: column;
+  }
+
+  /* ---- shared bits ---- */
+  .eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--text-tertiary);
+  }
+  .title { font-size: 26px; line-height: 30px; font-weight: 800; letter-spacing: -0.02em; }
+  .meta { font-size: 12px; line-height: 16px; color: var(--text-tertiary); margin-top: 2px; }
+  .hex { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.02em; color: var(--text-tertiary); }
+
+  .wm { display: block; height: 22px; width: auto; }
+  .wm-row { margin-top: auto; display: flex; align-items: flex-end; justify-content: flex-end; }
+
+  /* photo placeholder (stands in for the user's real photo) */
+  .photo {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 30% 20%, #E7E3EF 0%, #D7D2E2 45%, #C4BFD3 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .photo::after {
+    content: "foto usuario";
+    font-size: 11px; letter-spacing: 0.04em; color: var(--text-disabled);
+    background: rgba(255,255,255,0.55);
+    padding: 3px 9px; border-radius: var(--r-pill);
+  }
+  /* a faint head-and-shoulders hint so it reads as a person crop */
+  .photo .figure {
+    position: absolute; bottom: -6%; left: 50%; transform: translateX(-50%);
+    width: 62%; height: 78%;
+    background:
+      radial-gradient(50% 34% at 50% 0%, rgba(255,255,255,0.35) 0 60%, rgba(255,255,255,0) 61%),
+      linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0.05));
+    border-radius: 50% 50% 0 0 / 40% 40% 0 0;
+  }
+
+  /* ============ CONCEPT 1 · CON FOTO ============ */
+  .c1 .head { display: flex; align-items: baseline; justify-content: space-between; }
+  .c1 .photo {
+    margin-top: 12px;
+    width: 100%; flex: 1 1 auto;
+    border-radius: var(--r-lg);
+    box-shadow: 0 1px 3px rgba(28,24,38,0.08);
+  }
+  /* palette as a filmstrip tucked under the hero photo */
+  .c1 .strip {
+    margin-top: 12px; display: flex; height: 46px;
+    border-radius: var(--r-sm); overflow: hidden;
+    box-shadow: 0 0 0 1px var(--border);
+  }
+  .c1 .strip i { display: block; height: 100%; }
+  .c1 .baseline {
+    margin-top: 8px; display: flex; align-items: center; gap: 7px;
+  }
+  .c1 .basebadge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-ink); background: var(--accent-tint);
+    border-radius: var(--r-sm); padding: 2px 7px;   /* PURPLE dose 1 */
+  }
+  .c1 .basehex { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); font-weight: 600; }
+  .c1 .basedesc { font-size: 11px; color: var(--text-tertiary); }
+
+  /* ============ CONCEPT 2 · COMBINA CON ============ */
+  .c2 .title { font-size: 30px; line-height: 32px; }
+  .c2 .sub { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-top: 6px; }
+  .c2 .pair {
+    margin-top: 18px; position: relative;
+    display: flex; gap: 12px;
+  }
+  .c2 .chip { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .c2 .block {
+    width: 100%; height: 150px; border-radius: var(--r-md);
+    box-shadow: 0 0 0 1px var(--border), 0 4px 16px rgba(28,24,38,0.10);
+  }
+  .c2 .chip .lab { margin-top: 8px; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); }
+  .c2 .chip .hx { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); margin-top: 2px; font-weight: 600; }
+  .c2 .plus {
+    position: absolute; top: 62px; left: 50%; transform: translate(-50%,0);
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--bg); border: 1px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 600; color: var(--text-secondary);
+    box-shadow: 0 2px 8px rgba(28,24,38,0.10); z-index: 2;
+  }
+  .c2 .harmony {
+    margin-top: 16px; text-align: center;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .c2 .rule { margin-top: 16px; border-top: 1px solid var(--border); }
+  .c2 .fromfit {
+    margin-top: 12px; display: flex; align-items: center; gap: 10px;
+  }
+  .c2 .thumb {
+    width: 40px; height: 40px; border-radius: var(--r-sm); flex: none;
+    box-shadow: 0 0 0 1px var(--border);
+  }
+  .c2 .thumb::after { content: none; }   /* no placeholder label at thumb size */
+  .c2 .fromfit .col { flex: 1; }
+  .c2 .fromfit .lab { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 4px; }
+  .c2 .mini { display: flex; height: 16px; border-radius: 5px; overflow: hidden; box-shadow: 0 0 0 1px var(--border); }
+  .c2 .mini i { display: block; height: 100%; }
+</style>
+</head>
+<body>
+
+  <!-- shared watermark asset (logo/assets/watermark-story.svg, paths inlined) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="wm-story" viewBox="0 0 438.5 96">
+      <path d="M43.6,12 A26,26 0 0 1 43.6,64 L43.6,48 A10,10 0 0 0 43.6,28 Z" fill="#8F87A3"/>
+      <path d="M26,12 L44,12 L44,75 A9,9 0 0 1 35,84 A9,9 0 0 1 26,75 Z" fill="#8F87A3"/>
+      <circle cx="43.6" cy="38" r="10" fill="#6C3FD1"/>
+      <g transform="translate(84,70.0)"><path d="M2.84 0.00V-44.00H20.84Q25.94 -44.00 29.66 -42.19Q33.38 -40.37 35.40 -37.04Q37.42 -33.70 37.42 -29.13Q37.42 -24.57 35.38 -21.23Q33.35 -17.88 29.62 -16.06Q25.88 -14.25 20.78 -14.25H8.85V-23.05H20.10Q22.25 -23.05 23.80 -23.80Q25.35 -24.55 26.19 -25.91Q27.04 -27.28 27.04 -29.13Q27.04 -31.01 26.19 -32.35Q25.35 -33.70 23.80 -34.45Q22.25 -35.19 20.10 -35.19H13.46V0.00Z M40.27 0.00V-31.18H50.45V0.00ZM45.34 -34.21Q42.89 -34.21 41.31 -35.67Q39.73 -37.13 39.73 -39.36Q39.73 -41.59 41.31 -43.04Q42.89 -44.48 45.32 -44.48Q47.78 -44.48 49.36 -43.04Q50.94 -41.60 50.94 -39.35Q50.94 -37.12 49.36 -35.67Q47.78 -34.21 45.34 -34.21Z M64.05 -8.08V-20.10H65.17L74.67 -31.18H86.37L72.67 -15.12H70.05ZM54.89 0.00V-44.00H65.07V0.00ZM75.16 0.00 66.46 -12.87 73.10 -19.99 86.88 0.00Z M101.45 0.71Q96.67 0.71 93.04 -1.38Q89.41 -3.46 87.40 -7.15Q85.38 -10.84 85.38 -15.58Q85.38 -20.35 87.41 -24.03Q89.43 -27.71 92.99 -29.80Q96.55 -31.89 101.18 -31.89Q104.70 -31.89 107.59 -30.72Q110.49 -29.55 112.59 -27.40Q114.70 -25.25 115.85 -22.31Q116.99 -19.37 116.99 -15.82V-13.09H88.67V-19.15H112.24L107.59 -17.92Q107.59 -19.94 106.84 -21.39Q106.10 -22.84 104.73 -23.62Q103.36 -24.40 101.43 -24.40Q99.53 -24.40 98.15 -23.62Q96.77 -22.84 96.03 -21.39Q95.28 -19.94 95.28 -17.92V-13.43Q95.28 -11.36 96.05 -9.82Q96.82 -8.28 98.29 -7.45Q99.75 -6.62 101.80 -6.62Q103.30 -6.62 104.48 -7.04Q105.66 -7.45 106.46 -8.21Q107.27 -8.96 107.63 -9.98H116.78Q116.21 -6.84 114.06 -4.44Q111.90 -2.03 108.64 -0.66Q105.38 0.71 101.45 0.71Z M139.68 -31.18V-23.33H117.77V-31.18ZM123.09 -39.69H133.27V-10.48Q133.27 -8.99 133.87 -8.42Q134.47 -7.86 136.16 -7.86Q136.93 -7.86 138.05 -7.86Q139.17 -7.86 139.68 -7.86V0.00Q138.89 0.00 137.27 0.00Q135.65 0.00 133.94 0.00Q128.31 0.00 125.70 -2.12Q123.09 -4.23 123.09 -8.78Z M156.96 0.71Q152.19 0.71 148.56 -1.38Q144.93 -3.46 142.92 -7.15Q140.90 -10.84 140.90 -15.58Q140.90 -20.35 142.93 -24.03Q144.95 -27.71 148.51 -29.80Q152.07 -31.89 156.70 -31.89Q160.22 -31.89 163.11 -30.72Q166.01 -29.55 168.11 -27.40Q170.22 -25.25 171.37 -22.31Q172.51 -19.37 172.51 -15.82V-13.09H144.19V-19.15H167.76L163.11 -17.92Q163.11 -19.94 162.36 -21.39Q161.62 -22.84 160.25 -23.62Q158.88 -24.40 156.95 -24.40Q155.05 -24.40 153.67 -23.62Q152.29 -22.84 151.54 -21.39Q150.80 -19.94 150.80 -17.92V-13.43Q150.80 -11.36 151.57 -9.82Q152.34 -8.28 153.81 -7.45Q155.27 -6.62 157.32 -6.62Q158.82 -6.62 160.00 -7.04Q161.18 -7.45 161.98 -8.21Q162.79 -8.96 163.15 -9.98H172.30Q171.73 -6.84 169.58 -4.44Q167.42 -2.03 164.16 -0.66Q160.90 0.71 156.96 0.71Z" fill="#8F87A3"/><path d="M175.57 0.00V-44.00H191.27L196.96 -26.72Q197.43 -25.15 198.07 -22.88Q198.72 -20.60 199.40 -18.11Q200.09 -15.61 200.67 -13.35Q201.25 -11.09 201.61 -9.53H198.92Q199.28 -11.09 199.86 -13.35Q200.43 -15.61 201.11 -18.11Q201.78 -20.60 202.41 -22.88Q203.05 -25.15 203.51 -26.72L209.11 -44.00H224.84V0.00H214.43V-19.05Q214.43 -20.54 214.49 -22.74Q214.55 -24.95 214.62 -27.52Q214.70 -30.08 214.77 -32.71Q214.83 -35.34 214.84 -37.67H216.07Q215.43 -35.24 214.69 -32.58Q213.96 -29.93 213.26 -27.37Q212.56 -24.82 211.94 -22.66Q211.32 -20.51 210.86 -19.05L204.52 0.00H195.93L189.52 -19.05Q189.06 -20.51 188.41 -22.66Q187.76 -24.82 187.05 -27.37Q186.33 -29.93 185.58 -32.58Q184.83 -35.24 184.15 -37.67H185.58Q185.59 -35.34 185.65 -32.71Q185.72 -30.08 185.79 -27.52Q185.87 -24.95 185.93 -22.74Q185.99 -20.54 185.99 -19.05V0.00Z M238.85 0.54Q235.73 0.54 233.32 -0.48Q230.92 -1.50 229.54 -3.55Q228.16 -5.61 228.16 -8.71Q228.16 -11.35 229.11 -13.13Q230.06 -14.92 231.73 -16.04Q233.39 -17.15 235.59 -17.73Q237.79 -18.31 240.25 -18.52Q243.06 -18.75 244.74 -19.04Q246.41 -19.32 247.15 -19.84Q247.88 -20.36 247.88 -21.29V-21.45Q247.88 -22.38 247.35 -23.08Q246.82 -23.77 245.85 -24.17Q244.89 -24.56 243.53 -24.56Q242.14 -24.56 241.10 -24.14Q240.06 -23.72 239.46 -22.94Q238.87 -22.16 238.75 -21.09H229.31Q229.55 -24.47 231.28 -26.88Q233.02 -29.29 236.19 -30.58Q239.37 -31.86 243.89 -31.86Q247.28 -31.86 249.91 -31.14Q252.53 -30.41 254.33 -29.01Q256.13 -27.60 257.05 -25.59Q257.96 -23.58 257.96 -21.00V0.00H248.02V-4.38H247.90Q246.98 -2.70 245.71 -1.61Q244.44 -0.52 242.75 0.01Q241.06 0.54 238.85 0.54ZM241.94 -6.13Q243.64 -6.13 245.01 -6.76Q246.38 -7.40 247.18 -8.54Q247.97 -9.68 247.97 -11.23V-14.05Q247.57 -13.87 247.01 -13.70Q246.45 -13.54 245.75 -13.38Q245.05 -13.23 244.22 -13.08Q243.39 -12.93 242.44 -12.77Q241.09 -12.56 240.04 -12.11Q238.99 -11.65 238.39 -10.93Q237.79 -10.21 237.79 -9.18Q237.79 -8.22 238.32 -7.53Q238.84 -6.84 239.77 -6.48Q240.70 -6.13 241.94 -6.13Z M271.56 -8.08V-20.10H272.69L282.18 -31.18H293.89L280.19 -15.12H277.56ZM262.40 0.00V-44.00H272.59V0.00ZM282.68 0.00 273.97 -12.87 280.61 -19.99 294.40 0.00Z M308.96 0.71Q304.18 0.71 300.56 -1.38Q296.93 -3.46 294.91 -7.15Q292.90 -10.84 292.90 -15.58Q292.90 -20.35 294.92 -24.03Q296.95 -27.71 300.51 -29.80Q304.07 -31.89 308.70 -31.89Q312.21 -31.89 315.11 -30.72Q318.00 -29.55 320.11 -27.40Q322.22 -25.25 323.36 -22.31Q324.51 -19.37 324.51 -15.82V-13.09H296.18V-19.15H319.75L315.10 -17.92Q315.10 -19.94 314.36 -21.39Q313.62 -22.84 312.25 -23.62Q310.87 -24.40 308.94 -24.40Q307.04 -24.40 305.66 -23.62Q304.29 -22.84 303.54 -21.39Q302.80 -19.94 302.80 -17.92V-13.43Q302.80 -11.36 303.57 -9.82Q304.34 -8.28 305.80 -7.45Q307.27 -6.62 309.32 -6.62Q310.82 -6.62 312.00 -7.04Q313.17 -7.45 313.98 -8.21Q314.78 -8.96 315.14 -9.98H324.29Q323.72 -6.84 321.57 -4.44Q319.42 -2.03 316.16 -0.66Q312.90 0.71 308.96 0.71Z M327.55 0.00V-31.18H337.41V-25.70H337.48Q338.33 -28.68 340.15 -29.99Q341.97 -31.30 345.11 -31.30Q345.93 -31.30 346.59 -31.28Q347.26 -31.27 347.87 -31.25V-22.87Q347.33 -22.89 346.15 -22.92Q344.97 -22.95 343.85 -22.95Q342.05 -22.95 340.67 -22.13Q339.28 -21.31 338.50 -19.75Q337.73 -18.19 337.73 -15.96V0.00Z" fill="#8F87A3"/></g>
+    </symbol>
+  </svg>
+
+  <!-- ================= CONCEPT 1 · CON FOTO ================= -->
+  <div class="stage">
+    <h3>Concepto 1 · "Con foto"</h3>
+    <p class="lead">La foto del propio fit es el gancho; la paleta extraída, la prueba.</p>
+    <div class="canvas c1">
+      <div class="safe top">zona insegura · avatar / usuario</div>
+      <div class="frame">
+        <div class="head">
+          <div>
+            <div class="title">Mi fit de hoy</div>
+            <div class="meta">10 jul 2026</div>
+          </div>
+        </div>
+
+        <div class="photo">
+          <div class="figure"></div>
+        </div>
+
+        <!-- paleta extraida como tira bajo la foto (bandas proporcionales al peso, D5) -->
+        <div class="strip">
+          <i style="background:#E13683; flex:36"></i>
+          <i style="background:#F856A4; flex:31"></i>
+          <i style="background:#B21E5E; flex:20"></i>
+          <i style="background:#652234; flex:9"></i>
+          <i style="background:#9CA6C6; flex:3"></i>
+        </div>
+        <div class="baseline">
+          <span class="basebadge">Base</span>
+          <span class="basehex">#E13683</span>
+          <span class="basedesc">· mi color dominante</span>
+        </div>
+
+        <div class="wm-row">
+          <svg class="wm" viewBox="0 0 438.5 96"><use href="#wm-story"/></svg>
+        </div>
+      </div>
+      <div class="safe bot">zona insegura · barra de respuesta / link sticker</div>
+    </div>
+    <div class="stage-note">
+      <b>Foto = héroe.</b> Crop grande del fit (no una miniatura tímida: el CEO
+      dijo que "lo guapo es que se vea la foto"). Paleta extraída como filmstrip
+      proporcional (D5) tucked bajo la foto — real, no sintética. Morado en 2
+      dosis: badge <b>Base</b> + piquete del watermark. Mint = 0. Todo dentro de
+      la banda segura (guías a rayas = UI de plataforma).
+    </div>
+  </div>
+
+  <!-- ================= CONCEPT 2 · COMBINA CON ================= -->
+  <div class="stage">
+    <h3>Concepto 2 · "Combina con"</h3>
+    <p class="lead">La recomendación de color es el héroe; la paleta, secundaria.</p>
+    <div class="canvas c2">
+      <div class="safe top">zona insegura · avatar / usuario</div>
+      <div class="frame">
+        <div class="eyebrow">PiketeMaker me dice</div>
+        <div class="title">Combina con</div>
+        <div class="sub">Mi base pega con su complementario.</div>
+
+        <!-- HÉROE: la recomendación (base real + complemento sugerido) -->
+        <div class="pair">
+          <div class="chip">
+            <div class="block" style="background:#E13683"></div>
+            <div class="lab">mi base</div>
+            <div class="hx">#E13683</div>
+          </div>
+          <div class="plus">+</div>
+          <div class="chip">
+            <div class="block" style="background:#36E194"></div>
+            <div class="lab">combina</div>
+            <div class="hx">#36E194</div>
+          </div>
+        </div>
+        <div class="harmony">Complementario</div>
+
+        <div class="rule"></div>
+        <!-- secundario: mini-paleta real del fit + thumbnail para anclar -->
+        <div class="fromfit">
+          <div class="thumb photo"><div class="figure"></div></div>
+          <div class="col">
+            <div class="lab">de mi fit</div>
+            <div class="mini">
+              <i style="background:#E13683; flex:36"></i>
+              <i style="background:#F856A4; flex:31"></i>
+              <i style="background:#B21E5E; flex:20"></i>
+              <i style="background:#652234; flex:9"></i>
+              <i style="background:#9CA6C6; flex:3"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="wm-row">
+          <svg class="wm" viewBox="0 0 438.5 96"><use href="#wm-story"/></svg>
+        </div>
+      </div>
+      <div class="safe bot">zona insegura · barra de respuesta / link sticker</div>
+    </div>
+    <div class="stage-note">
+      <b>Recomendación = héroe.</b> Lidera el consejo (F4, el diferenciador vs un
+      "palette ripper"): base real + complemento sugerido, etiquetados para no
+      confundir extraído vs sintético. La paleta real + un thumbnail del fit
+      quedan como pie que ancla ("de mi fit"). Morado en 1 dosis (watermark);
+      mint = 0.
+    </div>
+  </div>
+
+</body>
+</html>

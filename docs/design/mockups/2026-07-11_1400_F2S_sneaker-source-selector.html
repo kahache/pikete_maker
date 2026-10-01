@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Sneaker source selector + mini-trucos (F2S · #83)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json
+     F2S · #83 — "¿Desde dónde haces la foto?" chooser + 3 mini-trucos.
+     Inserts one screen before spec 1030 §3 Captura. Light theme.
+     Self-contained, inline. Viewport 390.
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C; --action-bright: #43E5C2; --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1; --accent-bright: #A78BFA; --accent-tint: #EFEAFB;
+    --logo-turquoise: #17B598;
+    --bg: #FFFFFF; --surface: #FFFFFF; --surface-subtle: #F7F5FB;
+    --border: #E9E6F2; --border-strong: #D9D3E6;
+    --text-primary: #1C1826; --text-secondary: #544E68;
+    --text-tertiary: #6B6383; --text-disabled: #8F87A3;
+    --action-on-fill: #FFFFFF; --error: #B3261E; --success: #2E7D32;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px; --sp-3xl: 48px; --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary); padding: 40px 16px 80px; }
+  .page-head { max-width: 1040px; margin: 0 auto 34px; text-align: center; }
+  .page-head h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+  .page-head p { font-size: 13px; line-height: 19px; color: var(--text-secondary); margin-top: 8px; }
+  .page-head .decision { display: inline-block; margin-top: 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-tint); border-radius: var(--r-sm); padding: 4px 10px; }
+  .row { display: flex; flex-wrap: wrap; gap: 44px; justify-content: center; align-items: flex-start; }
+  .stage { width: 390px; }
+  .stage-tag { text-align: center; font-size: 13px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
+  .stage-tag span { color: var(--text-tertiary); font-weight: 600; }
+  .stage-note { margin-top: 14px; padding: 0 4px; font-size: 12px; line-height: 17px; color: var(--text-tertiary); }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+
+  .phone { width: 390px; min-height: 780px; background: var(--bg); border: 1px solid var(--border); border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-md); position: relative; }
+  .statusbar { height: 44px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--screen-margin); font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 6px auto 8px; flex: none; }
+
+  .appbar { height: 52px; display: flex; align-items: center; padding: 0 var(--sp-xs); position: relative; flex: none; }
+  .appbar .back { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--action-ink); }
+  .appbar .title { position: absolute; left: 0; right: 0; text-align: center; font-size: 11px; line-height: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); pointer-events: none; }
+  .ico { width: 24px; height: 24px; display: block; }
+
+  .btn { height: 56px; border-radius: var(--r-pill); display: flex; align-items: center; justify-content: center; gap: var(--sp-sm); font-size: 16px; font-weight: 700; border: none; cursor: pointer; width: 100%; font-family: var(--font-sans); }
+  .btn-primary { background: var(--action-ink); color: var(--action-on-fill); }
+
+  /* ---------- A · SOURCE SELECTOR ---------- */
+  .sel-body { flex: 1; display: flex; flex-direction: column; padding: var(--sp-sm) var(--screen-margin) var(--sp-xl); }
+  .sel-body h1 { font-size: 32px; line-height: 38px; font-weight: 800; letter-spacing: -0.02em; margin-top: var(--sp-sm); }
+  .sel-body .sub { font-size: 15px; line-height: 22px; color: var(--text-secondary); margin-top: var(--sp-sm); }
+  .cards { margin-top: var(--sp-xl); display: flex; flex-direction: column; gap: var(--sp-md); }
+  .card { display: flex; align-items: center; gap: var(--sp-md); min-height: 72px; padding: 0 var(--sp-lg); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); cursor: pointer; }
+  .card .tile { width: 44px; height: 44px; flex: none; border-radius: var(--r-sm); background: var(--surface-subtle); display: flex; align-items: center; justify-content: center; font-size: 24px; line-height: 1; }
+  .card .txt { flex: 1; }
+  .card .txt .t { font-size: 16px; line-height: 22px; font-weight: 600; color: var(--text-primary); }
+  .card .txt .h { font-size: 13px; line-height: 18px; color: var(--text-tertiary); margin-top: 1px; }
+  .card .chev { color: var(--action-ink); flex: none; }
+  .sel-privacy { margin-top: var(--sp-lg); text-align: center; font-size: 13px; line-height: 18px; color: var(--text-tertiary); }
+  .spacer { flex: 1; }
+
+  /* ---------- B · MINI-TUTORIAL ---------- */
+  .tip-body { flex: 1; display: flex; flex-direction: column; padding: var(--sp-sm) var(--screen-margin) var(--sp-xl); }
+  .badge { align-self: flex-start; font-size: 11px; line-height: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-tint); border-radius: var(--r-sm); padding: 3px var(--sp-sm); }
+  .tip-body h1 { font-size: 32px; line-height: 38px; font-weight: 800; letter-spacing: -0.02em; margin-top: var(--sp-md); }
+  .illus-card { margin-top: var(--sp-xl); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-subtle); overflow: hidden; }
+  .illus-card svg { display: block; width: 100%; height: auto; }
+  .tip-body .body { font-size: 15px; line-height: 22px; color: var(--text-secondary); margin-top: var(--sp-lg); }
+
+  /* thumbnail-brief panel */
+  .briefs { max-width: 1040px; margin: 60px auto 0; }
+  .briefs h2 { text-align: center; font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+  .briefs .lead { text-align: center; font-size: 12px; color: var(--text-tertiary); margin-bottom: 22px; }
+  .brief-row { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
+  .brief { width: 300px; }
+  .brief .frame { border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-subtle); overflow: hidden; }
+  .brief .frame svg { display: block; width: 100%; height: auto; }
+  .brief .cap { margin-top: 10px; }
+  .brief .cap .name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--action-ink); }
+  .brief .cap .d { font-size: 12px; line-height: 17px; color: var(--text-secondary); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>Sneaker · «¿Desde dónde haces la foto?» + mini-trucos</h1>
+  <p>Fix de PRODUCTO al gate G2S: el motor product-mode (D24, cuadro entero) sólo acierta si la zapa llena el cuadro sobre fondo simple. Coaching por situación antes de capturar. Reutiliza el patrón de tutorial (D12). Viewport 390.</p>
+  <span class="decision">F2S · #83 · D7 · D24 · D27</span>
+</div>
+
+<div class="row">
+
+  <!-- ============ A · SOURCE SELECTOR ============ -->
+  <div class="stage">
+    <div class="stage-tag">A · Selector de origen <span>— NEW (fino)</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>&#9673; &#9662; 100%</span></div>
+      <div class="appbar">
+        <div class="back"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <div class="title">MIS ZAPAS</div>
+      </div>
+      <div class="sel-body">
+        <h1>¿Desde dónde<br>haces la foto?</h1>
+        <div class="sub">Cada sitio tiene su truco. Elige el tuyo.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="tile">&#127968;</div>
+            <div class="txt"><div class="t">Casa o calle</div><div class="h">Las zapas, en el centro y llenando la foto</div></div>
+            <svg class="ico chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </div>
+          <div class="card">
+            <div class="tile">&#127978;</div>
+            <div class="txt"><div class="t">En una tienda</div><div class="h">Ponlas en el suelo, como si fueran tuyas</div></div>
+            <svg class="ico chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </div>
+          <div class="card">
+            <div class="tile">&#128187;</div>
+            <div class="txt"><div class="t">Captura de pantalla</div><div class="h">Recórtala hasta dejar solo la zapa</div></div>
+            <svg class="ico chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="sel-privacy">Tu foto no sale del móvil: se analiza aquí mismo.</div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+    <div class="stage-note"><strong>Mint sólo en lo pulsable</strong> (atrás + 3 chevrones); cero morado. Tile emoji en <code>surfaceSubtle</code> (no actionTint) para no gastar presupuesto mint (D8). Tarjeta = el <code>_SourceOption</code> del source sheet, ×3.</div>
+  </div>
+
+  <!-- ============ B1 · CASA ============ -->
+  <div class="stage">
+    <div class="stage-tag">B1 · Truco «Casa o calle» <span>— tutorial REUSADO</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>&#9673; &#9662; 100%</span></div>
+      <div class="appbar">
+        <div class="back"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <div class="title">MIS ZAPAS</div>
+      </div>
+      <div class="tip-body">
+        <div class="badge">EL TRUCO</div>
+        <h1>Zapas en el centro,<br>llenando la foto</h1>
+        <div class="illus-card">
+          <!-- casa: center-frame, fill the frame -->
+          <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Zapa grande centrada que casi toca las esquinas del cuadro">
+            <rect width="160" height="120" fill="var(--surface-subtle)"/>
+            <!-- big centered sneaker (mode_glyphs path), scaled ~1.9 -->
+            <g transform="translate(35,26) scale(1.85)">
+              <path d="M4 30 L4 23 Q4 21 6 21 L13 21 L19 26 L30 28 C37 29 42 31 42 34 L42 35 Q42 37 40 37 L6 37 Q4 37 4 35 Z" fill="var(--action-tint)" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linejoin="round"/>
+              <path d="M13 21 L16 27 M19 26 L22 31 M4 33 L42 33" fill="none" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+            </g>
+            <!-- 4 mint "fill it" corner brackets -->
+            <g fill="none" stroke="var(--action-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 30 L14 16 L28 16"/>
+              <path d="M146 30 L146 16 L132 16"/>
+              <path d="M14 90 L14 104 L28 104"/>
+              <path d="M146 90 L146 104 L132 104"/>
+            </g>
+          </svg>
+        </div>
+        <div class="body">Acércate hasta que las zapas ocupen casi toda la pantalla. Fondo liso (suelo o pared) y buena luz.</div>
+        <div class="spacer"></div>
+        <button class="btn btn-primary">Hacer la foto</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+    <div class="stage-note">Corrige el «floor shot demasiado lejos»: la zapa debe llenar el cuadro (brackets mint = «llénalo»).</div>
+  </div>
+
+  <!-- ============ B2 · TIENDA ============ -->
+  <div class="stage">
+    <div class="stage-tag">B2 · Truco «En una tienda» <span>— tutorial REUSADO</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>&#9673; &#9662; 100%</span></div>
+      <div class="appbar">
+        <div class="back"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <div class="title">MIS ZAPAS</div>
+      </div>
+      <div class="tip-body">
+        <div class="badge">EL TRUCO</div>
+        <h1>Ponlas en el suelo,<br>como tuyas</h1>
+        <div class="illus-card">
+          <!-- tienda: floor-place, top-down -->
+          <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Zapa en el suelo y un móvil disparando desde arriba">
+            <rect width="160" height="120" fill="var(--surface-subtle)"/>
+            <!-- floor band -->
+            <rect x="0" y="92" width="160" height="28" fill="var(--border)"/>
+            <!-- phone shooting down (top) -->
+            <g transform="translate(80,20)">
+              <rect x="-11" y="-11" width="22" height="34" rx="4" fill="var(--surface)" stroke="var(--text-secondary)" stroke-width="2"/>
+              <circle cx="0" cy="-4" r="3" fill="var(--text-secondary)"/>
+            </g>
+            <!-- downward mint chevron = shoot from above -->
+            <g fill="none" stroke="var(--action-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M80 50 L80 66"/>
+              <path d="M73 60 L80 67 L87 60"/>
+            </g>
+            <!-- shadow + sneaker on floor -->
+            <ellipse cx="80" cy="103" rx="34" ry="6" fill="var(--border-strong)"/>
+            <g transform="translate(56,72) scale(1.15)">
+              <path d="M4 30 L4 23 Q4 21 6 21 L13 21 L19 26 L30 28 C37 29 42 31 42 34 L42 35 Q42 37 40 37 L6 37 Q4 37 4 35 Z" fill="var(--action-tint)" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linejoin="round"/>
+              <path d="M13 21 L16 27 M19 26 L22 31 M4 33 L42 33" fill="none" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+        <div class="body">Baja las zapas al suelo y dispara desde arriba, como si ya fueran tuyas. Así el fondo no se cuela en los colores.</div>
+        <div class="spacer"></div>
+        <button class="btn btn-primary">Hacer la foto</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+    <div class="stage-note">Corrige el «store shelf»: replica el caso del suelo que ya funciona (sin estanterías ni cajas de fondo).</div>
+  </div>
+
+  <!-- ============ B3 · WEB ============ -->
+  <div class="stage">
+    <div class="stage-tag">B3 · Truco «Captura de pantalla» <span>— tutorial REUSADO</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>&#9673; &#9662; 100%</span></div>
+      <div class="appbar">
+        <div class="back"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <div class="title">MIS ZAPAS</div>
+      </div>
+      <div class="tip-body">
+        <div class="badge">EL TRUCO</div>
+        <h1>Recorta hasta<br>dejar solo la zapa</h1>
+        <div class="illus-card">
+          <!-- web: crop the screenshot -->
+          <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ventana de navegador con una zapa pequeña y un recorte mint que deja solo la zapa">
+            <rect width="160" height="120" fill="var(--surface-subtle)"/>
+            <!-- browser window -->
+            <rect x="20" y="16" width="120" height="88" rx="6" fill="var(--surface)" stroke="var(--border-strong)" stroke-width="1.5"/>
+            <!-- top bar + 3 dots -->
+            <path d="M20 28 h120" stroke="var(--border-strong)" stroke-width="1.5"/>
+            <g fill="var(--border-strong)"><circle cx="29" cy="22" r="2"/><circle cx="37" cy="22" r="2"/><circle cx="45" cy="22" r="2"/></g>
+            <!-- faux web UI / price lines (clutter to cut) -->
+            <g fill="var(--border)"><rect x="94" y="40" width="34" height="6" rx="3"/><rect x="94" y="52" width="26" height="6" rx="3"/><rect x="94" y="64" width="30" height="6" rx="3"/></g>
+            <!-- small sneaker inside -->
+            <g transform="translate(30,52) scale(0.9)">
+              <path d="M4 30 L4 23 Q4 21 6 21 L13 21 L19 26 L30 28 C37 29 42 31 42 34 L42 35 Q42 37 40 37 L6 37 Q4 37 4 35 Z" fill="var(--action-tint)" stroke="var(--text-secondary)" stroke-width="2.4" stroke-linejoin="round"/>
+              <path d="M4 33 L42 33" fill="none" stroke="var(--text-secondary)" stroke-width="2.4" stroke-linecap="round"/>
+            </g>
+            <!-- dashed mint crop rect hugging the sneaker + corner handles -->
+            <rect x="26" y="60" width="52" height="30" rx="2" fill="none" stroke="var(--action-ink)" stroke-width="2.4" stroke-dasharray="5 4"/>
+            <g fill="var(--action-ink)"><rect x="23" y="57" width="6" height="6" rx="1"/><rect x="75" y="57" width="6" height="6" rx="1"/><rect x="23" y="87" width="6" height="6" rx="1"/><rect x="75" y="87" width="6" height="6" rx="1"/></g>
+          </svg>
+        </div>
+        <div class="body">Antes de subirla, recorta la captura: fuera el navegador, el precio y todo lo blanco. Solo la zapa.</div>
+        <div class="spacer"></div>
+        <button class="btn btn-primary">Elegir la captura</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+    <div class="stage-note">Corrige el «screenshot»: sin recorte, el blanco del navegador domina y el motor cae en canvas mode (~90%).</div>
+  </div>
+
+</div>
+
+<!-- ============ THUMBNAIL BRIEFS (large) ============ -->
+<div class="briefs">
+  <h2>Las 3 ilustraciones nuevas — estilo <code>TipIllustration</code></h2>
+  <div class="lead">Plano, colores de token sobre escena <code>surfaceSubtle</code>, glifo de zapa reutilizado de <code>mode_glyphs</code>. Portar como CustomPainter (sin flutter_svg, gate G1).</div>
+  <div class="brief-row">
+    <div class="brief">
+      <div class="frame">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="120" fill="var(--surface-subtle)"/>
+          <g transform="translate(35,26) scale(1.85)">
+            <path d="M4 30 L4 23 Q4 21 6 21 L13 21 L19 26 L30 28 C37 29 42 31 42 34 L42 35 Q42 37 40 37 L6 37 Q4 37 4 35 Z" fill="var(--action-tint)" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M13 21 L16 27 M19 26 L22 31 M4 33 L42 33" fill="none" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+          </g>
+          <g fill="none" stroke="var(--action-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 30 L14 16 L28 16"/><path d="M146 30 L146 16 L132 16"/>
+            <path d="M14 90 L14 104 L28 104"/><path d="M146 90 L146 104 L132 104"/>
+          </g>
+        </svg>
+      </div>
+      <div class="cap"><div class="name">casa · center-frame</div><div class="d">Zapa grande y centrada casi tocando 4 brackets mint = «llénalo».</div></div>
+    </div>
+    <div class="brief">
+      <div class="frame">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="120" fill="var(--surface-subtle)"/>
+          <rect x="0" y="92" width="160" height="28" fill="var(--border)"/>
+          <g transform="translate(80,20)"><rect x="-11" y="-11" width="22" height="34" rx="4" fill="var(--surface)" stroke="var(--text-secondary)" stroke-width="2"/><circle cx="0" cy="-4" r="3" fill="var(--text-secondary)"/></g>
+          <g fill="none" stroke="var(--action-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M80 50 L80 66"/><path d="M73 60 L80 67 L87 60"/></g>
+          <ellipse cx="80" cy="103" rx="34" ry="6" fill="var(--border-strong)"/>
+          <g transform="translate(56,72) scale(1.15)">
+            <path d="M4 30 L4 23 Q4 21 6 21 L13 21 L19 26 L30 28 C37 29 42 31 42 34 L42 35 Q42 37 40 37 L6 37 Q4 37 4 35 Z" fill="var(--action-tint)" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M13 21 L16 27 M19 26 L22 31 M4 33 L42 33" fill="none" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+      <div class="cap"><div class="name">tienda · floor + top-down</div><div class="d">Zapa en el suelo, móvil arriba y chevron mint hacia abajo.</div></div>
+    </div>
+    <div class="brief">
+      <div class="frame">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="120" fill="var(--surface-subtle)"/>
+          <rect x="20" y="16" width="120" height="88" rx="6" fill="var(--surface)" stroke="var(--border-strong)" stroke-width="1.5"/>
+          <path d="M20 28 h120" stroke="var(--border-strong)" stroke-width="1.5"/>
+          <g fill="var(--border-strong)"><circle cx="29" cy="22" r="2"/><circle cx="37" cy="22" r="2"/><circle cx="45" cy="22" r="2"/></g>
+          <g fill="var(--border)"><rect x="94" y="40" width="34" height="6" rx="3"/><rect x="94" y="52" width="26" height="6" rx="3"/><rect x="94" y="64" width="30" height="6" rx="3"/></g>
+          <g transform="translate(30,52) scale(0.9)">
+            <path d="M4 30 L4 23 Q4 21 6 21 L13 21 L19 26 L30 28 C37 29 42 31 42 34 L42 35 Q42 37 40 37 L6 37 Q4 37 4 35 Z" fill="var(--action-tint)" stroke="var(--text-secondary)" stroke-width="2.4" stroke-linejoin="round"/>
+            <path d="M4 33 L42 33" fill="none" stroke="var(--text-secondary)" stroke-width="2.4" stroke-linecap="round"/>
+          </g>
+          <rect x="26" y="60" width="52" height="30" rx="2" fill="none" stroke="var(--action-ink)" stroke-width="2.4" stroke-dasharray="5 4"/>
+          <g fill="var(--action-ink)"><rect x="23" y="57" width="6" height="6" rx="1"/><rect x="75" y="57" width="6" height="6" rx="1"/><rect x="23" y="87" width="6" height="6" rx="1"/><rect x="75" y="87" width="6" height="6" rx="1"/></g>
+        </svg>
+      </div>
+      <div class="cap"><div class="name">web · crop</div><div class="d">Navegador con UI/precio en border; recorte mint punteado deja solo la zapa.</div></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

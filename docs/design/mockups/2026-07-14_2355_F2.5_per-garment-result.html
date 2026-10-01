@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — F2.5 · Resultado por prendas (spec 2026-07-14)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json (mismos valores que el
+     mockup canónico result.html). Spec:
+     docs/design/2026-07-14_2355_F2.5_per-garment-result-spec.md
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C;
+    --action-bright: #43E5C2;
+    --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1;
+    --accent-bright: #A78BFA;
+    --accent-tint: #EFEAFB;
+
+    --bg: #FFFFFF;
+    --surface: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --border-strong: #D9D3E6;
+    --text-primary: #1C1826;
+    --text-secondary: #544E68;
+    --text-tertiary: #6B6383;
+    --text-disabled: #8F87A3;
+    --action-on-fill: #FFFFFF;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px; --sp-3xl: 48px;
+    --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #F2F0F6;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    display: flex; flex-wrap: wrap; gap: 40px;
+    justify-content: center; align-items: flex-start;
+    padding: 40px 16px 80px;
+  }
+
+  .stage { width: 390px; }
+  .stage-note {
+    margin-top: 14px; padding: 0 4px;
+    font-size: 12px; line-height: 17px; color: var(--text-tertiary);
+  }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+
+  .phone {
+    width: 390px; min-height: 844px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow-md);
+  }
+
+  .statusbar {
+    height: 44px; flex: none;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--screen-margin);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+  }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--sp-sm) var(--screen-margin) var(--sp-lg);
+  }
+  .topbar .back {
+    width: 44px; height: 44px; margin-left: -12px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--action-ink); font-size: 24px;
+  }
+  .kicker {
+    font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  /* ============================================================
+     ÁREA COMPARTIBLE (F6) — sin cambios de contenedor
+     ============================================================ */
+  .share-canvas {
+    margin: 0 var(--screen-margin);
+    padding: var(--sp-xl) var(--sp-xl) var(--sp-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  .share-canvas h1 {
+    font-size: 32px; line-height: 38px; font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .share-canvas .meta {
+    font-size: 13px; line-height: 18px; color: var(--text-tertiary);
+    margin: var(--sp-xs) 0 var(--sp-xl);
+  }
+
+  /* --- NUEVO (F2.5): bloque por prenda --- */
+  .garment-block + .garment-block {
+    border-top: 1px solid var(--border);
+    margin-top: var(--sp-lg); padding-top: var(--sp-lg);
+  }
+  .region-label {
+    display: flex; align-items: baseline; gap: var(--sp-sm);
+    margin-bottom: var(--sp-sm);
+  }
+  .region-label .r {
+    font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+  .region-label .neutral-note {
+    font-size: 13px; line-height: 18px; color: var(--text-tertiary);
+    font-weight: 400; text-transform: none; letter-spacing: 0;
+  }
+
+  /* bandas: misma gramática que result.html, presupuesto de altura menor
+     (120px por prenda · 200px en single-region · gap sm) */
+  .plate-row { display: flex; align-items: center; gap: var(--sp-md); margin-bottom: var(--sp-sm); }
+  .plate-row:last-child { margin-bottom: 0; }
+  .plate-row .swatch { flex: 1; align-self: stretch; }
+  .plate-row:first-of-type .swatch { border-radius: var(--r-sm) var(--r-sm) 0 0; }
+  .plate-row:last-of-type  .swatch { border-radius: 0 0 var(--r-sm) var(--r-sm); }
+  .plate-row .index {
+    width: 96px; display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 13px; line-height: 18px; font-weight: 500; letter-spacing: 0.02em;
+  }
+  .plate-row .index .hex { color: var(--text-secondary); }
+  .plate-row .index .pct { color: var(--text-tertiary); }
+  .plate-row.is-base .index .hex { color: var(--text-primary); font-weight: 700; }
+
+  /* línea del color base (D5) — copy con atribución (S1) */
+  .base-line {
+    display: flex; align-items: center; gap: var(--sp-md);
+    margin-top: var(--sp-xl); padding-top: var(--sp-lg);
+    border-top: 1px solid var(--border);
+  }
+  .base-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    flex: none;
+    box-shadow: 0 0 0 1px var(--border-strong);
+  }
+  .base-line .txt { flex: 1; }
+  .badge-base {
+    display: inline-block;
+    font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-ink); background: var(--accent-tint);
+    border-radius: var(--r-sm); padding: 2px 8px;
+    margin-bottom: 2px;
+  }
+  .base-line .desc { font-size: 13px; line-height: 18px; color: var(--text-secondary); }
+  .base-line .desc b { color: var(--text-primary); font-weight: 600; }
+
+  .watermark {
+    margin-top: var(--sp-lg); text-align: right;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+    color: var(--text-disabled);
+  }
+  .watermark span { color: var(--accent-ink); }
+
+  /* ============================================================
+     ARMONÍAS (#82: seleccionables — sin cambios)
+     ============================================================ */
+  .section { padding: var(--sp-2xl) var(--screen-margin) 0; }
+  .section h2 {
+    font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em;
+    margin-bottom: var(--sp-xs);
+  }
+  .section .sub {
+    font-size: 13px; line-height: 18px; color: var(--text-secondary);
+    margin-bottom: var(--sp-lg);
+  }
+  .harmony {
+    display: flex; align-items: center; gap: var(--sp-lg);
+    padding: var(--sp-lg) 0;
+    border-top: 1px solid var(--border);
+    min-height: 44px;
+  }
+  .harmony:last-of-type { border-bottom: 1px solid var(--border); }
+  .harmony .name { flex: 1; }
+  .harmony .name .n {
+    display: inline-block;
+    font-size: 16px; line-height: 22px; font-weight: 600;
+    padding: 2px 8px; margin-left: -8px; border-radius: var(--r-pill);
+  }
+  .harmony.is-selected .name .n { background: var(--action-ink); color: var(--action-on-fill); }
+  .harmony .name .d { font-size: 13px; line-height: 18px; color: var(--text-tertiary); }
+  .harmony .strip {
+    display: flex; width: 132px; height: 44px;
+    border-radius: var(--r-sm); overflow: hidden;
+    box-shadow: 0 0 0 1px var(--border);
+  }
+  .harmony .strip i { flex: 1; }
+  .harmony .chev { color: var(--action-ink); font-size: 18px; font-weight: 700; }
+
+  /* pops del modo lienzo (D10) */
+  .pops { display: flex; flex-wrap: wrap; gap: var(--sp-md); }
+  .pop {
+    width: 44px; height: 44px; border-radius: var(--r-sm);
+    box-shadow: 0 0 0 1px var(--border);
+  }
+
+  /* ============================================================
+     CTAs — zona de pulgar (sin cambios)
+     ============================================================ */
+  .cta-block {
+    margin-top: auto;
+    padding: var(--sp-2xl) var(--screen-margin) var(--sp-xl);
+    display: flex; flex-direction: column; gap: var(--sp-md);
+  }
+  .btn {
+    height: 56px; border-radius: var(--r-pill);
+    display: flex; align-items: center; justify-content: center; gap: var(--sp-sm);
+    font-size: 16px; font-weight: 700; font-family: var(--font-sans);
+    border: none; cursor: pointer;
+  }
+  .btn-primary { background: var(--action-ink); color: var(--action-on-fill); }
+  .btn-secondary {
+    background: var(--bg); color: var(--action-ink);
+    border: 1.5px solid var(--border-strong);
+  }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 6px auto 8px; }
+</style>
+</head>
+<body>
+
+  <!-- ============ FRAME 1 · S1 HAPPY PATH: ARRIBA + ABAJO ============ -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="topbar">
+        <div class="back">‹</div>
+        <div class="kicker">PiketeMaker</div>
+        <div style="width:44px"></div>
+      </div>
+
+      <div class="share-canvas">
+        <h1>Tu paleta</h1>
+        <div class="meta">Fit de hoy · 14 jul 2026</div>
+
+        <!-- ARRIBA: sudadera verde -->
+        <div class="garment-block">
+          <div class="region-label"><span class="r">Arriba</span></div>
+          <div class="plate-row" style="height:52px">
+            <div class="swatch" style="background:#7E9C7B"></div>
+            <div class="index"><span class="hex">#7E9C7B</span><span class="pct">48%</span></div>
+          </div>
+          <div class="plate-row" style="height:34px">
+            <div class="swatch" style="background:#9FBF9A"></div>
+            <div class="index"><span class="hex">#9FBF9A</span><span class="pct">31%</span></div>
+          </div>
+          <div class="plate-row" style="height:18px">
+            <div class="swatch" style="background:#55704F"></div>
+            <div class="index"><span class="hex">#55704F</span><span class="pct">15%</span></div>
+          </div>
+          <div class="plate-row" style="height:10px">
+            <div class="swatch" style="background:#C9D8C4"></div>
+            <div class="index"><span class="hex">#C9D8C4</span><span class="pct">6%</span></div>
+          </div>
+        </div>
+
+        <!-- ABAJO: shorts morados — aquí vive la BASE (hex en bold) -->
+        <div class="garment-block">
+          <div class="region-label"><span class="r">Abajo</span></div>
+          <div class="plate-row is-base" style="height:64px">
+            <div class="swatch" style="background:#9B59D0"></div>
+            <div class="index"><span class="hex">#9B59D0</span><span class="pct">61%</span></div>
+          </div>
+          <div class="plate-row" style="height:30px">
+            <div class="swatch" style="background:#7C3BB2"></div>
+            <div class="index"><span class="hex">#7C3BB2</span><span class="pct">28%</span></div>
+          </div>
+          <div class="plate-row" style="height:10px">
+            <div class="swatch" style="background:#C4A1E8"></div>
+            <div class="index"><span class="hex">#C4A1E8</span><span class="pct">11%</span></div>
+          </div>
+        </div>
+
+        <div class="base-line">
+          <div class="base-dot" style="background:#9B59D0"></div>
+          <div class="txt">
+            <span class="badge-base">Base</span>
+            <div class="desc"><b>Tu color dominante.</b> Sale de tu parte de abajo.
+              Todo conjunta alrededor de él.</div>
+          </div>
+        </div>
+
+        <div class="watermark">piketemaker<span>.</span></div>
+      </div>
+
+      <!-- UNA sola sección de recomendación (U1), desde la base global -->
+      <div class="section">
+        <h2>Combina con</h2>
+        <div class="sub">Toca una y mira looks reales con esos colores.</div>
+
+        <div class="harmony is-selected">
+          <div class="name">
+            <div class="n">Complementario</div>
+            <div class="d">Contraste máximo, 2 colores</div>
+          </div>
+          <div class="strip"><i style="background:#9B59D0"></i><i style="background:#8ED059"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Análogo</div>
+            <div class="d">Suave, tono sobre tono</div>
+          </div>
+          <div class="strip"><i style="background:#D059C4"></i><i style="background:#9B59D0"></i><i style="background:#5965D0"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Triádico</div>
+            <div class="d">Equilibrado, 3 colores</div>
+          </div>
+          <div class="strip"><i style="background:#9B59D0"></i><i style="background:#D09B59"></i><i style="background:#59D09B"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Complementario dividido</div>
+            <div class="d">Contraste con matiz</div>
+          </div>
+          <div class="strip"><i style="background:#9B59D0"></i><i style="background:#A6D059"></i><i style="background:#59D065"></i></div>
+          <div class="chev">›</div>
+        </div>
+      </div>
+
+      <div class="cta-block">
+        <button class="btn btn-primary">Ver looks así</button>
+        <button class="btn btn-secondary">Súbela a tu story</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>S1 · Happy path (dos prendas).</strong> Dos bloques etiquetados
+      ARRIBA/ABAJO dentro de la MISMA card compartible; la base global (regla #6,
+      region-aware) vive en ABAJO → su hex va en bold y la línea BASE gana una
+      frase de atribución. UNA sola sección "Combina con" (#82 intacto: primera
+      armonía preseleccionada). Morado en sus 2 dosis de siempre.
+    </div>
+  </div>
+
+  <!-- ============ FRAME 2 · S1 VARIANTE: UNA PRENDA NEUTRA ============ -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="topbar">
+        <div class="back">‹</div>
+        <div class="kicker">PiketeMaker</div>
+        <div style="width:44px"></div>
+      </div>
+
+      <div class="share-canvas">
+        <h1>Tu paleta</h1>
+        <div class="meta">Fit de hoy · 14 jul 2026</div>
+
+        <!-- ARRIBA: hoodie rojo — BASE -->
+        <div class="garment-block">
+          <div class="region-label"><span class="r">Arriba</span></div>
+          <div class="plate-row is-base" style="height:58px">
+            <div class="swatch" style="background:#D0342C"></div>
+            <div class="index"><span class="hex">#D0342C</span><span class="pct">54%</span></div>
+          </div>
+          <div class="plate-row" style="height:32px">
+            <div class="swatch" style="background:#A32620"></div>
+            <div class="index"><span class="hex">#A32620</span><span class="pct">30%</span></div>
+          </div>
+          <div class="plate-row" style="height:16px">
+            <div class="swatch" style="background:#E8837D"></div>
+            <div class="index"><span class="hex">#E8837D</span><span class="pct">16%</span></div>
+          </div>
+        </div>
+
+        <!-- ABAJO: vaquero negro, 100% neutro → caption U7 -->
+        <div class="garment-block">
+          <div class="region-label">
+            <span class="r">Abajo</span>
+            <span class="neutral-note">neutro — combina con todo</span>
+          </div>
+          <div class="plate-row" style="height:66px">
+            <div class="swatch" style="background:#232128"></div>
+            <div class="index"><span class="hex">#232128</span><span class="pct">72%</span></div>
+          </div>
+          <div class="plate-row" style="height:24px">
+            <div class="swatch" style="background:#3A3946"></div>
+            <div class="index"><span class="hex">#3A3946</span><span class="pct">21%</span></div>
+          </div>
+          <div class="plate-row" style="height:10px">
+            <div class="swatch" style="background:#6B6A75"></div>
+            <div class="index"><span class="hex">#6B6A75</span><span class="pct">7%</span></div>
+          </div>
+        </div>
+
+        <div class="base-line">
+          <div class="base-dot" style="background:#D0342C"></div>
+          <div class="txt">
+            <span class="badge-base">Base</span>
+            <div class="desc"><b>Tu color dominante.</b> Sale de tu parte de arriba.
+              Todo conjunta alrededor de él.</div>
+          </div>
+        </div>
+
+        <div class="watermark">piketemaker<span>.</span></div>
+      </div>
+
+      <div class="section">
+        <h2>Combina con</h2>
+        <div class="sub">Toca una y mira looks reales con esos colores.</div>
+
+        <div class="harmony is-selected">
+          <div class="name">
+            <div class="n">Complementario</div>
+            <div class="d">Contraste máximo, 2 colores</div>
+          </div>
+          <div class="strip"><i style="background:#D0342C"></i><i style="background:#2CC8D0"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Análogo</div>
+            <div class="d">Suave, tono sobre tono</div>
+          </div>
+          <div class="strip"><i style="background:#D02C6B"></i><i style="background:#D0342C"></i><i style="background:#D0862C"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Triádico</div>
+            <div class="d">Equilibrado, 3 colores</div>
+          </div>
+          <div class="strip"><i style="background:#D0342C"></i><i style="background:#2CD034"></i><i style="background:#342CD0"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Complementario dividido</div>
+            <div class="d">Contraste con matiz</div>
+          </div>
+          <div class="strip"><i style="background:#D0342C"></i><i style="background:#2CD086"></i><i style="background:#2C86D0"></i></div>
+          <div class="chev">›</div>
+        </div>
+      </div>
+
+      <div class="cta-block">
+        <button class="btn btn-primary">Ver looks así</button>
+        <button class="btn btn-secondary">Súbela a tu story</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>S1 variante · Una prenda neutra (el caso real más común).</strong>
+      El vaquero negro NO desaparece ni dispara modo lienzo global: su bloque
+      muestra la paleta neutra con el caption de 3 palabras ("neutro — combina
+      con todo", caption/terciario, sin color ni icono). La base sale de la
+      prenda cromática y las armonías se calculan solo desde ella.
+    </div>
+  </div>
+
+  <!-- ============ FRAME 3 · S3: SINGLE REGION ("TU ROPA") ============ -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="topbar">
+        <div class="back">‹</div>
+        <div class="kicker">PiketeMaker</div>
+        <div style="width:44px"></div>
+      </div>
+
+      <div class="share-canvas">
+        <h1>Tu paleta</h1>
+        <div class="meta">Fit de hoy · 14 jul 2026</div>
+
+        <!-- Una sola región superviviente (encuadre de cintura para arriba):
+             etiqueta TU ROPA (U5), presupuesto de altura mayor (200px) -->
+        <div class="garment-block">
+          <div class="region-label"><span class="r">Tu ropa</span></div>
+          <div class="plate-row is-base" style="height:88px">
+            <div class="swatch" style="background:#2456B8"></div>
+            <div class="index"><span class="hex">#2456B8</span><span class="pct">46%</span></div>
+          </div>
+          <div class="plate-row" style="height:64px">
+            <div class="swatch" style="background:#4A7BD4"></div>
+            <div class="index"><span class="hex">#4A7BD4</span><span class="pct">33%</span></div>
+          </div>
+          <div class="plate-row" style="height:28px">
+            <div class="swatch" style="background:#16336E"></div>
+            <div class="index"><span class="hex">#16336E</span><span class="pct">15%</span></div>
+          </div>
+          <div class="plate-row" style="height:12px">
+            <div class="swatch" style="background:#B8C9EA"></div>
+            <div class="index"><span class="hex">#B8C9EA</span><span class="pct">6%</span></div>
+          </div>
+        </div>
+
+        <div class="base-line">
+          <div class="base-dot" style="background:#2456B8"></div>
+          <div class="txt">
+            <span class="badge-base">Base</span>
+            <div class="desc"><b>Tu color dominante.</b> Todo conjunta alrededor de él.</div>
+          </div>
+        </div>
+
+        <div class="watermark">piketemaker<span>.</span></div>
+      </div>
+
+      <div class="section">
+        <h2>Combina con</h2>
+        <div class="sub">Toca una y mira looks reales con esos colores.</div>
+
+        <div class="harmony is-selected">
+          <div class="name">
+            <div class="n">Complementario</div>
+            <div class="d">Contraste máximo, 2 colores</div>
+          </div>
+          <div class="strip"><i style="background:#2456B8"></i><i style="background:#B88624"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Análogo</div>
+            <div class="d">Suave, tono sobre tono</div>
+          </div>
+          <div class="strip"><i style="background:#2488B8"></i><i style="background:#2456B8"></i><i style="background:#3624B8"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Triádico</div>
+            <div class="d">Equilibrado, 3 colores</div>
+          </div>
+          <div class="strip"><i style="background:#2456B8"></i><i style="background:#B82456"></i><i style="background:#56B824"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Complementario dividido</div>
+            <div class="d">Contraste con matiz</div>
+          </div>
+          <div class="strip"><i style="background:#2456B8"></i><i style="background:#B85624"></i><i style="background:#B8B024"></i></div>
+          <div class="chev">›</div>
+        </div>
+      </div>
+
+      <div class="cta-block">
+        <button class="btn btn-primary">Ver looks así</button>
+        <button class="btn btn-secondary">Súbela a tu story</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>S3 · Una sola región (degradación sin vergüenza).</strong> Foto de
+      cintura para arriba o región inferior demasiado pequeña → un solo bloque
+      etiquetado "TU ROPA" (nunca "ARRIBA" a secas: no anunciamos lo que falta).
+      Sigue siendo mejor que la foto completa: piel, pelo y fondo YA no están en
+      los swatches. Base line con el copy de siempre, sin atribución. Cero
+      lenguaje de error.
+    </div>
+  </div>
+
+  <!-- ============ FRAME 4 · S4: DEGRADACIÓN A FOTO COMPLETA ============ -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="topbar">
+        <div class="back">‹</div>
+        <div class="kicker">PiketeMaker</div>
+        <div style="width:44px"></div>
+      </div>
+
+      <div class="share-canvas">
+        <h1>Tu paleta</h1>
+        <div class="meta">Fit de hoy · 14 jul 2026</div>
+
+        <!-- Idéntico a la pantalla actual: una pila de 280px, sin etiquetas -->
+        <div class="garment-block">
+          <div class="plate-row is-base" style="height:100px">
+            <div class="swatch" style="background:#E13683"></div>
+            <div class="index"><span class="hex">#E13683</span><span class="pct">36%</span></div>
+          </div>
+          <div class="plate-row" style="height:86px">
+            <div class="swatch" style="background:#F856A4"></div>
+            <div class="index"><span class="hex">#F856A4</span><span class="pct">31%</span></div>
+          </div>
+          <div class="plate-row" style="height:56px">
+            <div class="swatch" style="background:#B21E5E"></div>
+            <div class="index"><span class="hex">#B21E5E</span><span class="pct">20%</span></div>
+          </div>
+          <div class="plate-row" style="height:26px">
+            <div class="swatch" style="background:#652234"></div>
+            <div class="index"><span class="hex">#652234</span><span class="pct">9%</span></div>
+          </div>
+          <div class="plate-row" style="height:12px">
+            <div class="swatch" style="background:#9CA6C6"></div>
+            <div class="index"><span class="hex">#9CA6C6</span><span class="pct">3%</span></div>
+          </div>
+        </div>
+
+        <div class="base-line">
+          <div class="base-dot" style="background:#E13683"></div>
+          <div class="txt">
+            <span class="badge-base">Base</span>
+            <div class="desc"><b>Tu color dominante.</b> Todo conjunta alrededor de él.</div>
+          </div>
+        </div>
+
+        <div class="watermark">piketemaker<span>.</span></div>
+      </div>
+
+      <div class="section">
+        <h2>Combina con</h2>
+        <div class="sub">Toca una y mira looks reales con esos colores.</div>
+
+        <div class="harmony is-selected">
+          <div class="name">
+            <div class="n">Complementario</div>
+            <div class="d">Contraste máximo, 2 colores</div>
+          </div>
+          <div class="strip"><i style="background:#E13683"></i><i style="background:#36E194"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Análogo</div>
+            <div class="d">Suave, tono sobre tono</div>
+          </div>
+          <div class="strip"><i style="background:#E136D8"></i><i style="background:#E13683"></i><i style="background:#E13E36"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Triádico</div>
+            <div class="d">Equilibrado, 3 colores</div>
+          </div>
+          <div class="strip"><i style="background:#E13683"></i><i style="background:#83E136"></i><i style="background:#3683E1"></i></div>
+          <div class="chev">›</div>
+        </div>
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Complementario dividido</div>
+            <div class="d">Contraste con matiz</div>
+          </div>
+          <div class="strip"><i style="background:#E13683"></i><i style="background:#36E13E"></i><i style="background:#36D8E1"></i></div>
+          <div class="chev">›</div>
+        </div>
+      </div>
+
+      <div class="cta-block">
+        <button class="btn btn-primary">Ver looks así</button>
+        <button class="btn btn-secondary">Súbela a tu story</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>S4 · Degradación a foto completa (silenciosa).</strong>
+      SegmentationException (sin persona o el modelo no arranca) → el motor
+      repite el pipeline actual y esta pantalla es PÍXEL-IDÉNTICA a la de hoy:
+      una pila, sin etiquetas, sin toast, sin "modo básico". El usuario pidió
+      una paleta y recibe una paleta. E3/E4 solo si TAMBIÉN falla el pipeline
+      de foto completa (sin cambios). Analytics sí lo registra
+      (segmentation_degraded).
+    </div>
+  </div>
+
+</body>
+</html>

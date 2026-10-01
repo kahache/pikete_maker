@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Logo · Ronda 4 · Junta limpia + wordmark en colores del logo</title>
+<style>
+  /* ============================================================
+     Ronda 4 (feedback CEO sobre r3):
+       1. Fuera el 0.5 de solape técnico: la panza mint y el punto
+          arrancan EXACTAMENTE donde termina el asta (x=38). Cero
+          superposición sobre el morado.
+       2. Wordmark en los colores del logo: "Pikete" morado
+          (accent.ink) + "Maker" turquesa mint (action.bright).
+          Se incluye variante de legibilidad para fondos claros
+          (mint oscuro) como fallback A DECIDIR por el CEO.
+     Histórico: r1 (4 direcciones), r2 (colores CEO), r3 (panza
+     pegada) conservan sus ficheros.
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C;
+    --action-bright: #43E5C2;
+    --accent-ink: #6C3FD1;
+    --accent-tint: #EFEAFB;
+    --bg: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --text-primary: #1C1826;
+    --text-secondary: #544E68;
+    --text-tertiary: #6B6383;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --wall-light: #EDEBF2;
+    --wall-dark: #141119;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary); padding: 40px 20px 96px; }
+  .sheet { max-width: 1080px; margin: 0 auto; }
+  .head, .dir, .foot { background: var(--bg); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 28px; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+  h1 { font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .head p { font-size: 14px; line-height: 21px; color: var(--text-secondary); margin-top: 10px; max-width: 76ch; }
+  h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 18px; }
+  .cells { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .cell { border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 190px; }
+  .cell-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
+  .cell-stage { flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .cell-stage.col { flex-direction: column; gap: 18px; }
+  .was { opacity: 0.55; }
+  .zoomframe { border: 1px dashed var(--border); border-radius: var(--r-sm); background: #FFFFFF; }
+  .zoomcap { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-align: center; }
+
+  .icon-bench { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 14px; }
+  .wall { border-radius: var(--r-md); padding: 20px; display: flex; align-items: flex-end; gap: 22px; }
+  .wall.light { background: var(--wall-light); border: 1px solid var(--border); }
+  .wall.dark  { background: var(--wall-dark); }
+  .wall.lockups { align-items: center; justify-content: center; padding: 28px 20px; }
+  .tilewrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .tile { border-radius: 22.5%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.18); background: #FFFFFF; }
+  .tile svg { width: 62%; height: 62%; display: block; }
+  .t192 { width: 192px; height: 192px; }
+  .t48  { width: 48px;  height: 48px; }
+  .tile-cap { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+  .wall.dark .tile-cap { color: #8F87A3; }
+
+  /* wordmark r4: colores del logo */
+  .wm { font-weight: 800; letter-spacing: -0.02em; font-size: 34px; line-height: 1; white-space: nowrap; }
+  .wm .pik { color: var(--accent-ink); }
+  .wm .mkr { color: var(--action-bright); }
+  .wm .mkr-ink { color: var(--action-ink); }
+  .lockup { display: inline-flex; align-items: center; gap: 12px; }
+  .lockup svg.iso { width: 42px; height: 42px; }
+  .lockup .wm { font-size: 25px; }
+
+  .rationale { background: var(--surface-subtle); border-radius: var(--r-md); padding: 16px 20px; margin-top: 14px; font-size: 13.5px; line-height: 20px; color: var(--text-secondary); }
+  .rationale b { color: var(--text-primary); font-weight: 600; }
+  .rationale p + p { margin-top: 6px; }
+  .foot { font-size: 14px; line-height: 21px; color: var(--text-secondary); }
+  .foot h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+  .foot ul { margin: 8px 0 0 18px; }
+  .foot li + li { margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- r4: junta EXACTA. El asta muere en x=38 y la panza + punto
+         arrancan en x=38. Cero solape sobre el morado. -->
+    <symbol id="markA_r4" viewBox="0 0 96 96">
+      <g transform="translate(6,0)">
+        <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="var(--m-stem, #6C3FD1)"/>
+        <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="var(--m-color, #43E5C2)"/>
+        <circle cx="38" cy="38" r="10" fill="var(--m-dot, #1C1826)"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="sheet">
+
+  <div class="head">
+    <div class="kicker">Logo · Ronda 4 · issue #27 · 2026-07-07</div>
+    <h1>Junta limpia + wordmark en los colores del logo</h1>
+    <p><b>1.</b> Eliminado el último medio punto de solape (el "anti-hairline" de la r3): ahora
+       la panza mint y el punto negro arrancan <b>exactamente</b> donde termina el asta morada.
+       El zoom de abajo lo demuestra. <b>2.</b> El wordmark deja de inventar colores:
+       <b>Pikete = morado del asta · Maker = turquesa mint de la panza</b>. Mismo criterio que
+       el CEO: la palabra viste los colores del símbolo.</p>
+  </div>
+
+  <div class="dir">
+    <h2>1 · La junta, con lupa</h2>
+    <div class="cells">
+      <div class="cell">
+        <div class="cell-label">r3 · quedaba 0.5 de solape</div>
+        <div class="cell-stage col was">
+          <svg class="zoomframe" width="150" height="150" viewBox="33 26 10 24">
+            <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+            <path d="M37.5,12 A26,26 0 0 1 37.5,64 L37.5,48 A10,10 0 0 0 37.5,28 Z" fill="#43E5C2"/>
+            <circle cx="37.5" cy="38" r="10" fill="#1C1826"/>
+          </svg>
+          <div class="zoomcap">zoom ×15 — el mint pisa el asta</div>
+        </div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">r4 · junta exacta ✓</div>
+        <div class="cell-stage col">
+          <svg class="zoomframe" width="150" height="150" viewBox="33 26 10 24">
+            <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+            <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#43E5C2"/>
+            <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+          </svg>
+          <div class="zoomcap">zoom ×15 — frontera limpia en x=38</div>
+        </div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Isotipo r4</div>
+        <div class="cell-stage"><svg width="140" height="140"><use href="#markA_r4"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Monocromo · 1 tinta</div>
+        <div class="cell-stage" style="--m-stem:#1C1826; --m-color:#1C1826; --m-dot:#FFFFFF;"><svg width="140" height="140"><use href="#markA_r4"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dir">
+    <h2>2 · Wordmark y lockup en colores del logo</h2>
+    <div class="cells">
+      <div class="cell">
+        <div class="cell-label">Wordmark r4</div>
+        <div class="cell-stage"><div class="wm"><span class="pik">Pikete</span><span class="mkr">Maker</span></div></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Lockup r4</div>
+        <div class="cell-stage">
+          <div class="lockup">
+            <svg class="iso"><use href="#markA_r4"/></svg>
+            <div class="wm"><span class="pik">Pikete</span><span class="mkr">Maker</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="icon-bench">
+      <div class="wall light lockups">
+        <div class="lockup">
+          <svg class="iso"><use href="#markA_r4"/></svg>
+          <div class="wm"><span class="pik">Pikete</span><span class="mkr">Maker</span></div>
+        </div>
+      </div>
+      <div class="wall dark lockups">
+        <div class="lockup">
+          <svg class="iso"><use href="#markA_r4"/></svg>
+          <div class="wm"><span class="pik">Pikete</span><span class="mkr">Maker</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Nota de legibilidad (decisión tuya, con los ojos):</b> el turquesa mint brilla
+         (contraste ~1.9:1 sobre blanco) — sobre fondo OSCURO luce perfecto (panel derecho),
+         pero sobre blanco, a tamaños pequeños, "Maker" puede costar de leer. Si en algún
+         soporte claro flojea, existe el fallback en mint oscuro del sistema
+         (<span style="color:#0B7C6C; font-weight:700">Maker</span>) — misma familia, más tinta.
+         Comparación directa sobre blanco:</p>
+      <p style="margin-top:10px">
+        <span class="wm" style="font-size:22px"><span class="pik">Pikete</span><span class="mkr">Maker</span></span>
+        &nbsp;&nbsp;vs&nbsp;&nbsp;
+        <span class="wm" style="font-size:22px"><span class="pik">Pikete</span><span class="mkr-ink">Maker</span></span>
+      </p>
+    </div>
+  </div>
+
+  <div class="dir">
+    <h2>3 · Banco de icono (r4)</h2>
+    <div class="icon-bench">
+      <div class="wall light">
+        <div class="tilewrap"><div class="tile t192"><svg><use href="#markA_r4"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile t48"><svg><use href="#markA_r4"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+      <div class="wall dark">
+        <div class="tilewrap"><div class="tile t192"><svg><use href="#markA_r4"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile t48"><svg><use href="#markA_r4"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <h3>Con tu OK a esta r4 → ronda final de cierre</h3>
+    <ul>
+      <li>Wordmark "PiketeMaker" completo lo doy por decidido (has coloreado las dos palabras). Queda solo tu palabra sobre el fallback de "Maker" en soportes claros (mint brillante vs mint tinta).</li>
+      <li>Tipografía display con licencia (Archivo Black / Inter Display ExtraBold) y ajuste óptico del lockup.</li>
+      <li>Variantes de uso: splash, watermark del story, favicon, negativa sobre morado.</li>
+      <li>Exports: SVG maestro + PNG 48/72/96/144/192/512.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

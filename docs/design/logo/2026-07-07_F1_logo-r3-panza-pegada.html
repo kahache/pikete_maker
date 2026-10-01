@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Logo · Ronda 3 · Panza pegada al asta (feedback CEO)</title>
+<style>
+  /* ============================================================
+     Ronda 3 sobre la A refinada (r2). Cambio único (feedback CEO):
+       La panza mint NO debe superponerse al asta morada: debe quedar
+       PEGADA a su borde derecho. Se desplaza panza + punto a la
+       derecha (de x=34 a x=37.5; el asta termina en x=38).
+     Nota técnica: se deja 0.5 de solape invisible para evitar la
+     línea fantasma (hairline) que el antialiasing dibuja entre dos
+     rellenos exactamente adyacentes al escalar. Visualmente: pegado.
+     Histórico intacto: r1 (4 direcciones) y r2 (cambios de color y
+     remate) conservan sus ficheros.
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C;
+    --action-bright: #43E5C2;
+    --accent-ink: #6C3FD1;
+    --accent-tint: #EFEAFB;
+    --bg: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --text-primary: #1C1826;
+    --text-secondary: #544E68;
+    --text-tertiary: #6B6383;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --wall-light: #EDEBF2;
+    --wall-dark: #141119;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary); padding: 40px 20px 96px; }
+  .sheet { max-width: 1080px; margin: 0 auto; }
+  .head, .dir, .foot { background: var(--bg); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 28px; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+  h1 { font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .head p { font-size: 14px; line-height: 21px; color: var(--text-secondary); margin-top: 10px; max-width: 76ch; }
+  h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 18px; }
+  .cells { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .cell { border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 190px; }
+  .cell-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
+  .cell-stage { flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .was { opacity: 0.55; }
+
+  .icon-bench { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 14px; }
+  .wall { border-radius: var(--r-md); padding: 20px; display: flex; align-items: flex-end; gap: 22px; }
+  .wall.light { background: var(--wall-light); border: 1px solid var(--border); }
+  .wall.dark  { background: var(--wall-dark); }
+  .tilewrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .tile { border-radius: 22.5%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.18); background: #FFFFFF; }
+  .tile svg { width: 62%; height: 62%; display: block; }
+  .t192 { width: 192px; height: 192px; }
+  .t48  { width: 48px;  height: 48px; }
+  .tile-cap { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+  .wall.dark .tile-cap { color: #8F87A3; }
+
+  .wm { font-weight: 800; letter-spacing: -0.02em; font-size: 34px; line-height: 1; white-space: nowrap; }
+  .wm .a { color: var(--text-primary); }
+  .wm .b { color: var(--action-ink); }
+  .lockup { display: inline-flex; align-items: center; gap: 12px; }
+  .lockup svg.iso { width: 42px; height: 42px; }
+  .lockup .wm { font-size: 25px; }
+
+  .rationale { background: var(--surface-subtle); border-radius: var(--r-md); padding: 16px 20px; margin-top: 14px; font-size: 13.5px; line-height: 20px; color: var(--text-secondary); }
+  .rationale b { color: var(--text-primary); font-weight: 600; }
+  .foot { font-size: 14px; line-height: 21px; color: var(--text-secondary); }
+  .foot h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+  .foot ul { margin: 8px 0 0 18px; }
+  .foot li + li { margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- r2 (referencia): la panza arrancaba en x=34 y montaba 4u sobre el
+         asta morada (que llega a x=38) -> el mint tapaba morado. -->
+    <symbol id="markA_r2" viewBox="0 0 96 96">
+      <g transform="translate(8,0)">
+        <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+        <path d="M34,12 A26,26 0 0 1 34,64 L34,48 A10,10 0 0 0 34,28 Z" fill="#43E5C2"/>
+        <circle cx="34" cy="38" r="10" fill="#1C1826"/>
+      </g>
+    </symbol>
+
+    <!-- r3 (feedback CEO): panza y punto desplazados a la derecha para
+         quedar PEGADOS al borde derecho del asta (x=38), sin taparlo.
+         (0.5 de solape técnico anti-hairline, invisible.) -->
+    <symbol id="markA_r3" viewBox="0 0 96 96">
+      <g transform="translate(6,0)">
+        <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="var(--m-stem, #6C3FD1)"/>
+        <path d="M37.5,12 A26,26 0 0 1 37.5,64 L37.5,48 A10,10 0 0 0 37.5,28 Z" fill="var(--m-color, #43E5C2)"/>
+        <circle cx="37.5" cy="38" r="10" fill="var(--m-dot, #1C1826)"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="sheet">
+
+  <div class="head">
+    <div class="kicker">Logo · Ronda 3 · issue #27 · 2026-07-07</div>
+    <h1>Panza pegada al asta, sin superposición</h1>
+    <p>Cambio único sobre la r2: el semicírculo mint y el punto negro se desplazan a la
+       derecha hasta quedar <b>pegados al borde del asta morada</b> — antes el mint montaba
+       4 unidades sobre el morado y se lo comía. Ahora cada color tiene su sitio:
+       asta morada íntegra + panza mint adosada + punto negro en el ojo.</p>
+  </div>
+
+  <div class="dir">
+    <h2>Antes (r2) / después (r3)</h2>
+    <div class="cells">
+      <div class="cell">
+        <div class="cell-label">r2 · mint superpuesto al asta</div>
+        <div class="cell-stage was"><svg width="140" height="140"><use href="#markA_r2"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">r3 · mint pegado al asta ✓</div>
+        <div class="cell-stage"><svg width="140" height="140"><use href="#markA_r3"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Monocromo · 1 tinta</div>
+        <div class="cell-stage" style="--m-stem:#1C1826; --m-color:#1C1826; --m-dot:#FFFFFF;"><svg width="140" height="140"><use href="#markA_r3"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Lockup</div>
+        <div class="cell-stage">
+          <div class="lockup">
+            <svg class="iso"><use href="#markA_r3"/></svg>
+            <div class="wm"><span class="a">Pikete</span><span class="b">Maker</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="icon-bench">
+      <div class="wall light">
+        <div class="tilewrap"><div class="tile t192"><svg><use href="#markA_r3"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile t48"><svg><use href="#markA_r3"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+      <div class="wall dark">
+        <div class="tilewrap"><div class="tile t192"><svg><use href="#markA_r3"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile t48"><svg><use href="#markA_r3"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Qué cambia por dentro:</b> la panza pasa de arrancar en x=34 a x=37.5 (el asta
+         termina en x=38): morado y mint ahora comparten frontera en vez de pisarse. Se deja
+         medio punto de solape técnico —invisible— para que al escalar el icono no aparezca
+         una línea clara fantasma entre los dos colores (artefacto típico del antialiasing
+         entre rellenos exactamente adyacentes). El conjunto se re-centra ópticamente en el
+         lienzo (la marca ahora es 3.5u más ancha).</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <h3>Si esta geometría ya es LA buena → ronda final</h3>
+    <ul>
+      <li>Tipografía display con licencia para el wordmark (candidatas: Archivo Black / Inter Display ExtraBold) y ajuste óptico del lockup.</li>
+      <li>Variantes de uso: splash, watermark del story compartido, favicon, versión negativa (sobre morado pleno).</li>
+      <li>Export final: SVG maestro + PNG por tamaño de launcher (48/72/96/144/192/512).</li>
+      <li>Pendiente de tu palabra también: wordmark "PiketeMaker" completo (el de estas hojas) vs "Pikete" corto.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

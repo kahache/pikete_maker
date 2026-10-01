@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Logo · Ronda 7 · PRUEBA FINAL: #17B598 como turquesa único</title>
+<style>
+  /* ============================================================
+     Ronda 7 (decisión CEO sobre r6): M1 #17B598 le encanta y
+     aguanta el blanco → prueba de aplicarlo EN TODO: panza del
+     isotipo + "Maker" del wordmark, a todos los tamaños.
+     Consecuencia elegante: la regla de tamaños DESAPARECE — un
+     solo turquesa canónico, sin variante mini. Sistema más simple.
+     Si el CEO da el OK a esta hoja, el logo queda CERRADO.
+     ============================================================ */
+  :root {
+    --brand-mint: #17B598;      /* EL turquesa (antes #43E5C2) */
+    --mint-old: #43E5C2;        /* referencia r4-r6 */
+    --accent-ink: #6C3FD1;
+    --bg: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --text-primary: #1C1826;
+    --text-secondary: #544E68;
+    --text-tertiary: #6B6383;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --wall-light: #EDEBF2;
+    --wall-dark: #141119;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary); padding: 40px 20px 96px; }
+  .sheet { max-width: 1080px; margin: 0 auto; }
+  .head, .dir, .foot { background: var(--bg); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 28px; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+  h1 { font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .head p { font-size: 14px; line-height: 21px; color: var(--text-secondary); margin-top: 10px; max-width: 76ch; }
+  h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .sub { font-size: 13.5px; color: var(--text-secondary); margin-bottom: 18px; max-width: 80ch; }
+  .cells { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .cell { border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 180px; }
+  .cell-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
+  .cell-stage { flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .was { opacity: 0.55; }
+
+  .bench { border-radius: var(--r-md); padding: 22px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 38px; }
+  .bench.white { background: #FFFFFF; border: 1px solid var(--border); }
+  .bench.wallL { background: var(--wall-light); border: 1px solid var(--border); }
+  .bench.dark  { background: var(--wall-dark); }
+  .spec { display: flex; flex-direction: column; gap: 7px; align-items: center; }
+  .speclab { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-align: center; }
+  .bench.dark .speclab { color: #8F87A3; }
+
+  .icon-bench { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 14px; }
+  .wall { border-radius: var(--r-md); padding: 20px; display: flex; align-items: flex-end; gap: 22px; }
+  .wall.light { background: var(--wall-light); border: 1px solid var(--border); }
+  .wall.dark  { background: var(--wall-dark); }
+  .tilewrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .tile { border-radius: 22.5%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.18); background: #FFFFFF; }
+  .tile svg { width: 62%; height: 62%; display: block; }
+  .t192 { width: 192px; height: 192px; }
+  .t96  { width: 96px;  height: 96px; }
+  .t48  { width: 48px;  height: 48px; }
+  .tile-cap { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+  .wall.dark .tile-cap { color: #8F87A3; }
+
+  .wm { font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; white-space: nowrap; }
+  .pik { color: var(--accent-ink); }
+  .mkr { color: var(--brand-mint); }
+  .lockup { display: inline-flex; align-items: center; gap: 10px; }
+
+  .rationale { background: var(--surface-subtle); border-radius: var(--r-md); padding: 16px 20px; margin-top: 14px; font-size: 13.5px; line-height: 20px; color: var(--text-secondary); }
+  .rationale b { color: var(--text-primary); font-weight: 600; }
+  .rationale p + p { margin-top: 6px; }
+  .foot { font-size: 14px; line-height: 21px; color: var(--text-secondary); }
+  .foot h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+  .foot ul { margin: 8px 0 0 18px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Isotipo FINAL: panza en #17B598 (turquesa único del CEO) -->
+    <symbol id="markFinal" viewBox="0 0 96 96">
+      <g transform="translate(6,0)">
+        <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="var(--m-stem, #6C3FD1)"/>
+        <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="var(--m-color, #17B598)"/>
+        <circle cx="38" cy="38" r="10" fill="var(--m-dot, #1C1826)"/>
+      </g>
+    </symbol>
+    <!-- Referencia r4-r6 (mint brillante) para el antes/después -->
+    <symbol id="markOld" viewBox="0 0 96 96">
+      <g transform="translate(6,0)">
+        <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+        <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#43E5C2"/>
+        <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="sheet">
+
+  <div class="head">
+    <div class="kicker">Logo · Ronda 7 · issue #27 · 2026-07-07 · PRUEBA FINAL</div>
+    <h1>#17B598 en todo: un solo turquesa, cero reglas especiales</h1>
+    <p>Propuesta del CEO sobre la r6: M1 <b>#17B598</b> aplicado también a la panza del
+       isotipo, no solo al texto. La consecuencia es la mejor noticia de sistema posible:
+       <b>desaparece la regla de tamaños</b> — un único turquesa canónico en logo y texto,
+       a cualquier tamaño, sobre cualquier fondo. Si esta hoja te convence, el logo queda
+       <b>CERRADO</b>.</p>
+  </div>
+
+  <div class="dir">
+    <h2>1 · Antes / después del isotipo</h2>
+    <div class="cells">
+      <div class="cell">
+        <div class="cell-label">r4-r6 · mint brillante #43E5C2</div>
+        <div class="cell-stage was"><svg width="130" height="130"><use href="#markOld"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">FINAL · turquesa #17B598</div>
+        <div class="cell-stage"><svg width="130" height="130"><use href="#markFinal"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Monocromo · 1 tinta (sin cambios)</div>
+        <div class="cell-stage" style="--m-stem:#1C1826; --m-color:#1C1826; --m-dot:#FFFFFF;"><svg width="130" height="130"><use href="#markFinal"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dir">
+    <h2>2 · Todos los tamaños de texto, sobre los tres fondos</h2>
+    <div class="sub">Un solo color en "Maker" — 34px (hero) / 25px (header) / 15px (watermark). Sin variante mini: lo que ves es lo que hay siempre.</div>
+    <div class="bench white">
+      <div class="spec"><div class="lockup"><svg width="52" height="52"><use href="#markFinal"/></svg><span class="wm" style="font-size:34px"><span class="pik">Pikete</span><span class="mkr">Maker</span></span></div><span class="speclab">34px · blanco</span></div>
+      <div class="spec"><div class="lockup"><svg width="42" height="42"><use href="#markFinal"/></svg><span class="wm" style="font-size:25px"><span class="pik">Pikete</span><span class="mkr">Maker</span></span></div><span class="speclab">25px · blanco</span></div>
+      <div class="spec"><div class="lockup"><svg width="26" height="26"><use href="#markFinal"/></svg><span class="wm" style="font-size:15px"><span class="pik">Pikete</span><span class="mkr">Maker</span></span></div><span class="speclab">15px · blanco</span></div>
+    </div>
+    <div class="bench wallL" style="margin-top:14px">
+      <div class="spec"><div class="lockup"><svg width="42" height="42"><use href="#markFinal"/></svg><span class="wm" style="font-size:25px"><span class="pik">Pikete</span><span class="mkr">Maker</span></span></div><span class="speclab">25px · gris cálido de la app</span></div>
+      <div class="spec"><div class="lockup"><svg width="26" height="26"><use href="#markFinal"/></svg><span class="wm" style="font-size:15px"><span class="pik">Pikete</span><span class="mkr">Maker</span></span></div><span class="speclab">15px · gris cálido</span></div>
+    </div>
+    <div class="bench dark" style="margin-top:14px">
+      <div class="spec"><div class="lockup"><svg width="42" height="42"><use href="#markFinal"/></svg><span class="wm" style="font-size:25px"><span class="pik">Pikete</span><span class="mkr">Maker</span></span></div><span class="speclab">25px · oscuro</span></div>
+      <div class="spec"><div class="lockup"><svg width="26" height="26"><use href="#markFinal"/></svg><span class="wm" style="font-size:15px"><span class="pik">Pikete</span><span class="mkr">Maker</span></span></div><span class="speclab">15px · oscuro</span></div>
+    </div>
+  </div>
+
+  <div class="dir">
+    <h2>3 · Banco de icono final</h2>
+    <div class="icon-bench">
+      <div class="wall light">
+        <div class="tilewrap"><div class="tile t192"><svg><use href="#markFinal"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile t96"><svg><use href="#markFinal"/></svg></div><div class="tile-cap">96px</div></div>
+        <div class="tilewrap"><div class="tile t48"><svg><use href="#markFinal"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+      <div class="wall dark">
+        <div class="tilewrap"><div class="tile t192"><svg><use href="#markFinal"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile t96"><svg><use href="#markFinal"/></svg></div><div class="tile-cap">96px</div></div>
+        <div class="tilewrap"><div class="tile t48"><svg><use href="#markFinal"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Lectura del UX — a favor del cambio:</b> #17B598 tiene más cuerpo que el mint
+         brillante: el isotipo gana presencia sobre blanco (el anillo ya no "flota") y la
+         palabra y el símbolo quedan idénticos, que era tu criterio desde la r4. Y el sistema
+         se simplifica: un turquesa, cero excepciones, cero regla de tamaños.</p>
+      <p><b>Nota de sistema (para la ronda de cierre, no bloquea):</b> el turquesa de la UI
+         (`action.bright` #43E5C2 en tokens.json, usado en fondos suaves y estados) es un
+         color DE INTERFAZ y puede seguir existiendo — pero el ux-designer debe revisar si
+         conviven bien o si la marca nueva pide ajustar la rampa mint de los tokens. Se
+         resuelve en el cierre.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <h3>Si das el OK a esta hoja → LOGO CERRADO 🎉</h3>
+    <ul>
+      <li>Queda congelado: isotipo P-Paleta (asta morada #6C3FD1 + panza #17B598 + punto #1C1826, junta exacta) · wordmark "PiketeMaker" (Pikete morado + Maker #17B598) · sin borde · un solo turquesa a todos los tamaños.</li>
+      <li>Ronda de cierre (última): tipografía display con licencia, splash, watermark story, favicon, negativa sobre morado, exports SVG + PNG 48-512, mini-manual de uso, y revisión de convivencia con los tokens de la UI.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

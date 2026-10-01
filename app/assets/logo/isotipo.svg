@@ -1,0 +1,14 @@
+<!-- Isotipo PiketeMaker "P-Paleta" — CONGELADO (D14 / docs/design/logo/LOGO.md).
+     Fuente maestra para generar el icono de launcher y el splash (ver app/README.md).
+     El widget LogoIsotipo (lib/widgets/logo_isotipo.dart) reproduce esta geometría
+     con CustomPainter (offline, sin dependencias). Cambiar aquí = nueva decisión CEO. -->
+<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(6,0)">
+    <!-- asta: morado, remate superior recto (P cerrada), inferior redondeado -->
+    <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+    <!-- panza: swatch anular turquesa, junta EXACTA con el asta en x=38 -->
+    <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#17B598"/>
+    <!-- piquete: punto negro en el ojo -->
+    <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+  </g>
+</svg>

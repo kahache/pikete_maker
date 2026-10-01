@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "colorlab"
+version = "0.1.0"
+description = "CV core of the fashion app: color palette of an outfit and proposed harmonies"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "Pillow",
+    "scikit-learn",
+    "matplotlib",
+    "opencv-python-headless",
+]
+
+[project.optional-dependencies]
+# Higher-quality background removal (U^2-Net). onnxruntime does not publish
+# a wheel for Python 3.14 yet: install this extra only on 3.11/3.12.
+hq-bg = ["rembg"]
+# Segmentation mask generation (Phase 2.5): ai-edge-litert is the only TFLite
+# runtime with a Python 3.14 / Windows wheel (verified 2026-07-14; tflite-runtime
+# and tensorflow have none). Used only by cv_core/tools/generate_masks.py —
+# the colorlab library itself never imports it.
+seg = ["ai-edge-litert"]
+# `ruff` is the formatter + linter for the whole repo; its config is the root
+# `ruff.toml` (it covers backend/ too, so it does not live in this file).
+# `mypy` type-checks `colorlab` only (config below): `cd cv_core && mypy`.
+dev = ["pytest", "ruff", "mypy"]
+
+[project.scripts]
+colorlab = "colorlab.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.mypy]
+# Run from cv_core/ (`cd cv_core && mypy`): mypy reads the config of its cwd.
+# Scope = the library only; the tools and tests are untyped scripts.
+files = ["src/colorlab"]
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+# Untyped / optional runtime dependencies: sklearn ships no py.typed marker
+# and rembg is the optional `hq-bg` extra (absent on Python 3.14).
+module = ["sklearn.*", "rembg"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: validation with real photos (GrabCut) — deselectable with -m 'not slow'",
+]

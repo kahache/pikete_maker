@@ -1,0 +1,69 @@
+# Ruff — formatter + linter for ALL Python in the repo (cv_core/ and backend/).
+#
+# Lives at the root, not inside cv_core/pyproject.toml, because the repo has two
+# independent Python trees (the `colorlab` package and the telemetry sink) and a
+# single config keeps them held to one standard. `ruff` is declared in the
+# `dev` extra of cv_core/pyproject.toml so `pip install -e "cv_core[dev]"`
+# gets you the tool.
+#
+#   ruff format .        # apply formatting
+#   ruff format --check .  # CI gate
+#   ruff check .         # lint
+
+# 88 = the black/ruff default. The codebase was already written to roughly this
+# width, so adopting it churns very little.
+line-length = 88
+# The floor declared by cv_core/pyproject.toml (`requires-python = ">=3.11"`).
+# Pinning it here stops pyupgrade rules from suggesting 3.12+ only syntax.
+target-version = "py311"
+
+extend-exclude = [
+    ".venv",
+    "outputs",
+    "samples",
+    "app",  # Flutter/Dart tree — owned separately, no Python in it.
+]
+
+[lint]
+# Deliberately a REVIEWABLE core rather than "select = ALL":
+#   E/W  pycodestyle   — layout and whitespace
+#   F    pyflakes      — real errors (undefined names, unused imports)
+#   I    isort         — deterministic import order
+#   B    bugbear       — likely-bug patterns (mutable defaults, loop closures)
+#   UP   pyupgrade     — modern syntax for the supported Python floor
+#   C4   comprehensions— readability
+#   RUF  ruff-specific
+select = ["E", "W", "F", "I", "B", "UP", "C4", "RUF"]
+
+ignore = [
+    # E501 (line too long) is enforced by the FORMATTER, not the linter. Long
+    # lines that the formatter cannot split are almost always comment prose or
+    # a URL, where a manual wrap hurts readability more than it helps.
+    "E501",
+    # B905 (`zip(..., strict=)`) is ENFORCED since 2026-09-30 (review E2): every
+    # zip in the repo passes `strict=True`. With equal lengths it cannot change
+    # any output; it only turns a silent truncation into an error.
+    # UP031 — printf-style `%`. 6 of the 7 occurrences are the hex-triple
+    # idiom `"#%02X%02X%02X" % rgb`, which is strictly more readable than the
+    # f-string equivalent (which has to index the tuple three times).
+    "UP031",
+    # RUF001/RUF002 — "ambiguous" unicode. The docstrings and report strings
+    # use typographic en-dashes deliberately; they are prose, not identifiers.
+    "RUF001",
+    "RUF002",
+]
+
+[lint.per-file-ignores]
+# Tests are organized in banner-delimited sections, each importing the symbols
+# it exercises next to the block that uses them. That is deliberate structure
+# in a long test module, not an accident, so module-level import placement
+# (E402) is not enforced there.
+"cv_core/tests/**" = ["E402"]
+
+[lint.isort]
+# `colorlab` is this repo's own package: keep it in its own import block below
+# third-party (numpy/PIL/sklearn) so the dependency direction is visible.
+known-first-party = ["colorlab"]
+
+[format]
+docstring-code-format = true

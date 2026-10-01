@@ -1,0 +1,81 @@
+# Static analysis rules — the project's "PEP 8 for Dart".
+#
+# Base: `flutter_lints`, the ruleset published by the Flutter team (already a
+# dev_dependency; no new package, so no build/APK cost). On top of it we enable
+# a curated set of rules, chosen on EVIDENCE rather than taste: each one was
+# measured against the codebase before being turned on.
+#
+# Two kinds of additions:
+#  1. Rules the code ALREADY satisfies with zero violations — enabling them
+#     costs nothing today and locks the existing discipline in for future work
+#     (explicit types, single quotes, super parameters...).
+#  2. Rules with a handful of violations that were genuinely worth fixing.
+#
+# Rules deliberately NOT enabled are listed at the bottom with the reason, so
+# the decision is auditable instead of looking like an oversight.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-raw-types: true
+  errors:
+    # Comentarios y strings en español: no exigir puntos finales en doc comments.
+    dangling_library_doc_comments: ignore
+
+linter:
+  rules:
+    # --- Project conventions (pre-existing) ---------------------------------
+    # Coherencia del proyecto (convención del repo: constantes con nombre).
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    always_declare_return_types: true
+    # 'const' en widgets es clave para el rendimiento (gate G1).
+    prefer_const_constructors_in_immutables: true
+
+    # --- Already satisfied everywhere: enabled to keep it that way ----------
+    # The codebase consistently writes `final AppColors c = ...` rather than
+    # `var`. This is the single biggest readability convention in the repo, so
+    # it becomes enforced instead of merely customary.
+    always_specify_types: true
+    prefer_single_quotes: true
+    use_super_parameters: true
+    avoid_dynamic_calls: true
+    avoid_final_parameters: true
+    join_return_with_assignment: true
+    prefer_const_literals_to_create_immutables: true
+
+    # --- Small, genuine improvements (all violations fixed) -----------------
+    directives_ordering: true
+    unnecessary_parenthesis: true
+    sort_constructors_first: true
+    prefer_asserts_with_message: true
+    # Catches accidental fire-and-forget async work; intentional cases are
+    # marked with `unawaited(...)`, which documents the intent at the call site.
+    unawaited_futures: true
+
+# --- Considered and REJECTED (with reasons) ---------------------------------
+#
+# very_good_analysis (the popular strict bundle): it pulls in
+#   `always_use_package_imports` (would rewrite every relative import in lib/),
+#   `require_trailing_commas` and `public_member_api_docs` — well over a
+#   thousand mechanical edits on code that is signed, shipped and on the CEO's
+#   phone. The value it adds beyond the list above is mostly formatting
+#   opinion, so the cost/benefit does not justify it. Revisit if the team grows.
+#
+# require_trailing_commas   — 337 violations. Pure formatting churn that would
+#                             also fight the hand-tuned line wrapping.
+# lines_longer_than_80_chars— 74, almost all prose in doc comments.
+# cascade_invocations       — 58; cascades often read WORSE here.
+# prefer_expression_function_bodies — 32; stylistic, no clarity gain.
+# avoid_redundant_argument_values   — 22, and ~18 of them are in the color
+#                             engine PARITY tests, where passing the default
+#                             explicitly is the point (it documents the value
+#                             the Python side is being compared against).
+# avoid_positional_boolean_parameters — 1, on `setEnabled(bool)`, an idiomatic
+#                             setter-shaped API; the rule is a false positive.
+# unnecessary_lambdas       — 1, where the tearoff would change generic
+#                             inference. Not worth the risk.
+# flutter_style_todos       — 1; the repo's `TODO(F6, needs device)` form
+#                             carries more information than `TODO(username)`.

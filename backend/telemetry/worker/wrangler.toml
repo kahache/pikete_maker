@@ -1,0 +1,17 @@
+# PiketeMaker telemetry sink — Cloudflare Worker config (stack A', D33 amended).
+# Deploy steps: backend/telemetry/README.md. FREE tier only — no paid features.
+
+name = "piketemaker-telemetry"
+main = "src/worker.js"
+compatibility_date = "2026-07-01"
+
+# Counters live in Workers KV (free tier: 100k reads / 1k writes per day —
+# Phase A is ~180 cards TOTAL, so orders of magnitude of headroom).
+# Create the namespace with:  npx wrangler kv namespace create SIGNALS
+# then paste the id it prints here:
+[[kv_namespaces]]
+binding = "SIGNALS"
+id = "REPLACE_WITH_NAMESPACE_ID"
+
+# The write-only app key (contract §4) is a SECRET, never in this file:
+#   npx wrangler secret put API_KEY

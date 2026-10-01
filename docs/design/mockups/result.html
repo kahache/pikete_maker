@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Pantalla de resultado (canónica · D7+D8+D9)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json · MOCKUP CANÓNICO
+     D8: mint = acción (CTAs, links, chevrons) · morado = acento
+     (badge BASE + watermark, máx. 2 dosis por pantalla).
+     D9: neutros teñidos de morado (hue ~258, sat 8–14%), cada uno
+     con contraste ≥ su equivalente gris puro. AA en todos los textos.
+     Exploraciones descartadas: ver archive/.
+     ============================================================ */
+  :root {
+    /* rol de acción (mint) */
+    --action-ink: #0B7C6C;      /* brand.mint.ink — 5.10:1 sobre blanco */
+    --action-bright: #43E5C2;   /* brand.mint.bright — solo no textual */
+    --action-tint: #DFF7F1;     /* brand.mint.tint */
+    /* rol de acento (morado) */
+    --accent-ink: #6C3FD1;      /* brand.purple.ink — 6.42:1 sobre blanco */
+    --accent-bright: #A78BFA;
+    --accent-tint: #EFEAFB;
+
+    /* neutros light */
+    --bg: #FFFFFF;
+    --surface: #FFFFFF;
+    --surface-subtle: #F7F5FB;   /* neutral.tinted */
+    --border: #E9E6F2;           /* neutral.tinted */
+    --border-strong: #D9D3E6;    /* neutral.tinted */
+    --text-primary: #1C1826;     /* 17.38:1 */
+    --text-secondary: #544E68;   /* 7.88:1 */
+    --text-tertiary: #6B6383;    /* 5.62:1 */
+    --text-disabled: #8F87A3;    /* solo decorativo */
+    --action-on-fill: #FFFFFF;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px; --sp-3xl: 48px;
+    --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #F2F0F6;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    display: flex; flex-wrap: wrap; gap: 40px;
+    justify-content: center; align-items: flex-start;
+    padding: 40px 16px 80px;
+  }
+
+  .stage { width: 390px; }
+  .stage-note {
+    margin-top: 14px; padding: 0 4px;
+    font-size: 12px; line-height: 17px; color: var(--text-tertiary);
+  }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+
+  .phone {
+    width: 390px; min-height: 844px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* --- chrome de sistema (fake) --- */
+  .statusbar {
+    height: 44px; flex: none;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--screen-margin);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+  }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--sp-sm) var(--screen-margin) var(--sp-lg);
+  }
+  .topbar .back {
+    width: 44px; height: 44px; margin-left: -12px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--action-ink); font-size: 24px;
+  }
+  .kicker {
+    font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  /* ============================================================
+     ÁREA COMPARTIBLE (F6): esta card ES el story
+     ============================================================ */
+  .share-canvas {
+    margin: 0 var(--screen-margin);
+    padding: var(--sp-xl) var(--sp-xl) var(--sp-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  .share-canvas h1 {
+    font-size: 32px; line-height: 38px; font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .share-canvas .meta {
+    font-size: 13px; line-height: 18px; color: var(--text-tertiary);
+    margin: var(--sp-xs) 0 var(--sp-xl);
+  }
+
+  /* paleta: bandas proporcionales al peso + índice hex/% en mono */
+  .plate-row { display: flex; align-items: stretch; gap: var(--sp-md); }
+  .plate-row .swatch { flex: 1; }
+  .plate-row:first-child .swatch { border-radius: var(--r-sm) var(--r-sm) 0 0; }
+  .plate-row:last-child  .swatch { border-radius: 0 0 var(--r-sm) var(--r-sm); }
+  .plate-row .index {
+    width: 96px; display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 13px; line-height: 18px; font-weight: 500; letter-spacing: 0.02em;
+  }
+  .plate-row .index .hex { color: var(--text-secondary); }
+  .plate-row .index .pct { color: var(--text-tertiary); }
+  .plate-row.is-base .index .hex { color: var(--text-primary); font-weight: 700; }
+
+  /* línea del color base (D5) — badge BASE en ACENTO (morado): 1 de sus 2 apariciones */
+  .base-line {
+    display: flex; align-items: center; gap: var(--sp-md);
+    margin-top: var(--sp-xl); padding-top: var(--sp-lg);
+    border-top: 1px solid var(--border);
+  }
+  .base-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #E13683; flex: none;
+    box-shadow: 0 0 0 1px var(--border-strong);
+  }
+  .base-line .txt { flex: 1; }
+  .badge-base {
+    display: inline-block;
+    font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-ink); background: var(--accent-tint);
+    border-radius: var(--r-sm); padding: 2px 8px;
+    margin-bottom: 2px;
+  }
+  .base-line .desc { font-size: 13px; line-height: 18px; color: var(--text-secondary); }
+  .base-line .desc b { color: var(--text-primary); font-weight: 600; }
+
+  /* watermark: acento firma el story (2ª y última aparición del morado) */
+  .watermark {
+    margin-top: var(--sp-lg); text-align: right;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+    color: var(--text-disabled);
+  }
+  .watermark span { color: var(--accent-ink); }
+
+  /* ============================================================
+     ARMONÍAS
+     ============================================================ */
+  .section { padding: var(--sp-2xl) var(--screen-margin) 0; }
+  .section h2 {
+    font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em;
+    margin-bottom: var(--sp-xs);
+  }
+  .section .sub {
+    font-size: 13px; line-height: 18px; color: var(--text-secondary);
+    margin-bottom: var(--sp-lg);
+  }
+
+  .harmony {
+    display: flex; align-items: center; gap: var(--sp-lg);
+    padding: var(--sp-lg) 0;
+    border-top: 1px solid var(--border);
+    min-height: 44px;
+  }
+  .harmony:last-of-type { border-bottom: 1px solid var(--border); }
+  .harmony .name { flex: 1; }
+  .harmony .name .n { font-size: 16px; line-height: 22px; font-weight: 600; }
+  .harmony .name .d { font-size: 13px; line-height: 18px; color: var(--text-tertiary); }
+  .harmony .strip {
+    display: flex; width: 132px; height: 44px;
+    border-radius: var(--r-sm); overflow: hidden;
+    box-shadow: 0 0 0 1px var(--border);
+  }
+  .harmony .strip i { flex: 1; }
+  .harmony .chev { color: var(--action-ink); font-size: 18px; font-weight: 700; }
+
+  /* ============================================================
+     CTAs — zona de pulgar. ACCIÓN = MINT
+     ============================================================ */
+  .cta-block {
+    margin-top: auto;
+    padding: var(--sp-2xl) var(--screen-margin) var(--sp-xl);
+    display: flex; flex-direction: column; gap: var(--sp-md);
+  }
+  .btn {
+    height: 56px; border-radius: var(--r-pill);
+    display: flex; align-items: center; justify-content: center; gap: var(--sp-sm);
+    font-size: 16px; font-weight: 700; font-family: var(--font-sans);
+    border: none; cursor: pointer;
+  }
+  .btn-primary { background: var(--action-ink); color: var(--action-on-fill); }
+  .btn-secondary {
+    background: var(--bg); color: var(--action-ink);
+    border: 1.5px solid var(--border-strong);
+  }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 6px auto 8px; }
+
+  /* ============================================================
+     PANTALLA 2 — ANALIZANDO (hueco rewarded ad, F8)
+     ============================================================ */
+  .analyzing-body { flex: 1; display: flex; flex-direction: column; padding: 0 var(--screen-margin); }
+  .progress-zone { padding: var(--sp-2xl) 0 var(--sp-xl); }
+  .progress-zone .copy {
+    font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em;
+    margin-bottom: var(--sp-xs);
+  }
+  .progress-zone .step { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-bottom: var(--sp-lg); }
+  .track { height: 6px; background: var(--action-tint); border-radius: 3px; overflow: hidden; }
+  .track .fill { width: 62%; height: 100%; background: var(--action-bright); border-radius: 3px; }
+  .track-meta {
+    display: flex; justify-content: space-between; margin-top: var(--sp-sm);
+    font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary);
+  }
+  .track-meta .pct { color: var(--action-ink); font-weight: 700; }
+
+  .ad-slot {
+    flex: 1; max-height: 438px; /* contenedor máx 4:5 sobre 390 − márgenes */
+    background: var(--surface-subtle);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-lg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: var(--sp-sm); text-align: center; padding: var(--sp-xl);
+  }
+  .ad-slot .tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-strong); border-radius: var(--r-sm);
+    padding: 3px 8px;
+  }
+  .ad-slot .why { font-size: 13px; line-height: 18px; color: var(--text-secondary); max-width: 250px; }
+
+  /* acento (morado) en analizando: el punto de firma, única aparición */
+  .skip-note {
+    text-align: center; font-size: 13px; color: var(--text-tertiary);
+    padding: var(--sp-lg) 0 var(--sp-xl);
+  }
+  .skip-note b { color: var(--accent-ink); font-weight: 700; }
+</style>
+</head>
+<body>
+
+  <!-- ================= PANTALLA 1 · RESULTADO ================= -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+
+      <div class="topbar">
+        <div class="back">‹</div>
+        <div class="kicker">PiketeMaker</div>
+        <div style="width:44px"></div>
+      </div>
+
+      <!-- ÁREA COMPARTIBLE (F6): esta card se exporta tal cual como story -->
+      <div class="share-canvas">
+        <h1>Tu paleta</h1>
+        <div class="meta">Fit de hoy · 6 jul 2026</div>
+
+        <div class="plate">
+          <div class="plate-row is-base" style="height:100px">
+            <div class="swatch" style="background:#E13683"></div>
+            <div class="index"><span class="hex">#E13683</span><span class="pct">36%</span></div>
+          </div>
+          <div class="plate-row" style="height:86px">
+            <div class="swatch" style="background:#F856A4"></div>
+            <div class="index"><span class="hex">#F856A4</span><span class="pct">31%</span></div>
+          </div>
+          <div class="plate-row" style="height:56px">
+            <div class="swatch" style="background:#B21E5E"></div>
+            <div class="index"><span class="hex">#B21E5E</span><span class="pct">20%</span></div>
+          </div>
+          <div class="plate-row" style="height:26px">
+            <div class="swatch" style="background:#652234"></div>
+            <div class="index"><span class="hex">#652234</span><span class="pct">9%</span></div>
+          </div>
+          <div class="plate-row" style="height:12px">
+            <div class="swatch" style="background:#9CA6C6"></div>
+            <div class="index"><span class="hex">#9CA6C6</span><span class="pct">3%</span></div>
+          </div>
+        </div>
+
+        <div class="base-line">
+          <div class="base-dot"></div>
+          <div class="txt">
+            <span class="badge-base">Base</span>
+            <div class="desc"><b>Tu color dominante.</b> Todo conjunta alrededor de él.</div>
+          </div>
+        </div>
+
+        <div class="watermark">piketemaker<span>.</span></div>
+      </div>
+
+      <!-- armonías (F4) -->
+      <div class="section">
+        <h2>Combina con</h2>
+        <div class="sub">Toca una y mira looks reales con esos colores.</div>
+
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Complementario</div>
+            <div class="d">Contraste máximo, 2 colores</div>
+          </div>
+          <div class="strip"><i style="background:#E13683"></i><i style="background:#36E194"></i></div>
+          <div class="chev">›</div>
+        </div>
+
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Análogo</div>
+            <div class="d">Suave, tono sobre tono</div>
+          </div>
+          <div class="strip"><i style="background:#E136D8"></i><i style="background:#E13683"></i><i style="background:#E13E36"></i></div>
+          <div class="chev">›</div>
+        </div>
+
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Triádico</div>
+            <div class="d">Equilibrado, 3 colores</div>
+          </div>
+          <div class="strip"><i style="background:#E13683"></i><i style="background:#83E136"></i><i style="background:#3683E1"></i></div>
+          <div class="chev">›</div>
+        </div>
+
+        <div class="harmony">
+          <div class="name">
+            <div class="n">Complementario dividido</div>
+            <div class="d">Contraste con matiz</div>
+          </div>
+          <div class="strip"><i style="background:#E13683"></i><i style="background:#36E13E"></i><i style="background:#36D8E1"></i></div>
+          <div class="chev">›</div>
+        </div>
+      </div>
+
+      <!-- CTAs en zona de pulgar: F5-lite + F6 -->
+      <div class="cta-block">
+        <button class="btn btn-primary">Ver looks así</button>
+        <button class="btn btn-secondary">Súbela a tu story</button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>Pantalla de resultado — canónica (D7+D8+D9).</strong>
+      Mint solo en lo pulsable (CTAs, back, chevrons); morado en 2 dosis (badge BASE,
+      watermark); todos los neutros teñidos de morado con AA garantizado. La card
+      superior es el área compartible exacta (F6): se exporta tal cual como story.
+      "Ver looks así" abre el deep-link F5-lite con la armonía elegida.
+    </div>
+  </div>
+
+  <!-- ================= PANTALLA 2 · ANALIZANDO (F8) ================= -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+
+      <div class="analyzing-body">
+        <div class="progress-zone">
+          <div class="copy">Leyendo los colores de tu fit…</div>
+          <div class="step">Separando la ropa del fondo</div>
+          <div class="track"><div class="fill"></div></div>
+          <div class="track-meta"><span>analizando</span><span class="pct">62%</span></div>
+        </div>
+
+        <!-- HUECO REWARDED AD (F8): vive dentro de la espera, nunca sobre el resultado -->
+        <div class="ad-slot">
+          <div class="tag">Hueco rewarded video · F8 · AdMob</div>
+          <div class="why">Contenedor máx. 4:5 en superficie sutil. El progreso queda
+          siempre visible arriba y avanzando: el ad acompaña la espera, no la bloquea.</div>
+        </div>
+
+        <div class="skip-note">Tu paleta aparece en cuanto termine — <b>ya casi</b></div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>Estado "analizando" (canónico).</strong> Progreso en mint (tint + bright,
+      no textual) con porcentaje en mint ink; el morado firma una sola vez ("ya casi").
+      El hueco del rewarded ad (F8) vive en surfaceSubtle teñida, con el progreso siempre
+      visible encima. Al completar, la paleta se revela con motion.reveal (600 ms).
+    </div>
+  </div>
+
+</body>
+</html>

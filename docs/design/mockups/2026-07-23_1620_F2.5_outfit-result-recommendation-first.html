@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Resultado outfit: recomendación primero (F2.5 · propuesta D36)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json (mismos valores que
+     result.html y el mockup de zapas D27). Propuesta:
+     docs/design/2026-07-23_1620_F2.5_outfit-result-recommendation-first.md
+     Aplica la mentalidad D27 (recomendación protagonista) al
+     resultado de OUTFIT, que se construyó antes de D27.
+     Light theme. Self-contained, inline. Viewport 390.
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C; --action-bright: #43E5C2; --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1; --accent-bright: #A78BFA; --accent-tint: #EFEAFB;
+    --logo-turquoise: #17B598;
+
+    --bg: #FFFFFF; --surface: #FFFFFF; --surface-subtle: #F7F5FB;
+    --border: #E9E6F2; --border-strong: #D9D3E6;
+    --text-primary: #1C1826; --text-secondary: #544E68;
+    --text-tertiary: #6B6383; --text-disabled: #8F87A3;
+    --action-on-fill: #FFFFFF;
+    --error: #B3261E; --success: #2E7D32;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px; --sp-3xl: 48px;
+    --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+    --shadow-lg: 0 12px 32px rgba(28,24,38,0.14);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary);
+    padding: 40px 16px 80px;
+  }
+  .page-head { max-width: 1100px; margin: 0 auto 36px; text-align: center; }
+  .page-head h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+  .page-head p { font-size: 13px; line-height: 20px; color: var(--text-secondary); margin-top: 10px; }
+  .page-head .decision {
+    display: inline-block; margin-top: 14px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink);
+    background: var(--accent-tint); border-radius: var(--r-sm); padding: 4px 10px;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 44px; justify-content: center; align-items: flex-start; }
+  .stage { width: 390px; }
+  .stage-tag { text-align: center; font-size: 13px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-primary); margin-bottom: 6px; }
+  .stage-tag.before { color: var(--error); }
+  .stage-tag.after  { color: var(--success); }
+  .stage-tag span { color: var(--text-tertiary); font-weight: 600; }
+  .stage-note { margin-top: 14px; padding: 0 4px; font-size: 12px; line-height: 17px; color: var(--text-tertiary); }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+  .stage-note code { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+
+  .phone {
+    width: 390px; min-height: 844px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 28px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: var(--shadow-md); position: relative;
+  }
+  .phone.is-after { outline: 3px solid rgba(46,125,50,0.28); outline-offset: 4px; }
+  .phone.is-before { outline: 3px solid rgba(179,38,30,0.22); outline-offset: 4px; }
+  .statusbar {
+    height: 44px; flex: none; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 var(--screen-margin);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary); z-index: 3;
+  }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 6px auto 8px; flex: none; z-index: 3; }
+
+  .appbar { height: 52px; display: flex; align-items: center; padding: 0 var(--sp-xs); position: relative; flex: none; }
+  .appbar .back { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--action-ink); }
+  .appbar .title {
+    position: absolute; left: 0; right: 0; text-align: center;
+    font-size: 13px; line-height: 16px; font-weight: 800; letter-spacing: -0.01em;
+    color: var(--text-primary); pointer-events: none;
+  }
+
+  .btn {
+    height: 56px; border-radius: var(--r-pill); display: flex; align-items: center;
+    justify-content: center; gap: var(--sp-sm); font-size: 16px; font-weight: 700; border: none;
+    cursor: pointer; width: 100%; font-family: var(--font-sans);
+  }
+  .btn-primary { background: var(--action-ink); color: var(--action-on-fill); }
+  .btn-secondary { background: var(--bg); color: var(--action-ink); border: 1.5px solid var(--border-strong); }
+
+  .res-scroll { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+  /* ---------- SHARE CANVAS (F6 · objeto compartible) ---------- */
+  .share-canvas {
+    margin: 0 var(--screen-margin);
+    padding: var(--sp-xl) var(--sp-xl) var(--sp-lg);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-lg); box-shadow: var(--shadow-sm);
+  }
+  .share-canvas .meta { font-size: 13px; line-height: 18px; color: var(--text-tertiary); }
+  .share-canvas h1 { font-size: 32px; line-height: 36px; font-weight: 800; letter-spacing: -0.02em; }
+
+  /* ===== extracción (ANTES): bloque por prenda, GRANDE ===== */
+  .garment-block + .garment-block { border-top: 1px solid var(--border); margin-top: var(--sp-lg); padding-top: var(--sp-lg); }
+  .region-label { display: flex; align-items: baseline; gap: var(--sp-sm); margin-bottom: var(--sp-sm); }
+  .region-label .r { font-size: 11px; line-height: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
+  .region-label .neutral-note { font-size: 13px; line-height: 18px; color: var(--text-tertiary); font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .plate-row { display: flex; align-items: center; gap: var(--sp-md); margin-bottom: var(--sp-sm); }
+  .plate-row:last-child { margin-bottom: 0; }
+  .plate-row .swatch { flex: 1; align-self: stretch; }
+  .plate-row:first-of-type .swatch { border-radius: var(--r-sm) var(--r-sm) 0 0; }
+  .plate-row:last-of-type  .swatch { border-radius: 0 0 var(--r-sm) var(--r-sm); }
+  .plate-row .index { width: 96px; display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: 13px; line-height: 18px; font-weight: 500; letter-spacing: 0.02em; }
+  .plate-row .index .hex { color: var(--text-secondary); }
+  .plate-row .index .pct { color: var(--text-tertiary); }
+  .plate-row.is-base .index .hex { color: var(--text-primary); font-weight: 700; }
+  .base-line { display: flex; align-items: center; gap: var(--sp-md); margin-top: var(--sp-xl); padding-top: var(--sp-lg); border-top: 1px solid var(--border); }
+  .base-dot { width: 28px; height: 28px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px var(--border-strong); }
+  .base-line .txt { flex: 1; }
+  .base-line .desc { font-size: 13px; line-height: 18px; color: var(--text-secondary); }
+  .base-line .desc b { color: var(--text-primary); font-weight: 600; }
+
+  .badge-base {
+    display: inline-block; font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink);
+    background: var(--accent-tint); border-radius: var(--r-sm); padding: 2px 8px; margin-bottom: 2px;
+  }
+
+  /* ===== recomendación (DESPUÉS): hero combo GRANDE ===== */
+  .hero-kicker {
+    margin-top: var(--sp-lg); font-size: 11px; line-height: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary);
+  }
+  .combo {
+    margin-top: var(--sp-sm); display: flex; height: 154px;
+    border-radius: var(--r-md); overflow: hidden; box-shadow: 0 0 0 1px var(--border);
+  }
+  .combo .seg { position: relative; display: flex; align-items: flex-end; padding: var(--sp-sm); }
+  .combo .seg .tag { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: var(--r-pill); }
+  .combo-caption { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-top: var(--sp-md); }
+  .combo-caption b { color: var(--text-primary); font-weight: 600; }
+
+  /* pops del modo lienzo (D10) — protagonistas cuando el fit es 100% neutro */
+  .pops { margin-top: var(--sp-sm); display: flex; flex-wrap: wrap; gap: var(--sp-md); }
+  .pop { width: 52px; height: 52px; border-radius: var(--r-md); box-shadow: 0 0 0 1px var(--border); }
+
+  /* ===== "Tu pikete" DEMOTED: tira(s) pequeña(s) ARRIBA/ABAJO ===== */
+  .pikete-strip { margin-top: var(--sp-lg); padding-top: var(--sp-lg); border-top: 1px solid var(--border); }
+  .pikete-strip .cap-lbl { font-size: 11px; line-height: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: var(--sp-sm); }
+  .mini-row { display: flex; align-items: center; gap: var(--sp-md); margin-bottom: var(--sp-sm); }
+  .mini-row:last-of-type { margin-bottom: 0; }
+  .mini-row .region { width: 46px; flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); }
+  .mini-row .region .nn { display: block; font-size: 10px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--text-tertiary); margin-top: 1px; }
+  .mini-strip { display: flex; height: 26px; flex: 1; border-radius: var(--r-sm); overflow: hidden; box-shadow: 0 0 0 1px var(--border); }
+  .mini-strip i { flex: 1; position: relative; }
+  .mini-strip i.base::after {
+    content: ""; position: absolute; left: 50%; bottom: 3px; transform: translateX(-50%);
+    width: 5px; height: 5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1.5px var(--accent-ink);
+  }
+  .pikete-strip .base-cap { margin-top: var(--sp-md); font-size: 13px; line-height: 18px; color: var(--text-secondary); }
+  .pikete-strip .base-cap b { color: var(--text-primary); font-weight: 600; }
+
+  .watermark { margin-top: var(--sp-lg); text-align: right; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-disabled); }
+  .watermark span { color: var(--accent-ink); }
+
+  /* ---------- secciones de recomendación ---------- */
+  .section { padding: var(--sp-2xl) var(--screen-margin) 0; }
+  .section h2 { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: var(--sp-xs); }
+  .section .sub { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-bottom: var(--sp-lg); }
+  .harmony { display: flex; align-items: center; gap: var(--sp-lg); padding: var(--sp-lg) 0; border-top: 1px solid var(--border); min-height: 44px; }
+  .harmony:last-of-type { border-bottom: 1px solid var(--border); }
+  .harmony .name { flex: 1; }
+  .harmony .name .n { font-size: 16px; line-height: 22px; font-weight: 600; }
+  .harmony .name .d { font-size: 13px; line-height: 18px; color: var(--text-tertiary); }
+  .harmony .strip { display: flex; width: 132px; height: 44px; border-radius: var(--r-sm); overflow: hidden; box-shadow: 0 0 0 1px var(--border); }
+  .harmony .strip i { flex: 1; }
+
+  .cta-block { margin-top: auto; padding: var(--sp-2xl) var(--screen-margin) var(--sp-lg); display: flex; flex-direction: column; gap: var(--sp-md); }
+
+  /* anotaciones */
+  .callout { position: absolute; z-index: 5; pointer-events: none; border: 1.5px dashed var(--accent-bright); border-radius: var(--r-sm); }
+  .callout.good { border-color: rgba(46,125,50,0.7); }
+  .callout.bad  { border-color: rgba(179,38,30,0.6); }
+  .callout .lbl {
+    position: absolute; top: 100%; left: 0; margin-top: 6px; white-space: nowrap;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent-ink); background: var(--accent-tint); border-radius: var(--r-sm); padding: 2px 6px;
+  }
+  .callout .lbl.g { color: #fff; background: var(--success); }
+  .callout .lbl.b { color: #fff; background: var(--error); }
+  .callout .lbl.right { left: auto; right: 0; }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>Resultado OUTFIT — recomendación primero (propuesta)</h1>
+    <p>El resultado de outfit se construyó ANTES de D27 y celebra la <strong>extracción</strong> (la paleta ARRIBA/ABAJO ocupa
+       casi toda la pantalla) — eso demuestra que el algoritmo va bien: valor para NOSOTROS, no para Dani. El valor real es
+       la <strong>recomendación de color</strong> (con qué combinar el fit). El modo zapas ya lo resolvió con D27
+       (jerarquía invertida). Esta propuesta aplica la MISMA mentalidad al outfit, adaptada a su estructura de dos prendas.</p>
+    <div class="decision">Propuesta D36 · resultado outfit = recomendación protagonista (espeja D27) · pendiente de ratificar</div>
+  </div>
+
+  <div class="row">
+
+    <!-- ============ ANTES · extracción protagonista (estado actual) ============ -->
+    <div class="stage">
+      <div class="stage-tag before">ANTES <span>· extracción protagonista (hoy)</span></div>
+      <div class="phone is-before">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="appbar"><div class="title">PiketeMaker</div></div>
+
+        <div class="res-scroll">
+          <div class="share-canvas">
+            <h1>Tu pikete</h1>
+            <div class="meta" style="margin:var(--sp-xs) 0 var(--sp-xl);">Fit de hoy · 23 jul 2026</div>
+
+            <!-- ARRIBA: sudadera verde (GRANDE) -->
+            <div class="garment-block">
+              <div class="region-label"><span class="r">Arriba</span></div>
+              <div class="plate-row" style="height:52px"><div class="swatch" style="background:#7E9C7B"></div><div class="index"><span class="hex">#7E9C7B</span><span class="pct">48%</span></div></div>
+              <div class="plate-row" style="height:34px"><div class="swatch" style="background:#9FBF9A"></div><div class="index"><span class="hex">#9FBF9A</span><span class="pct">31%</span></div></div>
+              <div class="plate-row" style="height:18px"><div class="swatch" style="background:#55704F"></div><div class="index"><span class="hex">#55704F</span><span class="pct">15%</span></div></div>
+              <div class="plate-row" style="height:10px"><div class="swatch" style="background:#C9D8C4"></div><div class="index"><span class="hex">#C9D8C4</span><span class="pct">6%</span></div></div>
+            </div>
+
+            <!-- ABAJO: shorts morados — la BASE (GRANDE) -->
+            <div class="garment-block">
+              <div class="region-label"><span class="r">Abajo</span></div>
+              <div class="plate-row is-base" style="height:64px"><div class="swatch" style="background:#9B59D0"></div><div class="index"><span class="hex">#9B59D0</span><span class="pct">61%</span></div></div>
+              <div class="plate-row" style="height:30px"><div class="swatch" style="background:#7C3BB2"></div><div class="index"><span class="hex">#7C3BB2</span><span class="pct">28%</span></div></div>
+              <div class="plate-row" style="height:10px"><div class="swatch" style="background:#C4A1E8"></div><div class="index"><span class="hex">#C4A1E8</span><span class="pct">11%</span></div></div>
+            </div>
+
+            <div class="base-line">
+              <div class="base-dot" style="background:#9B59D0"></div>
+              <div class="txt"><span class="badge-base">Base</span><div class="desc"><b>Tu color dominante.</b> Sale de tu parte de abajo. Todo conjunta alrededor de él.</div></div>
+            </div>
+            <div class="watermark">piketemaker<span>.</span></div>
+          </div>
+
+          <!-- la recomendación queda ABAJO, casi fuera de vista -->
+          <div class="section">
+            <h2>Combina con</h2>
+            <div class="sub">Toca una y mira looks reales con esos colores.</div>
+            <div class="harmony">
+              <div class="name"><div class="n">Complementario</div><div class="d">Contraste máximo, 2 colores</div></div>
+              <div class="strip"><i style="background:#9B59D0"></i><i style="background:#8ED059"></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+
+        <div class="callout bad" style="top:150px; left:12px; right:12px; height:360px;">
+          <div class="lbl b">Extracción = casi toda la pantalla</div>
+        </div>
+        <div class="callout" style="bottom:96px; left:12px; right:12px; height:70px;">
+          <div class="lbl right">La recomendación, enterrada abajo</div>
+        </div>
+      </div>
+      <div class="stage-note">
+        <strong>Diagnóstico.</strong> El titular «Tu pikete» y las dos pilas ARRIBA/ABAJO a tamaño completo dicen «mira qué bien
+        te leo los colores». La armonía complementaria (el valor: con qué combinar) aparece al final, en una fila fría, casi
+        fuera del primer scroll. Dani ve una prueba de nuestro CV, no un consejo para vestir.
+      </div>
+    </div>
+
+    <!-- ============ DESPUÉS · recomendación protagonista (S1 happy) ============ -->
+    <div class="stage">
+      <div class="stage-tag after">DESPUÉS <span>· recomendación protagonista (D36)</span></div>
+      <div class="phone is-after">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="appbar"><div class="title">Mi pikete</div></div>
+
+        <div class="res-scroll">
+          <div class="share-canvas">
+            <div class="meta">Fit de hoy · 23 jul 2026</div>
+            <h1>Combina tu fit así</h1>
+
+            <!-- hero kicker: el héroe ES el complementario -->
+            <div class="hero-kicker">La combi · Contraste</div>
+
+            <!-- PROTAGONISTA: el combo recomendado (GRANDE, lo más colorido) -->
+            <div class="combo">
+              <div class="seg" style="flex:1.3; background:#9B59D0;">
+                <span class="tag" style="color:#fff; background:rgba(0,0,0,0.24);">tu fit</span>
+              </div>
+              <div class="seg" style="flex:1.5; background:#8ED059;">
+                <span class="tag" style="color:#31401C; background:rgba(255,255,255,0.6);">súmale</span>
+              </div>
+              <div class="seg" style="flex:0.9; background:#EDE9E1;">
+                <span class="tag" style="color:#3A3730; background:rgba(255,255,255,0.6);">+ crema</span>
+              </div>
+            </div>
+            <div class="combo-caption"><b>El verde lima hace saltar el morado de tu fit.</b> Súmale crema o negro y vas fino.</div>
+
+            <!-- SECUNDARIO: "Tu pikete" — la paleta ARRIBA/ABAJO, pequeña (la evidencia) -->
+            <div class="pikete-strip">
+              <div class="cap-lbl">Tu pikete · de aquí sale tu combi</div>
+              <div class="mini-row">
+                <span class="region">Arriba</span>
+                <div class="mini-strip"><i style="background:#7E9C7B"></i><i style="background:#9FBF9A"></i><i style="background:#55704F"></i><i style="background:#C9D8C4"></i></div>
+              </div>
+              <div class="mini-row">
+                <span class="region">Abajo</span>
+                <div class="mini-strip"><i class="base" style="background:#9B59D0"></i><i style="background:#7C3BB2"></i><i style="background:#C4A1E8"></i></div>
+              </div>
+              <div class="base-cap"><span class="badge-base">Base · morado</span><br><b>Tu color dominante</b> sale de tu parte de abajo.</div>
+            </div>
+
+            <div class="watermark">piketemaker<span>.</span></div>
+          </div>
+
+          <!-- OTRAS COMBIS: las 3 armonías restantes (el complementario ya es el héroe) -->
+          <div class="section">
+            <h2>Otras combis</h2>
+            <div class="sub">Toca una y mira looks reales con esos colores.</div>
+            <div class="harmony">
+              <div class="name"><div class="n">Tono sobre tono</div><div class="d">Suave, análoga</div></div>
+              <div class="strip"><i style="background:#D059C4"></i><i style="background:#9B59D0"></i><i style="background:#5965D0"></i></div>
+            </div>
+            <div class="harmony">
+              <div class="name"><div class="n">Equilibrada</div><div class="d">3 colores, atrevida</div></div>
+              <div class="strip"><i style="background:#9B59D0"></i><i style="background:#D09B59"></i><i style="background:#59D09B"></i></div>
+            </div>
+            <div class="harmony">
+              <div class="name"><div class="n">Contraste con matiz</div><div class="d">Punch, más fino</div></div>
+              <div class="strip"><i style="background:#9B59D0"></i><i style="background:#A6D059"></i><i style="background:#59D065"></i></div>
+            </div>
+          </div>
+
+          <div class="cta-block">
+            <button class="btn btn-primary">Ver looks así</button>
+            <button class="btn btn-secondary">Súbela a tu story</button>
+          </div>
+        </div>
+        <div class="homebar"></div>
+
+        <div class="callout good" style="top:150px; left:12px; right:12px; height:196px;">
+          <div class="lbl g">Héroe = la recomendación (la combi)</div>
+        </div>
+        <div class="callout good" style="top:360px; left:12px; right:12px; height:110px;">
+          <div class="lbl g right">«Tu pikete» ARRIBA/ABAJO, pequeño = evidencia</div>
+        </div>
+      </div>
+      <div class="stage-note">
+        <strong>Jerarquía invertida (espeja D27).</strong> El titular pasa a ser un consejo («Combina tu fit así»). El combo
+        recomendado (contraste = complementario) es lo más grande y colorido, con la frase slang que explica por qué funciona.
+        La paleta extraída baja a «Tu pikete»: dos tiras pequeñas ARRIBA/ABAJO con el punto BASE (morado) y la atribución —
+        se conserva el diferenciador vs Powsty, pero como base de la que sale la combi, no como titular. «Otras combis» = las
+        3 armonías restantes. Se mantienen los CTA F5-lite «Ver looks así» + F6 «Súbela a tu story» (a diferencia de zapas, el
+        outfit SÍ es el objeto compartible, Principio 3). Morado en sus 2 dosis (badge BASE + watermark); mint solo en el CTA.
+      </div>
+    </div>
+
+    <!-- ============ DESPUÉS · modo lienzo (fit 100% neutro, D10) ============ -->
+    <div class="stage">
+      <div class="stage-tag after">DESPUÉS <span>· modo lienzo (fit neutro, D10)</span></div>
+      <div class="phone is-after">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="appbar"><div class="title">Mi pikete</div></div>
+
+        <div class="res-scroll">
+          <div class="share-canvas">
+            <div class="meta">Fit de hoy · 23 jul 2026</div>
+            <h1>Tu fit es un lienzo</h1>
+
+            <div class="hero-kicker">La combi · Lienzo</div>
+
+            <!-- PROTAGONISTA: los pops curados SON la recomendación -->
+            <div class="pops">
+              <div class="pop" style="background:#E4483B"></div>
+              <div class="pop" style="background:#2E9E86"></div>
+              <div class="pop" style="background:#E8A72E"></div>
+              <div class="pop" style="background:#3C6FD1"></div>
+              <div class="pop" style="background:#D14FA0"></div>
+            </div>
+            <div class="combo-caption"><b>Negro, blanco y grises combinan con todo.</b> Dale un toque de color con uno de estos cinco pops.</div>
+
+            <!-- SECUNDARIO: la paleta neutra ARRIBA/ABAJO, pequeña -->
+            <div class="pikete-strip">
+              <div class="cap-lbl">Tu pikete · tu lienzo neutro</div>
+              <div class="mini-row">
+                <span class="region">Arriba<span class="nn">neutro</span></span>
+                <div class="mini-strip"><i style="background:#232128"></i><i style="background:#3A3946"></i><i style="background:#6B6A75"></i></div>
+              </div>
+              <div class="mini-row">
+                <span class="region">Abajo<span class="nn">neutro</span></span>
+                <div class="mini-strip"><i style="background:#E7E5E0"></i><i style="background:#C9C6C0"></i><i style="background:#9A968E"></i></div>
+              </div>
+              <div class="base-cap">Todo tu fit es neutro — <b>combina con todo</b>. Por eso mandamos color, no armonías.</div>
+            </div>
+
+            <div class="watermark">piketemaker<span>.</span></div>
+          </div>
+
+          <div class="cta-block">
+            <button class="btn btn-primary">Ver looks así</button>
+            <button class="btn btn-secondary">Súbela a tu story</button>
+          </div>
+        </div>
+        <div class="homebar"></div>
+
+        <div class="callout good" style="top:150px; left:12px; right:12px; height:120px;">
+          <div class="lbl g">Los pops SON la recomendación → arriba</div>
+        </div>
+      </div>
+      <div class="stage-note">
+        <strong>Modo lienzo, misma jerarquía.</strong> Cuando el fit es 100% neutro no hay base cromática ni armonías: los
+        «pops» curados (D10) son la recomendación, así que suben a la posición protagonista (antes vivían en una sección
+        aparte al final). El lienzo neutro ARRIBA/ABAJO baja a la tira «Tu pikete» con el caption honesto. Sin «Otras combis»
+        (no hay base → no hay armonías). CTAs iguales. Es el caso que ya estaba más cerca de lo correcto; aquí solo se recoloca.
+      </div>
+    </div>
+
+    <!-- ============ DESPUÉS · una sola región (S3, "TU ROPA") ============ -->
+    <div class="stage">
+      <div class="stage-tag after">DESPUÉS <span>· una región (S3, degradación)</span></div>
+      <div class="phone is-after">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+        <div class="appbar"><div class="title">Mi pikete</div></div>
+
+        <div class="res-scroll">
+          <div class="share-canvas">
+            <div class="meta">Fit de hoy · 23 jul 2026</div>
+            <h1>Combina tu fit así</h1>
+
+            <div class="hero-kicker">La combi · Contraste</div>
+
+            <div class="combo">
+              <div class="seg" style="flex:1.3; background:#2456B8;">
+                <span class="tag" style="color:#fff; background:rgba(0,0,0,0.24);">tu fit</span>
+              </div>
+              <div class="seg" style="flex:1.5; background:#B88624;">
+                <span class="tag" style="color:#fff; background:rgba(0,0,0,0.24);">súmale</span>
+              </div>
+              <div class="seg" style="flex:0.9; background:#EDE9E1;">
+                <span class="tag" style="color:#3A3730; background:rgba(255,255,255,0.6);">+ crema</span>
+              </div>
+            </div>
+            <div class="combo-caption"><b>El mostaza hace saltar el azul de tu fit.</b> Súmale crema o negro y vas fino.</div>
+
+            <!-- una sola región superviviente: "TU ROPA", nunca "ARRIBA" a secas (U5) -->
+            <div class="pikete-strip">
+              <div class="cap-lbl">Tu pikete · de aquí sale tu combi</div>
+              <div class="mini-row">
+                <span class="region">Tu ropa</span>
+                <div class="mini-strip"><i class="base" style="background:#2456B8"></i><i style="background:#4A7BD4"></i><i style="background:#16336E"></i><i style="background:#B8C9EA"></i></div>
+              </div>
+              <div class="base-cap"><span class="badge-base">Base · azul</span><br><b>Tu color dominante.</b> Todo conjunta alrededor de él.</div>
+            </div>
+
+            <div class="watermark">piketemaker<span>.</span></div>
+          </div>
+
+          <div class="section">
+            <h2>Otras combis</h2>
+            <div class="sub">Toca una y mira looks reales con esos colores.</div>
+            <div class="harmony">
+              <div class="name"><div class="n">Tono sobre tono</div><div class="d">Suave, análoga</div></div>
+              <div class="strip"><i style="background:#2488B8"></i><i style="background:#2456B8"></i><i style="background:#3624B8"></i></div>
+            </div>
+            <div class="harmony">
+              <div class="name"><div class="n">Equilibrada</div><div class="d">3 colores, atrevida</div></div>
+              <div class="strip"><i style="background:#2456B8"></i><i style="background:#B82456"></i><i style="background:#56B824"></i></div>
+            </div>
+            <div class="harmony">
+              <div class="name"><div class="n">Contraste con matiz</div><div class="d">Punch, más fino</div></div>
+              <div class="strip"><i style="background:#2456B8"></i><i style="background:#B85624"></i><i style="background:#B8B024"></i></div>
+            </div>
+          </div>
+
+          <div class="cta-block">
+            <button class="btn btn-primary">Ver looks así</button>
+            <button class="btn btn-secondary">Súbela a tu story</button>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <div class="stage-note">
+        <strong>Degradación sin vergüenza (S3/S4).</strong> Si solo sobrevive una región (foto de cintura para arriba) la tira
+        «Tu pikete» muestra un único strip «TU ROPA» (nunca «ARRIBA» a secas: no anunciamos lo que falta). En degradación a foto
+        completa (S4, motor sin persona) es idéntico pero el strip no lleva etiqueta de región. La jerarquía recomendación-primero
+        no cambia en ningún estado: siempre lidera la combi.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

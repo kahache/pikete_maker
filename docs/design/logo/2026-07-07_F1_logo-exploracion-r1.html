@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Exploración de logo · Ronda 1 (D13 · issue #27)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json
+     Hoja comparativa de logo, ronda 1. 4 direcciones distintas.
+     Criterios duros aplicados a todas:
+       · legible a 48px  · versión 1 tinta incluida
+       · cero degradados (bordado/merch-safe)
+       · cero cliché foto (rueda de color / apertura de cámara)
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C;
+    --action-bright: #43E5C2;
+    --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1;
+    --accent-bright: #A78BFA;
+    --accent-tint: #EFEAFB;
+
+    --bg: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --border-strong: #D9D3E6;
+    --text-primary: #1C1826;
+    --text-secondary: #544E68;
+    --text-tertiary: #6B6383;
+    --text-disabled: #8F87A3;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+
+    /* wallpapers del banco de pruebas de icono */
+    --wall-light: #EDEBF2;
+    --wall-dark: #141119;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #F2F0F6;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    padding: 40px 20px 96px;
+  }
+  .sheet { max-width: 1080px; margin: 0 auto; }
+
+  /* ---------- cabecera ---------- */
+  .head {
+    background: var(--bg); border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 28px;
+  }
+  .kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px;
+  }
+  h1 { font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .head p { font-size: 14px; line-height: 21px; color: var(--text-secondary); margin-top: 10px; max-width: 72ch; }
+  .criteria { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .criteria span {
+    font-size: 12px; font-weight: 600; color: var(--action-ink);
+    background: var(--action-tint); border-radius: var(--r-pill); padding: 5px 12px;
+  }
+
+  /* ---------- card de dirección ---------- */
+  .dir {
+    background: var(--bg); border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm); padding: 28px 32px 32px; margin-bottom: 28px;
+  }
+  .dir-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+  .dir-num {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+    color: var(--accent-ink); background: var(--accent-tint);
+    border-radius: var(--r-sm); padding: 3px 9px;
+  }
+  .dir-head h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+  .dir-claim { font-size: 14px; color: var(--text-secondary); margin-bottom: 22px; }
+
+  .cells { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .cell {
+    border: 1px solid var(--border); border-radius: var(--r-md);
+    padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 168px;
+  }
+  .cell-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-tertiary);
+  }
+  .cell-stage { flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; }
+
+  /* variante monocroma: una sola tinta */
+  .mono { --m-stem: #1C1826; --m-color: #1C1826; --m-dot: #1C1826; }
+
+  /* ---------- banco de pruebas de icono ---------- */
+  .icon-bench { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 14px; }
+  .wall {
+    border-radius: var(--r-md); padding: 20px;
+    display: flex; align-items: flex-end; gap: 22px;
+  }
+  .wall.light { background: var(--wall-light); border: 1px solid var(--border); }
+  .wall.dark  { background: var(--wall-dark); }
+  .tilewrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .tile {
+    border-radius: 22.5%; /* aprox. squircle de launcher */
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  }
+  .tile svg { width: 62%; height: 62%; display: block; }
+  .t192 { width: 192px; height: 192px; }
+  .t48  { width: 48px;  height: 48px; }
+  .tile-cap { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+  .wall.dark .tile-cap { color: #8F87A3; }
+  .tile.white  { background: #FFFFFF; }
+  .tile.purple { background: var(--accent-ink); }
+  .tile.ink    { background: var(--text-primary); }
+
+  /* ---------- racional ---------- */
+  .rationale {
+    background: var(--surface-subtle); border-radius: var(--r-md);
+    padding: 16px 20px; margin-top: 14px;
+    font-size: 13.5px; line-height: 20px; color: var(--text-secondary);
+  }
+  .rationale b { color: var(--text-primary); font-weight: 600; }
+  .rationale .risk b { color: #B3261E; }
+  .rationale p + p { margin-top: 6px; }
+  .typenote { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); margin-top: 8px; }
+
+  /* ---------- wordmarks (HTML, system stack = misma del design system) ---------- */
+  .wm { font-weight: 800; letter-spacing: -0.02em; font-size: 34px; line-height: 1; white-space: nowrap; }
+  .wm .a { color: var(--text-primary); }
+  .wm .b { color: var(--action-ink); }
+  .wm-plain { font-weight: 750; }
+
+  .chapa {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--accent-ink); border-radius: var(--r-pill);
+    padding: 10px 26px;
+  }
+  .chapa span {
+    color: #fff; font-weight: 800; font-style: italic; font-size: 26px;
+    letter-spacing: 0.06em; text-transform: uppercase; line-height: 1;
+  }
+  .chapa-sub {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.34em;
+    text-transform: uppercase; color: var(--text-tertiary); text-align: center; margin-top: 8px;
+  }
+
+  .kword { display: inline-flex; align-items: baseline; }
+  .kword .t { font-weight: 800; letter-spacing: -0.02em; font-size: 34px; line-height: 1; color: var(--text-primary); }
+  .kword .t.mkr { color: var(--action-ink); }
+  .kword svg.kglyph { height: 26px; width: 21px; margin: 0 1px; transform: translateY(1px); }
+
+  .lockup { display: inline-flex; align-items: center; gap: 12px; }
+  .lockup svg.iso { width: 42px; height: 42px; }
+  .lockup .wm, .lockup .kword .t { font-size: 25px; }
+  .lockup .kword svg.kglyph { height: 19px; width: 16px; }
+  .lockup .wm-plain { font-size: 25px; }
+
+  /* ---------- cierre ---------- */
+  .foot {
+    background: var(--bg); border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm); padding: 24px 32px;
+    font-size: 14px; line-height: 21px; color: var(--text-secondary);
+  }
+  .foot h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+  .foot ul { margin: 8px 0 0 18px; }
+  .foot li + li { margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SÍMBOLOS SVG (defs compartidos). Colores parametrizados con
+     custom properties para variantes mono / sobre oscuro:
+       --m-stem  (forma principal)   --m-color (mint)   --m-dot (morado)
+     ============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- A · P-Paleta: P construida con una banda (asta) + anillo de color (panza).
+         El punto morado en el ojo de la P = el "piquete". -->
+    <symbol id="markA" viewBox="0 0 96 96">
+      <g transform="translate(7,0)">
+        <rect x="20" y="12" width="18" height="72" rx="9" fill="var(--m-stem, #1C1826)"/>
+        <path d="M36,12 A26,26 0 0 1 36,64 L36,48 A10,10 0 0 0 36,28 Z" fill="var(--m-color, #43E5C2)"/>
+        <path d="M36,28 A10,10 0 0 1 36,48 Z" fill="var(--m-dot, #6C3FD1)"/>
+      </g>
+    </symbol>
+
+    <!-- B · La Chapa: pill (radius.pill del sistema) con monograma. -->
+    <symbol id="markB" viewBox="0 0 96 96">
+      <g transform="rotate(-6 48 48)">
+        <rect x="9" y="29" width="78" height="38" rx="19" fill="var(--m-dot, #6C3FD1)"/>
+        <text x="48" y="49" text-anchor="middle" dominant-baseline="central"
+              font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+              font-size="24" font-weight="800" font-style="italic" letter-spacing="2"
+              fill="var(--m-stem, #FFFFFF)">PK</text>
+      </g>
+    </symbol>
+
+    <!-- C · La Etiqueta: hang tag de prenda; el bajo de la etiqueta
+         lleva las bandas de color = la paleta de tu fit, etiquetada. -->
+    <symbol id="markC" viewBox="0 0 96 96">
+      <g transform="rotate(-14 48 48)">
+        <path d="M28,26 L48,8 L68,26 L68,80 Q68,86 62,86 L34,86 Q28,86 28,80 Z" fill="var(--m-stem, #1C1826)"/>
+        <rect x="28" y="50" width="40" height="14" fill="var(--m-dot, #6C3FD1)"/>
+        <path d="M28,64 L68,64 L68,80 Q68,86 62,86 L34,86 Q28,86 28,80 Z" fill="var(--m-color, #43E5C2)"/>
+        <circle cx="48" cy="26" r="5.5" fill="var(--m-hole, #FFFFFF)"/>
+      </g>
+    </symbol>
+
+    <!-- D · La K con piquete: la diagonal de la K quebrada en rayo.
+         El "piquete" (flow) hecho glifo. -->
+    <symbol id="markD" viewBox="0 0 96 96">
+      <rect x="22" y="12" width="16" height="72" rx="8" fill="var(--m-stem, #1C1826)"/>
+      <path d="M76,16 L44,46 L58,54 L80,86" fill="none"
+            stroke="var(--m-color, #43E5C2)" stroke-width="15"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <!-- Glifo K para el wordmark de la dirección D (recortado, más pesado
+         para casar ópticamente con el system 800 de al lado) -->
+    <symbol id="kGlyph" viewBox="18 6 74 90">
+      <rect x="20" y="12" width="18" height="72" rx="9" fill="#1C1826"/>
+      <path d="M76,16 L44,46 L58,54 L80,86" fill="none"
+            stroke="#0B7C6C" stroke-width="17"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="sheet">
+
+  <!-- ============================ CABECERA ============================ -->
+  <div class="head">
+    <div class="kicker">Exploración de logo · Ronda 1 · D13 · issue #27 · 2026-07-07</div>
+    <h1>PiketeMaker — 4 direcciones de identidad</h1>
+    <p>
+      Concepto madre en todas: <b>"tener piquete" = tener flow</b>. El logo no ilustra
+      "una app de fotos": ilustra el flow (D), la prenda (C), la calle (B) o el producto
+      mismo —la paleta— (A). Convive con las paletas del usuario, así que ninguna dirección
+      grita: 1–2 tintas de marca máximo, formas gordas, cero degradado.
+    </p>
+    <div class="criteria">
+      <span>Legible a 48px</span>
+      <span>Versión 1 tinta incluida</span>
+      <span>Sin degradados (bordado/merch)</span>
+      <span>Sin rueda de color ni apertura de cámara</span>
+      <span>Tokens reales D7/D8/D9</span>
+    </div>
+  </div>
+
+  <!-- ============================ DIRECCIÓN A ============================ -->
+  <div class="dir">
+    <div class="dir-head"><span class="dir-num">A</span><h2>P-Paleta</h2></div>
+    <div class="dir-claim">La P construida con la materia prima de la app: una banda (asta) y un swatch anular (panza). El ojo morado de la P es el "piquete".</div>
+
+    <div class="cells">
+      <div class="cell">
+        <div class="cell-label">Isotipo</div>
+        <div class="cell-stage"><svg width="84" height="84"><use href="#markA"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Monocromo · 1 tinta</div>
+        <div class="cell-stage mono" style="--m-dot:#FFFFFF;"><svg width="84" height="84"><use href="#markA"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Wordmark · nombre completo</div>
+        <div class="cell-stage"><div class="wm"><span class="a">Pikete</span><span class="b">Maker</span></div></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Lockup</div>
+        <div class="cell-stage">
+          <div class="lockup">
+            <svg class="iso"><use href="#markA"/></svg>
+            <div class="wm"><span class="a">Pikete</span><span class="b">Maker</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="icon-bench">
+      <div class="wall light">
+        <div class="tilewrap"><div class="tile white t192"><svg><use href="#markA"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile white t48"><svg><use href="#markA"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+      <div class="wall dark">
+        <div class="tilewrap"><div class="tile white t192"><svg><use href="#markA"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile white t48"><svg><use href="#markA"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Concepto:</b> el producto hecho letra — la panza de la P es literalmente un swatch anular; hablamos de color sin caer en la rueda de color.</p>
+      <p><b>Por qué aguanta 48px:</b> dos formas gordas y un contraforma de color; a tamaño launcher el anillo mint sigue siendo lo más visible del tile blanco.</p>
+      <p class="risk"><b>Riesgo:</b> el territorio "monograma P" está muy transitado (Pinterest sobre todo: app donde Dani vive). La geometría nos separa, pero es el flanco débil de la dirección.</p>
+      <p class="typenote">Tipografía: system stack 800. Si avanza: Archivo Black o Inter Display ExtraBold para el wordmark.</p>
+    </div>
+  </div>
+
+  <!-- ============================ DIRECCIÓN B ============================ -->
+  <div class="dir">
+    <div class="dir-head"><span class="dir-num">B</span><h2>La Chapa</h2></div>
+    <div class="dir-claim">Código box-logo del streetwear, traducido a nuestro sistema: pill (radius.pill), morado firma, tipografía itálica en mayúsculas. La marca como parche/chapa bordable.</div>
+
+    <div class="cells">
+      <div class="cell">
+        <div class="cell-label">Isotipo · monograma PK</div>
+        <div class="cell-stage"><svg width="96" height="96"><use href="#markB"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Monocromo · 1 tinta</div>
+        <div class="cell-stage mono" style="--m-stem:#FFFFFF;"><svg width="96" height="96"><use href="#markB"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Wordmark · forma corta</div>
+        <div class="cell-stage">
+          <div>
+            <div class="chapa"><span>Pikete</span></div>
+            <div class="chapa-sub">Maker</div>
+          </div>
+        </div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Lockup</div>
+        <div class="cell-stage">
+          <div class="lockup">
+            <svg class="iso"><use href="#markB"/></svg>
+            <div class="chapa" style="padding:7px 18px"><span style="font-size:19px">Pikete</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="icon-bench">
+      <div class="wall light">
+        <div class="tilewrap"><div class="tile purple t192"><svg style="width:78%;height:78%"><use href="#markB" style="--m-dot:transparent; --m-stem:#FFFFFF;"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile purple t48"><svg style="width:78%;height:78%"><use href="#markB" style="--m-dot:transparent; --m-stem:#FFFFFF;"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+      <div class="wall dark">
+        <div class="tilewrap"><div class="tile purple t192"><svg style="width:78%;height:78%"><use href="#markB" style="--m-dot:transparent; --m-stem:#FFFFFF;"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile purple t48"><svg style="width:78%;height:78%"><use href="#markB" style="--m-dot:transparent; --m-stem:#FFFFFF;"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Concepto:</b> la marca como prenda — chapa/parche que Dani se pondría. El tile del launcher ES la chapa (morado pleno + PK blanco), el único icono de color pleno de la ronda.</p>
+      <p><b>Por qué aguanta 48px:</b> es tipografía blanca sobre color plano, el formato más indestructible a tamaño pequeño; y borda/serigrafía perfecto.</p>
+      <p class="risk"><b>Riesgo:</b> dice "marca de ropa", no "app que hace algo" — y ya existe una "Pikete clothing" en streetwear (informe de growth §4): esta dirección es la que más nos acerca a esa confusión. Usa "Pikete" corto como marca visible; el nombre completo queda para la ficha de store.</p>
+      <p class="typenote">Tipografía: system 800 itálica como stand-in. Si avanza, pide display real: Archivo Black o Anton (itálica), con licencia libre.</p>
+    </div>
+  </div>
+
+  <!-- ============================ DIRECCIÓN C ============================ -->
+  <div class="dir">
+    <div class="dir-head"><span class="dir-num">C</span><h2>La Etiqueta</h2></div>
+    <div class="dir-claim">Un hang tag de prenda cuyo bajo son las bandas de color: PiketeMaker le pone etiqueta de color a tu fit. Moda literal, sin cliché fotográfico.</div>
+
+    <div class="cells">
+      <div class="cell">
+        <div class="cell-label">Isotipo</div>
+        <div class="cell-stage"><svg width="84" height="84"><use href="#markC"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Monocromo · 1 tinta</div>
+        <div class="cell-stage mono"><svg width="84" height="84"><use href="#markC"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Wordmark · nombre completo</div>
+        <div class="cell-stage"><div class="wm wm-plain">PiketeMaker</div></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Lockup</div>
+        <div class="cell-stage">
+          <div class="lockup">
+            <svg class="iso"><use href="#markC"/></svg>
+            <div class="wm wm-plain">PiketeMaker</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="icon-bench">
+      <div class="wall light">
+        <div class="tilewrap"><div class="tile white t192"><svg><use href="#markC"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile white t48"><svg><use href="#markC"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+      <div class="wall dark">
+        <div class="tilewrap"><div class="tile white t192"><svg><use href="#markC"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile white t48"><svg><use href="#markC"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Concepto:</b> objeto del mundo de la ropa (no de la fotografía) + resultado del producto (bandas de color con pesos). Es la dirección que mejor explica qué hace la app sin palabras.</p>
+      <p><b>Por qué aguanta 48px:</b> silueta cerrada, inclinada (dinamismo) y con contraste interno duro; el agujero del tag se pierde a 48px pero la silueta sigue leyéndose como etiqueta.</p>
+      <p class="risk"><b>Riesgo:</b> el icono "tag" es el idioma visual de apps de ofertas/precios; las bandas de color lo rescatan, pero en monocromo esa distinción se debilita.</p>
+      <p class="typenote">Tipografía: system stack 750, sin manipular. El símbolo lleva el peso; el wordmark acompaña neutro.</p>
+    </div>
+  </div>
+
+  <!-- ============================ DIRECCIÓN D ============================ -->
+  <div class="dir">
+    <div class="dir-head"><span class="dir-num">D</span><h2>La K con piquete</h2></div>
+    <div class="dir-claim">La K —la letra que hace urbano al nombre— con la diagonal quebrada en rayo: el "piquete" (flow, chispa) hecho glifo. Un solo glifo propio; todo lo demás, sistema.</div>
+
+    <div class="cells">
+      <div class="cell">
+        <div class="cell-label">Isotipo</div>
+        <div class="cell-stage"><svg width="84" height="84"><use href="#markD"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Monocromo · 1 tinta</div>
+        <div class="cell-stage mono"><svg width="84" height="84"><use href="#markD"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Wordmark · la K custom dentro</div>
+        <div class="cell-stage">
+          <div class="kword">
+            <span class="t">pi</span><svg class="kglyph" width="21" height="26"><use href="#kGlyph"/></svg><span class="t">ete</span><span class="t mkr">maker</span>
+          </div>
+        </div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Lockup</div>
+        <div class="cell-stage">
+          <div class="lockup">
+            <svg class="iso"><use href="#markD"/></svg>
+            <div class="kword">
+              <span class="t">pi</span><svg class="kglyph" width="16" height="19"><use href="#kGlyph"/></svg><span class="t">ete</span><span class="t mkr">maker</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="icon-bench">
+      <div class="wall light">
+        <div class="tilewrap"><div class="tile ink t192"><svg style="--m-stem:#FFFFFF;"><use href="#markD"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile ink t48"><svg style="--m-stem:#FFFFFF;"><use href="#markD"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+      <div class="wall dark">
+        <div class="tilewrap"><div class="tile ink t192"><svg style="--m-stem:#FFFFFF;"><use href="#markD"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile ink t48"><svg style="--m-stem:#FFFFFF;"><use href="#markD"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Concepto:</b> el doble sentido del nombre al completo — la K es la estilización urbana de "pikete" y el quiebro es el flow. No describe la herramienta: describe la sensación que vende (tu fit tiene chispa). Además fija la ortografía canónica: la K ES el logo, nadie la escribirá con Q después de verlo.</p>
+      <p><b>Por qué aguanta 48px:</b> dos trazos de 15/96 de grosor con remates redondos; a 48px el trazo queda en ~7px, por encima del mínimo de legibilidad. El tile oscuro con K blanca + rayo mint destaca en cualquier wallpaper sin usar color pleno de marca.</p>
+      <p class="risk"><b>Riesgo:</b> el rayo es un símbolo cargado (energía, Gatorade, Flash). Mitigado porque aquí no es un rayo suelto: es una letra. Ojo también con leerse "energía/velocidad" más que "moda" — el wordmark al lado lo ancla.</p>
+      <p class="typenote">Tipografía: system 800 para "pi·ete·maker"; la K es glifo dibujado (vector propio). Si avanza: ajustar la K ópticamente a una display tipo Archivo Black.</p>
+    </div>
+  </div>
+
+  <!-- ============================ CIERRE ============================ -->
+  <div class="foot">
+    <h3>Qué necesito de ti (CEO)</h3>
+    <ul>
+      <li><b>Elige dirección</b> (o un cruce: p. ej. "isotipo D + wordmark completo de A"). Puedes aportar una referencia visual para la ronda 2.</li>
+      <li>Postura sobre <b>"PiketeMaker" completo vs "Pikete" corto</b> en el wordmark: A/C/D enseñan el nombre completo (blinda la ortografía canónica que pidió growth); B apuesta por la forma corta, más chapa pero más expuesta a la confusión con "Pikete clothing".</li>
+      <li>En ronda 2 entrego: geometría afinada, tipografía display con licencia, variantes de uso (splash, watermark del story en <span style="font-family:var(--font-mono)">textDisabled</span> + firma acento, favicon) y export SVG/PNG por tamaño.</li>
+    </ul>
+    <p style="margin-top:12px; font-size:12.5px; color: var(--text-tertiary);">
+      Todas las direcciones cumplen los criterios duros: legibles a 48px, reproducibles a 1 tinta (columna monocromo),
+      sin degradados, sin cliché de fotografía. Colores estrictamente de tokens.json v1.2 (D7/D8/D9).
+    </p>
+  </div>
+
+</div>
+</body>
+</html>

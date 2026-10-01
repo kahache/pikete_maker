@@ -1,0 +1,45 @@
+# Pinned, reproducible install for people cloning the repo.
+# `cv_core/pyproject.toml` remains the SOURCE OF TRUTH for dependencies;
+# this file is the 1-command install path:
+#
+#   pip install -r requirements.txt && pip install -e cv_core
+#
+# Generated from a fresh venv (`pip install -e "cv_core[dev]"` + `pip freeze`)
+# on Python 3.14 / macOS, 2026-07-09. Regenerate the same way when
+# pyproject.toml changes. The optional `hq-bg` extra (rembg/onnxruntime,
+# Python 3.11/3.12 only) is intentionally NOT included.
+#
+# 2026-09-30 (review F17 / package E3): CI now installs from THIS file
+# (`pip install -r requirements.txt && pip install --no-deps -e cv_core`), so
+# the dev tools of the `dev` extra are pinned here too — ruff (formatter +
+# linter) and mypy (+ its runtime deps), at the versions of the Windows
+# Python 3.14 venv of that day. A new ruff/mypy release can no longer turn the
+# public CI red without a code change.
+ast_serialize==0.6.0
+contourpy==1.3.3
+cycler==0.12.1
+fonttools==4.63.0
+iniconfig==2.3.0
+joblib==1.5.3
+kiwisolver==1.5.0
+librt==0.13.0
+matplotlib==3.11.0
+mypy==2.3.0
+mypy_extensions==1.1.0
+narwhals==2.23.0
+numpy==2.5.1
+opencv_python_headless==5.0.0.93
+packaging==26.2
+pathspec==1.1.1
+pillow==12.3.0
+pluggy==1.6.0
+Pygments==2.20.0
+pyparsing==3.3.2
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+ruff==0.15.22
+scikit-learn==1.9.0
+scipy==1.18.0
+six==1.17.0
+threadpoolctl==3.6.0
+typing_extensions==4.16.0

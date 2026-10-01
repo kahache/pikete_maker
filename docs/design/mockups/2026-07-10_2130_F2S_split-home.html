@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Split-Home A/B (F2S · D24)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json
+     F2S split-Home A/B mockup. Two variants of ONE decision, side by side,
+     for the CEO to pick on device. Light theme (D7). Self-contained, inline.
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C; --action-bright: #43E5C2; --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1; --accent-bright: #A78BFA; --accent-tint: #EFEAFB;
+    --logo-turquoise: #17B598; /* LOGO-only color — never UI */
+
+    --bg: #FFFFFF; --surface: #FFFFFF; --surface-subtle: #F7F5FB;
+    --border: #E9E6F2; --border-strong: #D9D3E6;
+    --text-primary: #1C1826; --text-secondary: #544E68;
+    --text-tertiary: #6B6383; --text-disabled: #8F87A3;
+    --action-on-fill: #FFFFFF;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px; --sp-3xl: 48px;
+    --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary);
+    padding: 40px 16px 80px;
+  }
+  .page-head { max-width: 900px; margin: 0 auto 36px; text-align: center; }
+  .page-head h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+  .page-head p { font-size: 13px; line-height: 19px; color: var(--text-secondary); margin-top: 8px; }
+  .page-head .decision {
+    display: inline-block; margin-top: 12px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink);
+    background: var(--accent-tint); border-radius: var(--r-sm); padding: 4px 10px;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 48px; justify-content: center; align-items: flex-start; }
+  .stage { width: 390px; }
+  .stage-tag {
+    text-align: center; font-size: 13px; font-weight: 800; letter-spacing: 0.02em;
+    color: var(--text-primary); margin-bottom: 4px;
+  }
+  .stage-tag span { color: var(--text-tertiary); font-weight: 600; }
+  .stage-sub { text-align: center; font-size: 12px; color: var(--text-tertiary); margin-bottom: 16px; }
+  .stage-note { margin-top: 14px; padding: 0 4px; font-size: 12px; line-height: 17px; color: var(--text-tertiary); }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+  .stage-note code { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+
+  .phone {
+    width: 390px; height: 844px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 28px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: var(--shadow-md); position: relative;
+  }
+  .statusbar {
+    height: 44px; flex: none; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 var(--screen-margin);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary); z-index: 3;
+  }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 0 auto 8px; flex: none; z-index: 3; }
+
+  /* ---- shared: top row (lockup + tutorial re-entry) ---- */
+  .top-row { display: flex; align-items: center; justify-content: space-between; padding: 0 var(--screen-margin); flex: none; }
+  .lockup { display: flex; align-items: center; gap: 5px; }
+  .lockup .word { font-weight: 800; font-size: 12px; letter-spacing: -0.01em; }
+  .lockup .word .pikete { color: var(--accent-ink); }
+  .lockup .word .maker { color: var(--logo-turquoise); }
+  .help-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); margin-right: -10px; }
+
+  /* =====================================================================
+     VARIANT A — 50/50 vertical split
+     ===================================================================== */
+  .a-body { flex: 1; display: flex; flex-direction: column; }
+  .a-top { position: absolute; top: 44px; left: 0; right: 0; z-index: 2; padding-top: 6px; }
+  .split { flex: 1; display: flex; flex-direction: column; padding-top: 56px; }
+  .zone {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 0 var(--sp-2xl); position: relative; cursor: pointer;
+  }
+  .zone.sneaker { background: var(--action-tint); }
+  .zone.outfit  { background: var(--accent-tint); }
+  .zone .glyph { width: 84px; height: 84px; }
+  .zone.sneaker .glyph { color: var(--action-ink); }
+  .zone.outfit  .glyph { color: var(--accent-ink); }
+  .zone h2 { font-size: 32px; line-height: 38px; font-weight: 800; letter-spacing: -0.02em; margin-top: var(--sp-lg); color: var(--text-primary); }
+  .zone .cap { font-size: 15px; line-height: 22px; color: var(--text-secondary); margin-top: var(--sp-sm); }
+  .zone .go {
+    position: absolute; bottom: 22px; display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: var(--action-ink);
+  }
+  .zone .go svg { color: var(--action-ink); }
+  .split-divider { height: 1px; background: rgba(28,24,38,0.10); flex: none; }
+
+  /* =====================================================================
+     VARIANT B — dos tarjetas (keeps hero + air)
+     ===================================================================== */
+  .b-body { flex: 1; display: flex; flex-direction: column; padding: var(--sp-sm) var(--screen-margin) var(--sp-xl); }
+  .spacer-1 { flex: 1; } .spacer-2 { flex: 2; }
+  .b-hero { text-align: center; }
+  .b-hero h1 { font-size: 24px; line-height: 30px; font-weight: 800; letter-spacing: -0.01em; margin-top: var(--sp-lg); }
+  .cards { display: flex; flex-direction: column; gap: var(--sp-md); }
+  .card {
+    display: flex; align-items: center; gap: var(--sp-lg); height: 104px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm); padding: 0 var(--sp-lg); cursor: pointer;
+  }
+  .card .glyph { width: 44px; height: 44px; flex: none; }
+  .card.sneaker .glyph { color: var(--action-ink); }
+  .card.outfit  .glyph { color: var(--accent-ink); }
+  .card .txt { flex: 1; min-width: 0; }
+  .card .txt h3 { font-size: 16px; line-height: 22px; font-weight: 700; color: var(--text-primary); }
+  .card .txt p { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-top: 2px; }
+  .card .chev { color: var(--action-ink); flex: none; }
+
+  /* callout annotation (mockup-only) */
+  .callout { position: absolute; z-index: 5; pointer-events: none; border: 1.5px dashed var(--accent-bright); border-radius: var(--r-sm); }
+  .callout .lbl {
+    position: absolute; top: 100%; right: 0; margin-top: 6px; white-space: nowrap;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent-ink); background: var(--accent-tint); border-radius: var(--r-sm); padding: 2px 6px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>Split-Home — elige el layout</h1>
+    <p>El Home ahora ofrece dos entradas: <strong>Zapatillas</strong> (nuevo, F11) y
+       <strong>Tu outfit</strong> (flujo actual). Mismos tokens, misma decisión, dos maquetas.
+       Ábrelas en el móvil y elige una.</p>
+    <div class="decision">Decisión F2S · D24 — A o B</div>
+  </div>
+
+  <div class="row">
+
+    <!-- ================= VARIANT A — 50/50 vertical ================= -->
+    <div class="stage">
+      <div class="stage-tag">Variante A <span>· 50/50 vertical</span></div>
+      <div class="stage-sub">Dos zonas iguales, pantalla completa. Audaz, peso simétrico.</div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+
+        <!-- top bar overlaid (lockup + tutorial re-entry) -->
+        <div class="a-top top-row">
+          <div class="lockup">
+            <svg width="18" height="18" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(6,0)">
+                <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+                <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#17B598"/>
+                <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+              </g>
+            </svg>
+            <div class="word"><span class="pikete">Pikete</span><span class="maker">Maker</span></div>
+          </div>
+          <div class="help-btn" title="Cómo hacer la foto">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.9c-.7.3-1 .8-1 1.6"/>
+              <circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="a-body">
+          <div class="split">
+            <!-- ZONE 1 · Zapatillas (mint.tint wash) -->
+            <div class="zone sneaker">
+              <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 30 v-7 a2 2 0 0 1 2-2 h7 l6 5 l11 2 c7 1 12 3 12 6 v1 a2 2 0 0 1-2 2 H6 a2 2 0 0 1-2-2 Z"/>
+                <path d="M13 21 l3 6"/>
+                <path d="M19 26 l3 5"/>
+                <path d="M4 33 h38"/>
+              </svg>
+              <h2>Zapatillas</h2>
+              <div class="cap">Monta el fit desde tus zapas</div>
+              <div class="go">
+                Empezar
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+
+            <div class="split-divider"></div>
+
+            <!-- ZONE 2 · Tu outfit (purple.tint wash) -->
+            <div class="zone outfit">
+              <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 7 l-4 2 l-8 5 l4 7 l4 -3 v22 h20 v-22 l4 3 l4 -7 l-8 -5 l-4 -2 c0 4 -12 4 -12 0 Z"/>
+              </svg>
+              <h2>Tu outfit</h2>
+              <div class="cap">Saca la paleta de tu fit</div>
+              <div class="go" style="color:var(--accent-ink)">
+                Empezar
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+
+        <!-- annotation: tutorial re-entry survives -->
+        <div class="callout" style="top: 50px; right: 12px; width: 46px; height: 44px;">
+          <div class="lbl">Tutorial re-entry</div>
+        </div>
+      </div>
+
+      <div class="stage-note">
+        <strong>A — 50/50 vertical.</strong> Dos zonas de pantalla completa, peso
+        idéntico: <strong>Zapatillas</strong> arriba (<code>mint.tint</code>) y
+        <strong>Tu outfit</strong> abajo (<code>purple.tint</code>), glifos y labels
+        en <code>ink</code>. El lockup y el icono de tutorial viven en una barra
+        superior fina. <strong>Tradeoff:</strong> pierde el hero de 120px y el aire
+        de D7, y gasta una dosis grande de morado (tensa D8; fallback token-estricto
+        = ambas zonas en blanco con solo el divisor + chevron mint).
+      </div>
+    </div>
+
+    <!-- ================= VARIANT B — dos tarjetas ================= -->
+    <div class="stage">
+      <div class="stage-tag">Variante B <span>· dos tarjetas</span></div>
+      <div class="stage-sub">Mantiene el hero + aire de hoy. Calmada, D7 intacto.</div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+
+        <div class="b-body">
+          <!-- top row (identical to current Home) -->
+          <div class="top-row" style="padding:0">
+            <div class="lockup">
+              <svg width="18" height="18" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(6,0)">
+                  <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+                  <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#17B598"/>
+                  <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+                </g>
+              </svg>
+              <div class="word"><span class="pikete">Pikete</span><span class="maker">Maker</span></div>
+            </div>
+            <div class="help-btn" title="Cómo hacer la foto">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.9c-.7.3-1 .8-1 1.6"/>
+                <circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="spacer-2"></div>
+
+          <!-- compact hero: logo mark ~64 + one short headline -->
+          <div class="b-hero">
+            <svg width="64" height="64" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;">
+              <g transform="translate(6,0)">
+                <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="#6C3FD1"/>
+                <path d="M38,12 A26,26 0 0 1 38,64 L38,48 A10,10 0 0 0 38,28 Z" fill="#17B598"/>
+                <circle cx="38" cy="38" r="10" fill="#1C1826"/>
+              </g>
+            </svg>
+            <h1>¿Qué combinamos?</h1>
+          </div>
+
+          <div class="spacer-1"></div>
+
+          <!-- two large cards -->
+          <div class="cards">
+            <div class="card sneaker">
+              <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 30 v-7 a2 2 0 0 1 2-2 h7 l6 5 l11 2 c7 1 12 3 12 6 v1 a2 2 0 0 1-2 2 H6 a2 2 0 0 1-2-2 Z"/>
+                <path d="M13 21 l3 6"/>
+                <path d="M19 26 l3 5"/>
+                <path d="M4 33 h38"/>
+              </svg>
+              <div class="txt">
+                <h3>Zapatillas</h3>
+                <p>Monta el fit desde tus zapas</p>
+              </div>
+              <svg class="chev" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+
+            <div class="card outfit">
+              <svg class="glyph" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 7 l-4 2 l-8 5 l4 7 l4 -3 v22 h20 v-22 l4 3 l4 -7 l-8 -5 l-4 -2 c0 4 -12 4 -12 0 Z"/>
+              </svg>
+              <div class="txt">
+                <h3>Tu outfit</h3>
+                <p>Saca la paleta de tu fit</p>
+              </div>
+              <svg class="chev" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+          </div>
+
+          <div class="spacer-1"></div>
+        </div>
+        <div class="homebar"></div>
+
+        <!-- annotation: tutorial re-entry survives -->
+        <div class="callout" style="top: 50px; right: 12px; width: 46px; height: 44px;">
+          <div class="lbl">Tutorial re-entry</div>
+        </div>
+      </div>
+
+      <div class="stage-note">
+        <strong>B — dos tarjetas.</strong> La estructura actual: top row + hero
+        (logo a ~64px) + aire, y la elección como dos tarjetas grandes
+        (<code>surface</code> + <code>border</code> + <code>shadow-sm</code>),
+        <strong>Zapatillas</strong> arriba. Color de marca solo en los dos chevron
+        mint (dentro del presupuesto D8). <strong>Tradeoff:</strong> apilar da un
+        orden de lectura (peso menos simétrico que 50/50) y el hero baja de 120px a
+        ~64px.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

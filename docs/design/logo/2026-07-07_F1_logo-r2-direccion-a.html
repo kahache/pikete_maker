@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Logo · Ronda 2 · Dirección A refinada (feedback CEO)</title>
+<style>
+  /* ============================================================
+     Ronda 2 sobre la dirección A "P-Paleta" (elegida por el CEO).
+     Cambios aplicados (feedback CEO 2026-07-07):
+       1. Palo (asta): negro -> MORADO (accent.ink)
+       2. Punto (ojo de la P): morado -> NEGRO (text.primary)
+       3. Remate superior del palo: ovalado -> RECTO, cerrando la P
+     La ronda 1 completa queda como histórico en
+     2026-07-07_F1_logo-exploracion-r1.html (no se sobreescribe).
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C;
+    --action-bright: #43E5C2;
+    --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1;
+    --accent-tint: #EFEAFB;
+    --bg: #FFFFFF;
+    --surface-subtle: #F7F5FB;
+    --border: #E9E6F2;
+    --text-primary: #1C1826;
+    --text-secondary: #544E68;
+    --text-tertiary: #6B6383;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(28,24,38,0.08);
+    --wall-light: #EDEBF2;
+    --wall-dark: #141119;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary); padding: 40px 20px 96px; }
+  .sheet { max-width: 1080px; margin: 0 auto; }
+  .head, .dir, .foot { background: var(--bg); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 28px; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+  h1 { font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .head p { font-size: 14px; line-height: 21px; color: var(--text-secondary); margin-top: 10px; max-width: 72ch; }
+  .changes { margin: 14px 0 0 0; display: flex; flex-direction: column; gap: 6px; }
+  .changes div { font-size: 13.5px; color: var(--text-secondary); }
+  .changes b { color: var(--text-primary); font-weight: 600; }
+  .chip { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--accent-ink); background: var(--accent-tint); border-radius: var(--r-sm); padding: 2px 7px; margin-right: 6px; }
+
+  h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 18px; }
+  .cells { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .cell { border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 168px; }
+  .cell-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
+  .cell-stage { flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .was { opacity: 0.55; }
+
+  .icon-bench { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 14px; }
+  .wall { border-radius: var(--r-md); padding: 20px; display: flex; align-items: flex-end; gap: 22px; }
+  .wall.light { background: var(--wall-light); border: 1px solid var(--border); }
+  .wall.dark  { background: var(--wall-dark); }
+  .tilewrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .tile { border-radius: 22.5%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.18); background: #FFFFFF; }
+  .tile svg { width: 62%; height: 62%; display: block; }
+  .t192 { width: 192px; height: 192px; }
+  .t48  { width: 48px;  height: 48px; }
+  .tile-cap { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+  .wall.dark .tile-cap { color: #8F87A3; }
+
+  .wm { font-weight: 800; letter-spacing: -0.02em; font-size: 34px; line-height: 1; white-space: nowrap; }
+  .wm .a { color: var(--text-primary); }
+  .wm .b { color: var(--action-ink); }
+  .lockup { display: inline-flex; align-items: center; gap: 12px; }
+  .lockup svg.iso { width: 42px; height: 42px; }
+  .lockup .wm { font-size: 25px; }
+
+  .rationale { background: var(--surface-subtle); border-radius: var(--r-md); padding: 16px 20px; margin-top: 14px; font-size: 13.5px; line-height: 20px; color: var(--text-secondary); }
+  .rationale b { color: var(--text-primary); font-weight: 600; }
+  .rationale p + p { margin-top: 6px; }
+
+  .foot { font-size: 14px; line-height: 21px; color: var(--text-secondary); }
+  .foot h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+  .foot ul { margin: 8px 0 0 18px; }
+  .foot li + li { margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Ronda 1 (referencia): palo negro remate ovalado, punto morado -->
+    <symbol id="markA_r1" viewBox="0 0 96 96">
+      <g transform="translate(8,0)">
+        <rect x="20" y="12" width="18" height="72" rx="9" fill="#1C1826"/>
+        <path d="M34,12 A26,26 0 0 1 34,64 L34,48 A10,10 0 0 0 34,28 Z" fill="#43E5C2"/>
+        <circle cx="34" cy="38" r="10" fill="#6C3FD1"/>
+      </g>
+    </symbol>
+
+    <!-- Ronda 2 (feedback CEO): palo MORADO con remate superior RECTO
+         (esquinas superiores vivas -> la P queda cerrada arriba, el asta
+         enrasa con el arranque de la panza), remate inferior redondeado
+         se mantiene. Punto NEGRO en el ojo. Panza mint sin cambios. -->
+    <symbol id="markA_r2" viewBox="0 0 96 96">
+      <g transform="translate(8,0)">
+        <path d="M20,12 L38,12 L38,75 A9,9 0 0 1 29,84 A9,9 0 0 1 20,75 Z" fill="var(--m-stem, #6C3FD1)"/>
+        <path d="M34,12 A26,26 0 0 1 34,64 L34,48 A10,10 0 0 0 34,28 Z" fill="var(--m-color, #43E5C2)"/>
+        <circle cx="34" cy="38" r="10" fill="var(--m-dot, #1C1826)"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="sheet">
+
+  <div class="head">
+    <div class="kicker">Logo · Ronda 2 · Dirección A elegida · issue #27 · 2026-07-07</div>
+    <h1>P-Paleta refinada con el feedback del CEO</h1>
+    <p>La ronda 1 completa (4 direcciones) queda archivada sin tocar en
+       <span style="font-family:var(--font-mono); font-size:12.5px;">2026-07-07_F1_logo-exploracion-r1.html</span>
+       como histórico de la evolución.</p>
+    <div class="changes">
+      <div><span class="chip">1</span><b>Palo → morado</b> (accent.ink #6C3FD1). El asta pasa a llevar el color de firma.</div>
+      <div><span class="chip">2</span><b>Punto → negro</b> (text.primary #1C1826). El "piquete" del ojo, ahora en tinta.</div>
+      <div><span class="chip">3</span><b>Remate superior recto</b>: el asta ya no termina ovalada; enrasa en ángulo recto con el arranque de la panza → <b>P cerrada</b>. El remate inferior se mantiene redondeado.</div>
+    </div>
+  </div>
+
+  <div class="dir">
+    <h2>Antes / después</h2>
+    <div class="cells">
+      <div class="cell">
+        <div class="cell-label">Ronda 1 (histórico)</div>
+        <div class="cell-stage was"><svg width="110" height="110"><use href="#markA_r1"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Ronda 2 · cambios CEO</div>
+        <div class="cell-stage"><svg width="110" height="110"><use href="#markA_r2"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Monocromo · 1 tinta</div>
+        <div class="cell-stage" style="--m-stem:#1C1826; --m-color:#1C1826; --m-dot:#FFFFFF;"><svg width="110" height="110"><use href="#markA_r2"/></svg></div>
+      </div>
+      <div class="cell">
+        <div class="cell-label">Lockup</div>
+        <div class="cell-stage">
+          <div class="lockup">
+            <svg class="iso"><use href="#markA_r2"/></svg>
+            <div class="wm"><span class="a">Pikete</span><span class="b">Maker</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="icon-bench">
+      <div class="wall light">
+        <div class="tilewrap"><div class="tile t192"><svg><use href="#markA_r2"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile t48"><svg><use href="#markA_r2"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+      <div class="wall dark">
+        <div class="tilewrap"><div class="tile t192"><svg><use href="#markA_r2"/></svg></div><div class="tile-cap">192px</div></div>
+        <div class="tilewrap"><div class="tile t48"><svg><use href="#markA_r2"/></svg></div><div class="tile-cap">48px</div></div>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <p><b>Lectura del cambio:</b> con el asta morada, la marca lleva sus dos colores (morado estructura, mint color) y el negro queda reservado al detalle — jerarquía más limpia que en r1, donde el negro dominaba. El remate recto arriba cierra la silueta de la P y la hace más rotunda como icono.</p>
+      <p><b>A vigilar en 48px:</b> el punto negro sobre el ojo tiene menos contraste contra el anillo mint que el morado de r1 (negro vs mint ≈ contraste alto, sin problema; verificado en el banco de abajo). El morado del asta sobre tile blanco mantiene AA.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <h3>Para cerrar el logo (ronda 3, cuando des el OK a esta geometría)</h3>
+    <ul>
+      <li>Tipografía display real con licencia para el wordmark (candidatas: Archivo Black / Inter Display ExtraBold) y ajuste óptico del lockup.</li>
+      <li>Variantes de uso: splash, watermark del story compartido, favicon, versión negativa (sobre morado pleno).</li>
+      <li>Export final: SVG maestro + PNG por tamaño de launcher (48/72/96/144/192/512).</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Ugly states E1–E4 (synced with app)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json · SYNCED-WITH-APP MOCKUP
+     Source of truth for layout/copy:
+     app/lib/features/feedback/feedback_screen.dart (single template)
+     Routing/behavior: photo_flow.dart (E1) + analyzing_screen.dart (E3/E4).
+     Template: back app-bar + icon 56 + title headline + body detail +
+     primary CTA + secondary CTA. "Never a dead end."
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C; --action-bright: #43E5C2; --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1; --accent-bright: #A78BFA; --accent-tint: #EFEAFB;
+
+    --bg: #FFFFFF; --surface: #FFFFFF; --surface-subtle: #F7F5FB;
+    --border: #E9E6F2; --border-strong: #D9D3E6;
+    --text-primary: #1C1826; --text-secondary: #544E68;
+    --text-tertiary: #6B6383; --text-disabled: #8F87A3;
+    --action-on-fill: #FFFFFF;
+    --error: #B3261E; --success: #2E7D32;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px;
+    --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary);
+    display: flex; flex-wrap: wrap; gap: 40px; justify-content: center;
+    align-items: flex-start; padding: 40px 16px 80px;
+  }
+  .stage { width: 390px; }
+  .stage-note { margin-top: 14px; padding: 0 4px; font-size: 12px; line-height: 17px; color: var(--text-tertiary); }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+  .phone {
+    width: 390px; min-height: 700px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 28px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: var(--shadow-md);
+  }
+  .statusbar {
+    height: 44px; flex: none; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 var(--screen-margin);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+  }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 6px auto 8px; }
+  .appbar { height: 52px; display: flex; align-items: center; padding: 0 var(--sp-xs); }
+  .appbar .back {
+    width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+    color: var(--action-ink);
+  }
+  .btn {
+    height: 56px; border-radius: var(--r-pill); display: flex; align-items: center;
+    justify-content: center; font-size: 16px; font-weight: 700; border: none;
+    cursor: pointer; width: 100%; font-family: var(--font-sans);
+  }
+  .btn-primary { background: var(--action-ink); color: var(--action-on-fill); }
+  .btn-secondary { background: var(--bg); color: var(--action-ink); border: 1.5px solid var(--border-strong); }
+
+  .fb-body {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: var(--screen-margin) var(--screen-margin) var(--sp-xl);
+    text-align: center;
+  }
+  .fb-body .spacer { flex: 1; }
+  .fb-icon { color: var(--error); }
+  .fb-icon.neutral { color: var(--text-tertiary); }
+  .fb-headline { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; margin-top: var(--sp-xl); }
+  .fb-detail { font-size: 15px; line-height: 22px; color: var(--text-secondary); margin-top: var(--sp-sm); }
+  .fb-ctas { width: 100%; display: flex; flex-direction: column; gap: var(--sp-md); }
+</style>
+</head>
+<body>
+
+  <!-- ================= E1 · Camera permission denied ================= -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="appbar"><div class="back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg>
+      </div></div>
+      <div class="fb-body">
+        <div class="spacer"></div>
+        <!-- Icons.no_photography_outlined 56 · error -->
+        <svg class="fb-icon" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M8.5 5.5 9.5 4h5L16 5.5h4a1 1 0 0 1 1 1V19"/>
+          <path d="M19.5 21H4a1 1 0 0 1-1-1V6.5"/>
+          <path d="M9.7 11.2a3.5 3.5 0 0 1 4.9 4.9M8.6 13.4a3.5 3.5 0 0 0 3.9 3.9"/>
+          <path d="M2.5 2.5l19 19"/>
+        </svg>
+        <div class="fb-headline">Sin cámara no hay fit.</div>
+        <div class="fb-detail">Actívala en ajustes o elige una foto de tu galería.</div>
+        <div class="spacer"></div>
+        <div class="fb-ctas">
+          <button class="btn btn-primary">Abrir ajustes</button>
+          <button class="btn btn-secondary">Elegir de la galería</button>
+        </div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+    <div class="stage-note">
+      <strong>E1 · Camera permission denied.</strong> Reached from the source
+      sheet when the OS denies camera access; never re-asked in a loop. Gallery
+      always visible — the permission is not a wall; picking from the gallery
+      here closes E1 and rejoins the normal flow. AS IMPLEMENTED: "Abrir
+      ajustes" does NOT open system settings (no plugin yet) — it shows a
+      snackbar with the manual path ("Ajustes del sistema → Apps → PiketeMaker
+      → Permisos → Cámara."). Verdict + recommendation in the UX audit. On
+      Android this state is near-unreachable (system camera app needs no
+      permission of our own); it is a defensive path for iOS/odd OEMs.
+    </div>
+  </div>
+
+  <!-- ================= E2 · Offline ================= -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="appbar"><div class="back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg>
+      </div></div>
+      <div class="fb-body">
+        <div class="spacer"></div>
+        <!-- Icons.wifi_off_outlined 56 · error -->
+        <svg class="fb-icon" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M2 8.5a15 15 0 0 1 6.7-3.6M12.5 4.6A15 15 0 0 1 22 8.5"/>
+          <path d="M5.5 12.5a10 10 0 0 1 3.9-2.4M13.6 9.7a10 10 0 0 1 4.9 2.8"/>
+          <path d="M8.8 16a5.5 5.5 0 0 1 6.4 0"/>
+          <circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/>
+          <path d="M3 3l18 18"/>
+        </svg>
+        <div class="fb-headline">Sin conexión ahora mismo.</div>
+        <div class="fb-detail">Tu foto queda lista: reintenta cuando vuelvas a tener red.</div>
+        <div class="spacer"></div>
+        <div class="fb-ctas">
+          <button class="btn btn-primary">Reintentar</button>
+          <button class="btn btn-secondary">Cancelar y volver</button>
+        </div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+    <div class="stage-note">
+      <strong>E2 · Offline.</strong> Implemented in the template but UNREACHABLE
+      in the D15 demo: the analysis is 100% on-device, so no network is needed
+      on the critical path. Kept for when "Ver looks así" (deep-links) lands —
+      per user-flows §2 it will then degrade that button, not block analysis.
+      Dormant, correctly parked.
+    </div>
+  </div>
+
+  <!-- ================= E3 · Analysis failed ================= -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="appbar"><div class="back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg>
+      </div></div>
+      <div class="fb-body">
+        <div class="spacer"></div>
+        <!-- Icons.error_outline 56 · error -->
+        <svg class="fb-icon" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="12" cy="12" r="9.5"/>
+          <path d="M12 7.5v6"/>
+          <circle cx="12" cy="16.5" r="0.8" fill="currentColor" stroke="none"/>
+        </svg>
+        <div class="fb-headline">No pillamos bien tu fit.</div>
+        <div class="fb-detail">Prueba con más luz o aléjate un paso.</div>
+        <div class="spacer"></div>
+        <div class="fb-ctas">
+          <button class="btn btn-primary">Probar con otra foto</button>
+          <button class="btn btn-secondary">Reintentar con la misma</button>
+        </div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+    <div class="stage-note">
+      <strong>E3 · Analysis failed.</strong> Only shown after 1 silent automatic
+      retry also failed (Dani never sees the pipeline cough if it recovers).
+      AS IMPLEMENTED: "Reintentar con la misma" relaunches analyzing with
+      <code>withAd:false</code> — the wait was already paid, no second ad (F8 ✓).
+      "Probar con otra foto" lands on the CONFIRM screen (with the failed photo
+      still loaded), not on the source sheet as user-flows §2 specified — one
+      extra tap ("Repetir") to actually change photo. Deviation + verdict in
+      the UX audit.
+    </div>
+  </div>
+
+  <!-- ================= E4 · No clear outfit ================= -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="appbar"><div class="back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg>
+      </div></div>
+      <div class="fb-body">
+        <div class="spacer"></div>
+        <!-- Icons.image_search_outlined 56 · textTertiary (advice, NOT an error) -->
+        <svg class="fb-icon neutral" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M20 11v8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19V6a1.5 1.5 0 0 1 1.5-1.5H12"/>
+          <path d="M5.5 17.5l4-4.5 3 3.5 2-2 3 3"/>
+          <circle cx="17.5" cy="5.5" r="3"/>
+          <path d="M19.8 7.8 22 10"/>
+        </svg>
+        <div class="fb-headline">Aquí no vemos un outfit claro.</div>
+        <div class="fb-detail">Cuerpo entero, buena luz y fondo tranquilo.</div>
+        <div class="spacer"></div>
+        <div class="fb-ctas">
+          <button class="btn btn-primary">Hacer otra foto</button>
+          <button class="btn btn-secondary">Elegir de la galería</button>
+        </div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+    <div class="stage-note">
+      <strong>E4 · No clear outfit / unreliable palette.</strong> The engine
+      found no chromatic base (D5) — we never deliver a bad result (an ugly
+      story is anti-marketing, F6). Icon in textTertiary, NOT error red: this
+      is advice, no one is to blame (matches the spec's "E4 does not blame the
+      user"). No automatic retry (the photo is the photo). AS IMPLEMENTED:
+      "Hacer otra foto" lands on Confirm (same pattern as E3 — see audit);
+      "Elegir de la galería" opens the picker directly and, with a new photo,
+      rebuilds the stack home → confirm. Cancelling the picker stays here: no
+      dead ends.
+    </div>
+  </div>
+
+</body>
+</html>

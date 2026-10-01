@@ -1,0 +1,106 @@
+plugins {
+    id "com.android.application"
+    // #79: "kotlin-android" is no longer declared here — the Flutter Gradle
+    // Plugin auto-applies KGP when absent (3.44.6 template parity; declaring
+    // it triggers the AGP 9 built-in-Kotlin migration warning).
+    // The Flutter Gradle Plugin must be applied after the Android Gradle plugin.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+// Firma de release (issue #34): las credenciales viven en android/key.properties,
+// que esta git-ignorado (secreto). Si el fichero no existe (otra maquina, CI),
+// se degrada a la firma de debug para que el build no rompa.
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader("UTF-8") { reader ->
+        keystoreProperties.load(reader)
+    }
+}
+
+android {
+    namespace = "com.piketemaker.piketemaker"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        // Identidad de la app en Android/Play Store — NO cambiar tras publicar
+        // (el default de flutter create era com.piketemaker.piketemaker).
+        applicationId = "com.piketemaker.app"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // NOTE (#79, 2026-07-17): effective minSdk moved 21 -> 24 with the
+        // Flutter 3.32.8 -> 3.44.6 upgrade. NOT a choice: Flutter 3.44 hard-
+        // errors below minSdk 23 (engine dropped old APIs) and warns below 24.
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                keyAlias = keystoreProperties['keyAlias']
+                keyPassword = keystoreProperties['keyPassword']
+                // storeFile es relativo a este modulo (android/app/)
+                storeFile = file(keystoreProperties['storeFile'])
+                storePassword = keystoreProperties['storePassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            // Con key.properties presente firma con el keystore de release;
+            // sin el (otra maquina/CI sin el secreto) cae a la firma de debug
+            // para que `flutter run --release` siga funcionando.
+            signingConfig = keystorePropertiesFile.exists()
+                    ? signingConfigs.release
+                    : signingConfigs.debug
+        }
+    }
+
+    // #87 Stage 1 — GPU-lib drop. tflite_flutter pulls
+    // com.google.ai.edge.litert:litert-gpu, which ships
+    // libtensorflowlite_gpu_jni.so (~1-2.5 MB/ABI). We run CPU-only (the
+    // interpreter is created with default options, the GPU delegate is never
+    // instantiated — see core/segmentation/), so the lib is dead weight in
+    // every APK. Excluding just the .so is safe: the Java delegate classes
+    // remain but their native entrypoint is never reached at runtime.
+    // (AGP 9 DSL: `packaging { jniLibs.excludes }`, replaces `packagingOptions`.)
+    packaging {
+        jniLibs {
+            excludes += ["**/libtensorflowlite_gpu_jni.so"]
+        }
+    }
+
+    // #87 Stage 1 — per-ABI split is driven from the Flutter CLI
+    // (`flutter build apk --release --split-per-abi`), NOT a static
+    // `splits {}` block here, on purpose:
+    //   * The Flutter Gradle Plugin enables splits.abi (isUniversalApk=false)
+    //     itself when --split-per-abi is passed, and — critically — applies the
+    //     per-ABI versionCode offset (ARM32=1, ARM64=2, x86_64=4 -> abi*1000 +
+    //     base). A hand-rolled `splits {}` block bypasses that offset logic.
+    //   * A static block with isUniversalApk=true emits app-universal-release.apk,
+    //     which the flutter tool does NOT recognise as the default output
+    //     (it expects app-release.apk) — it would break plain `flutter build apk`.
+    // Universal fallback = plain `flutter build apk --release` (all ABIs in one
+    // app-release.apk). HARD RULE (#87): the model never ships in a universal
+    // APK — beta/release distribution uses the --split-per-abi artifacts only.
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
+}
+
+flutter {
+    source = "../.."
+}

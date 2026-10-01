@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiketeMaker — Analizando F8 (synced with app · D12 step 4)</title>
+<style>
+  /* ============================================================
+     TOKENS v1.2 — docs/design/tokens.json · SYNCED-WITH-APP MOCKUP
+     Source of truth for layout/copy:
+     app/lib/features/analyzing/analyzing_screen.dart
+     Supersedes the "Analizando" phone of result.html for the pipeline
+     subtext: post-D15 the MVP does NOT remove background, so the steps
+     are the honest on-device pipeline (see stage notes + UX audit).
+     ============================================================ */
+  :root {
+    --action-ink: #0B7C6C; --action-bright: #43E5C2; --action-tint: #DFF7F1;
+    --accent-ink: #6C3FD1; --accent-bright: #A78BFA; --accent-tint: #EFEAFB;
+
+    --bg: #FFFFFF; --surface: #FFFFFF; --surface-subtle: #F7F5FB;
+    --border: #E9E6F2; --border-strong: #D9D3E6;
+    --text-primary: #1C1826; --text-secondary: #544E68;
+    --text-tertiary: #6B6383; --text-disabled: #8F87A3;
+    --action-on-fill: #FFFFFF;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+    --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+    --sp-xl: 24px; --sp-2xl: 32px; --sp-3xl: 48px;
+    --screen-margin: 20px;
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --shadow-md: 0 4px 16px rgba(28,24,38,0.10);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F2F0F6; font-family: var(--font-sans); color: var(--text-primary);
+    display: flex; flex-wrap: wrap; gap: 40px; justify-content: center;
+    align-items: flex-start; padding: 40px 16px 80px;
+  }
+  .stage { width: 390px; }
+  .stage-note { margin-top: 14px; padding: 0 4px; font-size: 12px; line-height: 17px; color: var(--text-tertiary); }
+  .stage-note strong { color: var(--text-secondary); font-weight: 600; }
+  .phone {
+    width: 390px; min-height: 844px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 28px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: var(--shadow-md);
+  }
+  .statusbar {
+    height: 44px; flex: none; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 var(--screen-margin);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+  }
+  .homebar { width: 134px; height: 5px; border-radius: 3px; background: var(--border); margin: 6px auto 8px; }
+
+  .an-body { flex: 1; display: flex; flex-direction: column; padding: 0 var(--screen-margin); }
+  .progress-zone { padding-top: var(--sp-2xl); }
+  .progress-zone .copy { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .progress-zone .step { font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-top: var(--sp-xs); }
+  .track { height: 6px; background: var(--action-tint); border-radius: 3px; overflow: hidden; margin-top: var(--sp-lg); }
+  .track .fill { height: 100%; background: var(--action-bright); border-radius: 3px; }
+  .track-meta {
+    display: flex; justify-content: space-between; margin-top: var(--sp-sm);
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.02em; color: var(--text-tertiary);
+  }
+  .track-meta .pct { color: var(--action-ink); font-weight: 700; }
+
+  .ad-slot {
+    margin-top: var(--sp-2xl); max-height: 438px; flex: 1;
+    background: var(--surface-subtle);
+    border: 1px dashed var(--border-strong); border-radius: var(--r-lg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: var(--sp-sm); text-align: center; padding: var(--sp-xl);
+  }
+  .ad-slot .tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-tertiary); border: 1px solid var(--border-strong);
+    border-radius: var(--r-sm); padding: 3px 8px;
+  }
+  .ad-slot .why { font-size: 13px; line-height: 18px; color: var(--text-secondary); max-width: 260px; }
+
+  .skip-note { text-align: center; font-size: 13px; color: var(--text-tertiary); padding: var(--sp-xl) 0; }
+  .skip-note b { color: var(--accent-ink); font-weight: 700; }
+
+  .steps-card {
+    margin-top: 18px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 14px 16px;
+    font-size: 12px; line-height: 17px; color: var(--text-secondary);
+  }
+  .steps-card h3 {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-tertiary); margin-bottom: 8px;
+  }
+  .steps-card ol { margin: 0 0 8px; padding-left: 18px; }
+  .steps-card li { margin-bottom: 3px; }
+  .steps-card code { font-family: var(--font-mono); font-size: 11px; color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+  <!-- ============ A · FIRST ATTEMPT (ad slot active, F8) ============ -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+
+      <div class="an-body">
+        <div class="progress-zone">
+          <div class="copy">Leyendo los colores de tu fit…</div>
+          <div class="step">Agrupando los colores</div>
+          <div class="track"><div class="fill" style="width:62%"></div></div>
+          <div class="track-meta"><span>analizando</span><span class="pct">62%</span></div>
+        </div>
+
+        <div class="ad-slot">
+          <div class="tag">Hueco rewarded · F8 · AdMob</div>
+          <div class="why">El progreso queda siempre visible arriba: el ad acompaña la espera, no la bloquea.</div>
+        </div>
+
+        <div class="skip-note">Tu paleta aparece en cuanto termine — <b>ya casi</b></div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>Analyzing · first attempt — synced with <code>analyzing_screen.dart</code>.</strong>
+      Progress (mint bright on tint, % in action ink) ALWAYS above the ad slot,
+      which occupies the layout from v1 so AdMob (Phase 5) drops in without a
+      redesign. The purple accent signs exactly once ("ya casi"). In the demo
+      APK the slot renders this marked placeholder — intentional per D12: it
+      shows investors where monetization lives.
+    </div>
+
+    <div class="steps-card">
+      <h3>Honest pipeline subtext (post-D15)</h3>
+      <ol>
+        <li><code>Leyendo tu foto</code> (0–33%)</li>
+        <li><code>Agrupando los colores</code> (33–66%)</li>
+        <li><code>Montando tus armonías</code> (66–96%)</li>
+      </ol>
+      The pre-pivot subtext "Separando la ropa del fondo" (still visible in
+      result.html, screen 2) is OBSOLETE: the D15 MVP does not remove the
+      background. Perceived-progress mechanics as implemented: easeOutCubic
+      over a nominal 6 s, hard-capped at 96% until the engine returns a result
+      (never shows 100% without a palette). On success → result with
+      motion.reveal (600 ms). On first pipeline error → 1 silent automatic
+      retry (progress does not reset); second failure → E3.
+    </div>
+  </div>
+
+  <!-- ============ B · MANUAL RETRY (no second ad, F8 rule) ============ -->
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+
+      <div class="an-body">
+        <div class="progress-zone">
+          <div class="copy">Leyendo los colores de tu fit…</div>
+          <div class="step">Leyendo tu foto</div>
+          <div class="track"><div class="fill" style="width:24%"></div></div>
+          <div class="track-meta"><span>analizando</span><span class="pct">24%</span></div>
+        </div>
+
+        <div class="ad-slot">
+          <div class="tag">Tip</div>
+          <div class="why">Fondo liso y un paso atrás: así te clavo los colores.</div>
+        </div>
+
+        <div class="skip-note">Tu paleta aparece en cuanto termine — <b>ya casi</b></div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="stage-note">
+      <strong>Analyzing · manual retry (E3 → "Reintentar con la misma").</strong>
+      F8 rule (user-flows §3): the wait was already paid — NO second ad. Same
+      layout, same slot geometry (the layout never jumps); the slot shows a
+      capture tip instead ("TIP" tag). This is also the fallback when AdMob has
+      no inventory. Implemented via <code>AnalyzingArgs(withAd: false)</code>.
+    </div>
+  </div>
+
+</body>
+</html>
